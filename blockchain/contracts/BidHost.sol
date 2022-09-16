@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: UNLICENSED
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.8;
 
 /*
@@ -29,7 +29,7 @@ contract BidHost {
     bool public hasEnded;
     uint256 public endTime;
     uint128 public durationHr;
-    uint128 public deposit = 50000000000;
+    uint128 public depositUSD = 500;
 
     uint256 public highestBid;
     address public highestBidder;
@@ -37,6 +37,12 @@ contract BidHost {
 
     constructor() {
         seller = payable(msg.sender);
+        // TODO: get latest rate of USD->ETH and set 500$ equivalent of ETH as deposit
+    }
+
+    modifier auctionOngoing {
+        require((!hasEnded && hasStarted), "The auction has ended!");
+        _;
     }
 
     function startAuction(uint128 p_durationHr, uint128 p_startingBid)
@@ -70,6 +76,7 @@ contract BidHost {
         );
         require((msg.value == deposit), "Please pay the exact deposit amount!");
         bidderToDeposits[msg.sender] += uint128(msg.value);
+        // event for bidder joined
     }
 
     function placeBid() external payable {
@@ -95,8 +102,9 @@ contract BidHost {
             (msg.sender != highestBidder),
             "You can only withdraw the deposit if you are not the highest bidder!"
         );
-        // TODO: requires bidder to settle full payment for withdrawal
+        // TODO: requires bidder to settle full payment for withdrawal (full payment only when the seller accepted the result)
         // TODO: requires bidder to not exceed the expiry date for full payment settlement
+        // TODO: close the auction when the expiry date is reached 
         uint128 depositBalance = bidderToDeposits[msg.sender];
         bidderToDeposits[msg.sender] = 0;
         (bool sent, bytes memory data) = payable(msg.sender).call{
@@ -105,9 +113,17 @@ contract BidHost {
         require(sent, "Withdrawal failed!");
 
         emit WithdrawDeposit(msg.sender, uint128(msg.value));
+        // TODO: event for bidder quit
     }
 
     function getBlockTime() public view returns (uint256) {
         return block.timestamp;
     }
+
+    function getTimeLeft() public 
+        auctionOngoing
+    {
+
+    }
+
 }
