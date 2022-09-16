@@ -13,15 +13,21 @@ import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 */
 
 contract BidHostManager {
-    function getEthToUsdRate() public view returns (uint256) {
+    function getWeiPerUsdRate() public view returns (uint256) {
         AggregatorV3Interface priceFeed = AggregatorV3Interface(0xD4a33860578De61DBAbDc8BFdb98FD742fA7028e);
-        (,int256 price,,,) = priceFeed.latestRoundData(); // ETH per USD
+        (,int256 price,,,) = priceFeed.latestRoundData(); // WeiPerUsd (in 8 decimals)
         return uint256(price * 1e10);
     }
 
-    function convertEthToUsd(uint256 p_ethAmount) public view returns (uint256) {
-        uint256 ethPrice = getEthToUsdRate();
-        uint256 ethAmountInUsd = (ethPrice * p_ethAmount) / 1e18;
-        return ethAmountInUsd;
+    function convertWeiToUsd(uint256 p_weiAmount) public view returns (uint256) {
+        uint256 ethRate = getWeiPerUsdRate();
+        uint256 usdEquivalent = (p_weiAmount / ethRate);
+        return usdEquivalent;
+    }
+
+    function convertUsdToWei(uint256 p_usdAmount) public view returns (uint256) {
+        uint256 ethRate = getWeiPerUsdRate();
+        uint256 weiEquivalent = (p_usdAmount * ethRate);
+        return weiEquivalent;
     }
 }
