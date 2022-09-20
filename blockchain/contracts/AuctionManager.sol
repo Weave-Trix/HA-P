@@ -16,8 +16,10 @@ import "./AuctionRegistry.sol";
 contract AuctionManager {
     // TODO: Maintain an array to check timeLeft of BIDDING auctions (if timeLeft==0, perform Upkeep)
     // TODO: Maintain an array to check timeLeft of PENDING_PAYMENT auctions (if timeLeft==0, perform Upkeep) 
+    address[] public biddingAuctions;
+    address[] public pendingPaymentAuctions;
 
-    // TODO: transition betwee Auction states
+    // TODO: transition between Auction states
         // TODO: chainlink keepers for automated transition to VERIFYING_WINNER state when the auction ended
         // TODO: chainlink keepers for automated transition to ENDED state when payment timer's up
 
