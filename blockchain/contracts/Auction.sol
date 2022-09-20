@@ -252,7 +252,7 @@ contract Auction {
         // TODO: event for bidder quit
     }
 
-    function payWinningBid() external payable onlyWinnerPayment {
+    function payFullSettlement() external payable onlyWinnerPayment {
         require(
             (inPendingPaymentState()),
             "Auction not in PendingPayment state!"
