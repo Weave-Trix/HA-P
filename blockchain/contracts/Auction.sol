@@ -19,19 +19,13 @@ pragma solidity ^0.8.8;
     otherwise payment cannot be made and the NFT will not be transferred
 12. If no one bid on the vehicle after the bidding time is up, the auctin will end with EndState.NO_BIDDER
 */
+import "../libraries/AuctionUtility.sol";
 
 error Auction_RestrictedSellerAccess();
 error Auction_NotInPendingPaymentState();
 error Auction_RestrictedWinnerAccess();
 error Auction_SelfBiddingIsNotAllowed();
 error Auction_NoProceeds();
-
-interface AuctionManager {
-    function convertUsdToWei(uint256 p_usdAmount)
-        external
-        view
-        returns (uint256);
-}
 
 contract Auction {
     enum AuctionState {
@@ -263,6 +257,7 @@ contract Auction {
         );
         require((!winnerPaid), "You have paid!");
         fullSettlement[seller] = msg.value;
+        // TODO: transfer NFT ownership
     }
 
     function withdrawFullSettlement() external onlySeller {
@@ -285,8 +280,7 @@ contract Auction {
     }
 
     function getDepositInWei() public view returns (uint256) {
-        AuctionManager auctionManager = AuctionManager(auctionManagerAddress);
-        return (auctionManager.convertUsdToWei(depositUSD));
+        return (AuctionUtility.convertUsdToWei(depositUSD));
     }
 
     function hourToSec(uint inHours) public pure returns (uint256 inMinutes) {

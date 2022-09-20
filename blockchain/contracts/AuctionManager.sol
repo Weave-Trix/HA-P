@@ -2,7 +2,8 @@
 pragma solidity ^0.8.8;
 
 import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
-import "./AuctionRegistry.sol";
+import "./Auction.sol";
+import "../libraries/AuctionUtility.sol";
 
 /*
 1. Seller can register a new vehicle by minting a vehicle NFT
@@ -15,13 +16,13 @@ import "./AuctionRegistry.sol";
 
 contract AuctionManager {
     // TODO: Maintain an array to check timeLeft of BIDDING auctions (if timeLeft==0, perform Upkeep)
-    // TODO: Maintain an array to check timeLeft of PENDING_PAYMENT auctions (if timeLeft==0, perform Upkeep) 
+    // TODO: Maintain an array to check timeLeft of PENDING_PAYMENT auctions (if timeLeft==0, perform Upkeep)
     address[] public biddingAuctions;
     address[] public pendingPaymentAuctions;
 
     // TODO: transition between Auction states
-        // TODO: chainlink keepers for automated transition to VERIFYING_WINNER state when the auction ended
-        // TODO: chainlink keepers for automated transition to ENDED state when payment timer's up
+    // TODO: chainlink keepers for automated transition to VERIFYING_WINNER state when the auction ended
+    // TODO: chainlink keepers for automated transition to ENDED state when payment timer's up
 
     // TODO: emit event when Auction state changed
     /*
@@ -32,49 +33,17 @@ contract AuctionManager {
     5. Auction ended
     */
 
-   // TODO: emit event when Bidder perform action
-   /*
+    // TODO: emit event when Bidder perform action
+    /*
    1. Bidder submit bids
    */
 
+    constructor() {}
 
-    constructor() {
-        
-    }
-
-    function getWeiPerUsdRate() public view returns (uint256) {
-        AggregatorV3Interface priceFeed = AggregatorV3Interface(
-            0xD4a33860578De61DBAbDc8BFdb98FD742fA7028e
-        );
-        (, int256 price, , , ) = priceFeed.latestRoundData(); // WeiPerUsd (in 8 decimals)
-        return uint256(price * 1e10);
-    }
-
-    function convertWeiToUsd(uint256 p_weiAmount)
-        public
-        view
-        returns (uint256)
-    {
-        uint256 ethRate = getWeiPerUsdRate();
-        uint256 usdEquivalent = (p_weiAmount / ethRate);
-        return usdEquivalent;
-    }
-
-    function convertUsdToWei(uint256 p_usdAmount)
-        public
-        view
-        returns (uint256)
-    {
-        uint256 ethRate = getWeiPerUsdRate();
-        uint256 weiEquivalent = (p_usdAmount * ethRate);
-        return weiEquivalent;
-    }
-
-    function createAuction(uint256 _tokenId, address _auctionAddress)
-        external
-        returns (address)
-    {
+    function createAuction(uint256 _tokenId) external {
         // call AuctionRegistry, register auction
         // create Auction contract
+        Auction newAuctionInstance = new Auction(msg.sender, address(this));
+        biddingAuctions.push(address(newAuctionInstance));
     }
 }
