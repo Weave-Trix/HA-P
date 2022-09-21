@@ -327,21 +327,21 @@ contract Auction {
         bidderToDeposits[msg.sender] += uint128(msg.value);
     }
 
-    function placeBid() external payable notForSeller {
+    function placeBid(uint256 _bidAmount) external notForSeller {
         require(inBiddingState(), "Auction not in StartedBidding state!");
         require(
             (bidderToDeposits[msg.sender] >= getDepositInWei()),
             "Please deposit before bidding!"
         );
         require(
-            msg.value > highestBid,
+            _bidAmount > highestBid,
             "Your bid is lower than the current highest bid!"
         );
 
-        highestBid = msg.value;
+        highestBid = _bidAmount;
         highestBidder = msg.sender;
 
-        emit Bid(msg.sender, msg.value);
+        emit Bid(msg.sender, _bidAmount);
     }
 
     function withdrawDeposit() external payable {
