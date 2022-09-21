@@ -17,7 +17,7 @@ library AuctionUtility {
         returns (uint256)
     {
         uint256 ethRate = getWeiPerUsdRate();
-        uint256 usdEquivalent = (p_weiAmount / ethRate);
+        uint256 usdEquivalent = (p_weiAmount * ethRate) / (1e18 * 1e18);
         return usdEquivalent;
     }
 
@@ -27,7 +27,7 @@ library AuctionUtility {
         returns (uint256)
     {
         uint256 ethRate = getWeiPerUsdRate();
-        uint256 weiEquivalent = (p_usdAmount * ethRate);
+        uint256 weiEquivalent = (1e18 * 1e18) / (p_usdAmount * ethRate);
         return weiEquivalent;
     }
 }

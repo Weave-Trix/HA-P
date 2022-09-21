@@ -2,12 +2,15 @@
 pragma solidity ^0.8.8;
 
 import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
-import "./Auction.sol";
 import "../libraries/AuctionUtility.sol";
+
+error AuctionRegistry_RestrictedOwnerAccess();
+error AuctionRegistry__RestrictedManagerAccess();
+error AuctionRegistry__AuctionOngoing();
 
 error Auction_RestrictedSellerAccess();
 error Auction_NotInPendingPaymentState();
-error Auction_RestrictedWinnerAccess();
+error Auction_RestrictedWinnerPaymentAccess();
 error Auction_SelfBiddingIsNotAllowed();
 error Auction_NoProceeds();
 
@@ -25,6 +28,7 @@ contract AuctionManager {
     // TODO: Maintain an array to check timeLeft of PENDING_PAYMENT auctions (if timeLeft==0, perform Upkeep)
     address[] public biddingAuctions;
     address[] public pendingPaymentAuctions;
+    address auctionRegistryAdrress;
 
     // TODO: transition between Auction states
     // TODO: chainlink keepers for automated transition to VERIFYING_WINNER state when the auction ended
@@ -44,18 +48,82 @@ contract AuctionManager {
    1. Bidder submit bids
    */
 
-    constructor() {}
+    constructor(address _auctionRegistryAddress) {
+        auctionRegistryAdrress = _auctionRegistryAddress;
+    }
 
     function createAuction(uint256 _tokenId) external {
         // call AuctionRegistry, register auction
         // create Auction contract
         Auction newAuctionInstance = new Auction(msg.sender, address(this));
-        biddingAuctions.push(address(newAuctionInstance));
+        AuctionRegistry auctionRegistry = AuctionRegistry(
+            auctionRegistryAdrress
+        );
+        auctionRegistry.registerAuction(_tokenId, address(newAuctionInstance));
+    }
+
+    function addBiddingAuction(address _auctionAddress) external {
+        biddingAuctions.push(address(_auctionAddress));
     }
 }
 
+contract AuctionRegistry {
+    address public immutable owner;
+    address public auctionManagerAddress;
 
+    mapping(uint256 => address) public tokenIdToAuctionAddress;
 
+    constructor() {
+        owner = msg.sender;
+    }
+
+    modifier onlyOwner() {
+        if (msg.sender != owner) {
+            revert AuctionRegistry_RestrictedOwnerAccess();
+        }
+        _;
+    }
+
+    modifier onlyAuctionManager() {
+        if (msg.sender != auctionManagerAddress) {
+            revert AuctionRegistry__RestrictedManagerAccess();
+        }
+        _;
+    }
+
+    modifier onlyAuctionInactive(uint256 _tokenId, address _auctionAddress) {
+        // if event still not ended, unable to create a same auction for the NFT
+        // create interface of Auction.sol
+        Auction auction = Auction(_auctionAddress);
+        // call Auction.getEventState();
+        if (
+            !(auction.inEndedState() ||
+                (tokenIdToAuctionAddress[_tokenId] == address(0x0)))
+        ) {
+            revert AuctionRegistry__AuctionOngoing();
+        }
+        _;
+    }
+
+    function setAuctionManagerAddress(address _auctionManagerAddress)
+        public
+        onlyOwner
+    {
+        auctionManagerAddress = _auctionManagerAddress;
+    }
+
+    function registerAuction(uint256 _tokenId, address _auctionAddress)
+        public
+        onlyAuctionManager
+        onlyAuctionInactive(_tokenId, _auctionAddress)
+    {
+        // if NFT id not in map, store the NFT -> address mapping
+        // else if NFT id already exist, update the mapping
+        tokenIdToAuctionAddress[_tokenId] = _auctionAddress; // this line does it all
+    }
+
+    // TODO: registerTechnician
+}
 
 /*
 1. Seller can start the auction directly or choose to send the vehicle for verification
@@ -93,13 +161,13 @@ contract Auction {
 
     address public immutable auctionManagerAddress;
     address payable public seller;
-    uint128 public depositUSD = 500;
+    uint128 public depositUSD = 1;
     uint256 public startTime;
     uint256 public endTime;
     uint128 public durationSec;
     uint256 public payment_startTime;
     uint256 public payment_expiryTime;
-    uint256 public payment_durationDayLeft = 1 days;
+    uint256 public payment_duration = 1 days;
     AuctionState public currAuctionState = AuctionState.REGISTERED;
     EndState public auctionEndState = EndState.NOT_ENDED;
     uint256 public highestBid;
@@ -133,14 +201,14 @@ contract Auction {
     }
 
     modifier onlyWinnerPayment() {
-        if (msg.sender != highestBidder && inPendingPaymentState()) {
-            revert Auction_RestrictedWinnerAccess();
+        if (msg.sender != highestBidder && !(inPendingPaymentState())) {
+            revert Auction_RestrictedWinnerPaymentAccess();
         }
         _;
     }
 
     modifier notForSeller() {
-        if (msg.sender != seller) {
+        if (msg.sender == seller) {
             revert Auction_SelfBiddingIsNotAllowed();
         }
         _;
@@ -221,7 +289,7 @@ contract Auction {
         if (approveWinningBid) {
             // TODO: emit event
             payment_startTime = getBlockTime();
-            payment_expiryTime = payment_startTime + payment_durationDayLeft;
+            payment_expiryTime = payment_startTime + payment_duration;
             currAuctionState = AuctionState.PENDING_PAYMENT;
         } else {
             // TODO: emit event
@@ -305,7 +373,11 @@ contract Auction {
         );
         require((!winnerPaid), "You have paid!");
         fullSettlement[seller] = msg.value;
+        winnerPaid = true;
         // TODO: transfer NFT ownership
+        // TODO: change currState to ended
+        // TODO: update endState
+        closeAuction();
     }
 
     function withdrawFullSettlement() external onlySeller {
@@ -324,7 +396,19 @@ contract Auction {
     }
 
     function getTimeLeft() public view returns (uint256) {
-        return (endTime - getBlockTime());
+        if (getBlockTime() > endTime) {
+            return 0;
+        } else {
+            return (endTime - getBlockTime());
+        }
+    }
+
+    function getPaymentTimeLeft() public view returns (uint256) {
+        if (getBlockTime() > payment_expiryTime) {
+            return 0;
+        } else {
+            return (payment_expiryTime - getBlockTime());
+        }
     }
 
     function getDepositInWei() public view returns (uint256) {
@@ -335,4 +419,3 @@ contract Auction {
         return (inHours * 60 * 60);
     }
 }
-
