@@ -4,6 +4,9 @@ pragma solidity ^0.8.8;
 import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 import "../libraries/AuctionUtility.sol";
 
+error AuctionManager_BiddingAuctionNotFound();
+error AuctionManager_PendingPaymentAuctionNotFound();
+
 error AuctionRegistry_RestrictedOwnerAccess();
 error AuctionRegistry__RestrictedManagerAccess();
 error AuctionRegistry__AuctionOngoing();
@@ -30,7 +33,6 @@ contract AuctionManager {
     address[] public pendingPaymentAuctions;
     address auctionRegistryAdrress;
 
-    // TODO: transition between Auction states
     // TODO: chainlink keepers for automated transition to VERIFYING_WINNER state when the auction ended
     // TODO: chainlink keepers for automated transition to ENDED state when payment timer's up
 
@@ -52,6 +54,10 @@ contract AuctionManager {
         auctionRegistryAdrress = _auctionRegistryAddress;
     }
 
+    function getContractType() public pure returns (Constants.ContractType) {
+        return Constants.ContractType.AUCTION_MANAGER;
+    }
+
     function createAuction(uint256 _tokenId) external {
         // call AuctionRegistry, register auction
         // create Auction contract
@@ -62,14 +68,69 @@ contract AuctionManager {
         auctionRegistry.registerAuction(_tokenId, address(newAuctionInstance));
     }
 
-    function addBiddingAuction(address _auctionAddress) external {
+    function addBiddingAuction(address _auctionAddress) public {
+        // TODO: to be called when bidding starts (by Auction.startAuction())
         biddingAuctions.push(address(_auctionAddress));
+    }
+
+    function removeBiddingAuction(address _auctionAddress) public {
+        // TODO: to be called when bidding end time reached (by keepers)
+        uint auctionIndex = searchBiddingAuction(_auctionAddress);
+        for (uint i = auctionIndex; i < biddingAuctions.length - 1; i++) {
+            biddingAuctions[i] = biddingAuctions[i + 1];
+        }
+        biddingAuctions.pop();
+    }
+
+    function addPendingPaymentAuction(address _auctionAddress) public {
+        // TODO: to be called when bidding end time reached (by keepers)
+        pendingPaymentAuctions.push(address(_auctionAddress));
+    }
+
+    function removePendingPaymentAuction(address _auctionAddress) public {
+        // TODO: to be called when winner paid (by Auction.payFullSettlement()) / payment expiry time reached (by keepers)
+        uint auctionIndex = searchPendingPaymentAuction(_auctionAddress);
+        for (
+            uint i = auctionIndex;
+            i < pendingPaymentAuctions.length - 1;
+            i++
+        ) {
+            pendingPaymentAuctions[i] = pendingPaymentAuctions[i + 1];
+        }
+        pendingPaymentAuctions.pop();
+    }
+
+    function searchBiddingAuction(address _auctionAddress)
+        internal
+        view
+        returns (uint)
+    {
+        for (uint i = 0; i < uint(biddingAuctions.length); i++) {
+            if (biddingAuctions[i] == _auctionAddress) {
+                return uint(i);
+            }
+        }
+        revert AuctionManager_BiddingAuctionNotFound();
+    }
+
+    function searchPendingPaymentAuction(address _auctionAddress)
+        internal
+        view
+        returns (uint)
+    {
+        for (uint i = 0; i < uint(pendingPaymentAuctions.length); i++) {
+            if (pendingPaymentAuctions[i] == _auctionAddress) {
+                return uint(i);
+            }
+        }
+        revert AuctionManager_PendingPaymentAuctionNotFound();
     }
 }
 
 contract AuctionRegistry {
     address public immutable owner;
     address public auctionManagerAddress;
+    AuctionManager private auctionManager;
 
     mapping(uint256 => address) public tokenIdToAuctionAddress;
 
@@ -105,11 +166,16 @@ contract AuctionRegistry {
         _;
     }
 
+    function getContractType() public pure returns (Constants.ContractType) {
+        return Constants.ContractType.AUCTION_REGISTRY;
+    }
+
     function setAuctionManagerAddress(address _auctionManagerAddress)
         public
         onlyOwner
     {
         auctionManagerAddress = _auctionManagerAddress;
+        auctionManager = AuctionManager(auctionManagerAddress);
     }
 
     function registerAuction(uint256 _tokenId, address _auctionAddress)
@@ -175,6 +241,7 @@ contract Auction {
     bool winnerPaid = false;
     mapping(address => uint128) private bidderToDeposits;
     mapping(address => uint256) private fullSettlement;
+    AuctionManager private auctionManager;
 
     event BiddingStarted();
     event BiddingEnded(
@@ -190,6 +257,7 @@ contract Auction {
     constructor(address _seller, address _auctionManagerAddress) {
         seller = payable(_seller);
         auctionManagerAddress = _auctionManagerAddress;
+        auctionManager = AuctionManager(auctionManagerAddress);
         currAuctionState = AuctionState.REGISTERED;
     }
 
@@ -212,6 +280,10 @@ contract Auction {
             revert Auction_SelfBiddingIsNotAllowed();
         }
         _;
+    }
+
+    function getContractType() public pure returns (Constants.ContractType) {
+        return Constants.ContractType.AUCTION;
     }
 
     function inRegisteredState() public view returns (bool) {
@@ -413,9 +485,5 @@ contract Auction {
 
     function getDepositInWei() public view returns (uint256) {
         return (AuctionUtility.convertUsdToWei(depositUSD));
-    }
-
-    function hourToSec(uint inHours) public pure returns (uint256 inMinutes) {
-        return (inHours * 60 * 60);
     }
 }

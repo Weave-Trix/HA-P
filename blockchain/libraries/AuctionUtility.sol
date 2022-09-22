@@ -30,4 +30,16 @@ library AuctionUtility {
         uint256 weiEquivalent = (1e18 * 1e18) / (p_usdAmount * ethRate);
         return weiEquivalent;
     }
+
+    function hourToSec(uint inHours) public pure returns (uint256 inMinutes) {
+        return (inHours * 60 * 60);
+    }
+}
+
+library Constants {
+    enum ContractType {
+        AUCTION,
+        AUCTION_MANAGER,
+        AUCTION_REGISTRY
+    }
 }
