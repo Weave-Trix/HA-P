@@ -34,6 +34,17 @@ library AuctionUtility {
     function hourToSec(uint inHours) public pure returns (uint256 inMinutes) {
         return (inHours * 60 * 60);
     }
+
+    function getContractType(address _contractAddress)
+        public
+        returns (Constants.ContractType)
+    {
+        (bool success, bytes memory data) = _contractAddress.call(
+            abi.encodeWithSignature("getContractType()")
+        );
+        require(success, "Unable to determine the contract type!");
+        return abi.decode(data, (Constants.ContractType));
+    }
 }
 
 library Constants {
