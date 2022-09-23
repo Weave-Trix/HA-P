@@ -2,6 +2,7 @@
 pragma solidity ^0.8.8;
 
 import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
+import "@chainlink/contracts/src/v0.8/KeeperCompatible.sol";
 import "../libraries/AuctionUtility.sol";
 
 error AuctionManager_BiddingAuctionNotFound();
@@ -179,12 +180,18 @@ contract AuctionManager {
         auctionRegistry.registerAuction(_tokenId, address(newAuctionInstance));
     }
 
-    function addBiddingAuction(address _auctionAddress) public {
+    function addBiddingAuction(address _auctionAddress)
+        public
+        onlyAuction(msg.sender)
+    {
         // TODO: to be called when bidding starts (by Auction.startAuction())
         biddingAuctions.push(address(_auctionAddress));
     }
 
-    function removeBiddingAuction(address _auctionAddress) internal {
+    function removeBiddingAuction(address _auctionAddress)
+        public
+        onlyAuction(msg.sender)
+    {
         // TODO: to be called when bidding end time reached (by keepers)
         uint auctionIndex = searchBiddingAuction(_auctionAddress);
         for (uint i = auctionIndex; i < biddingAuctions.length - 1; i++) {
@@ -193,12 +200,18 @@ contract AuctionManager {
         biddingAuctions.pop();
     }
 
-    function addVerifyWinnerAuction(address _auctionAddress) internal {
+    function addVerifyWinnerAuction(address _auctionAddress)
+        public
+        onlyAuction(msg.sender)
+    {
         // TODO: to be called when bidding end time reached (by keepers)
         verifyWinnerAuctions.push(address(_auctionAddress));
     }
 
-    function removeVerifyWinnerAuction(address _auctionAddress) public {
+    function removeVerifyWinnerAuction(address _auctionAddress)
+        public
+        onlyAuction(msg.sender)
+    {
         // TODO: to be called when winner paid (by Auction.payFullSettlement()) / payment expiry time reached (by keepers)
         uint auctionIndex = searchVerifyWInnerAuction(_auctionAddress);
         for (uint i = auctionIndex; i < verifyWinnerAuctions.length - 1; i++) {
@@ -207,22 +220,32 @@ contract AuctionManager {
         verifyWinnerAuctions.pop();
     }
 
-    function addPendingPaymentAuction(address _auctionAddress) internal {
+    function addPendingPaymentAuction(address _auctionAddress)
+        public
+        onlyAuction(msg.sender)
+    {
         // TODO: to be called when bidding end time reached (by keepers)
         pendingPaymentAuctions.push(address(_auctionAddress));
     }
 
-    function removePendingPaymentAuction(address _auctionAddress) public {
+    function removePendingPaymentAuction(address _auctionAddress)
+        public
+        onlyAuction(msg.sender)
+    {
         // TODO: to be called when winner paid (by Auction.payFullSettlement()) / payment expiry time reached (by keepers)
-        uint auctionIndex = searchPendingPaymentAuction(_auctionAddress);
-        for (
-            uint i = auctionIndex;
-            i < pendingPaymentAuctions.length - 1;
-            i++
-        ) {
-            pendingPaymentAuctions[i] = pendingPaymentAuctions[i + 1];
+        uint auctionIndex;
+        int searchResult = searchPendingPaymentAuction(_auctionAddress);
+        if (searchResult >= 0) {
+            auctionIndex = uint(searchResult);
+            for (
+                uint i = auctionIndex;
+                i < pendingPaymentAuctions.length - 1;
+                i++
+            ) {
+                pendingPaymentAuctions[i] = pendingPaymentAuctions[i + 1];
+            }
+            pendingPaymentAuctions.pop();
         }
-        pendingPaymentAuctions.pop();
     }
 
     function searchBiddingAuction(address _auctionAddress)
@@ -254,11 +277,11 @@ contract AuctionManager {
     function searchPendingPaymentAuction(address _auctionAddress)
         internal
         view
-        returns (uint)
+        returns (int)
     {
         for (uint i = 0; i < uint(pendingPaymentAuctions.length); i++) {
             if (pendingPaymentAuctions[i] == _auctionAddress) {
-                return uint(i);
+                return int(i);
             }
         }
         revert AuctionManager_PendingPaymentAuctionNotFound();
@@ -687,6 +710,7 @@ contract Auction {
             bidEndTime,
             _startingBid
         );
+        auctionManager.addBiddingAuction(address(this));
     }
 
     function endBidding() public {
@@ -712,9 +736,12 @@ contract Auction {
                 verify_expiryTime
             );
         }
+        auctionManager.removeBiddingAuction(address(this));
+        auctionManager.addVerifyWinnerAuction(address(this));
     }
 
     function verifyWinner(bool approveWinningBid) external onlySeller {
+        // TODO: when timer's up, keepers call this function, verifyWinner(false)
         require(inVerifyWinnerState(), "Auction not in VerifyingWinner state!");
         require(
             getVerifyTimeLeft() > 0,
@@ -734,8 +761,11 @@ contract Auction {
                 payment_startTime,
                 payment_expiryTime
             );
+            auctionManager.removeVerifyWinnerAuction(address(this));
+            auctionManager.addPendingPaymentAuction(address(this));
         } else {
             closeAuction(Constants.AuctionEndState.REJECTED_BY_SELLER);
+            auctionManager.removeVerifyWinnerAuction(address(this));
         }
     }
 
@@ -759,6 +789,12 @@ contract Auction {
             highestBid,
             _endState
         );
+        if (
+            (_endState == Constants.AuctionEndState.PAYMENT_OVERDUE) ||
+            (_endState == Constants.AuctionEndState.OWNERSHIP_TRANSFERRED)
+        ) {
+            auctionManager.removePendingPaymentAuction(address(this));
+        }
     }
 
     function placeDeposit() external payable notForSeller {
