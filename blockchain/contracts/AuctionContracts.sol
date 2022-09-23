@@ -28,7 +28,7 @@ error Auction_NoProceeds();
 5. Chainlink Oracle is needed to fetch the latest usd -> eth rate
 */
 
-contract AuctionManager {
+contract AuctionManager is KeeperCompatibleInterface {
     event AuctionRegistered(
         address indexed auction,
         address seller,
@@ -178,6 +178,74 @@ contract AuctionManager {
             auctionRegistryAdrress
         );
         auctionRegistry.registerAuction(_tokenId, address(newAuctionInstance));
+    }
+
+    function checkUpkeep(bytes calldata checkData)
+        external
+        view
+        override
+        returns (bool upkeepNeeded, bytes memory performData)
+    {
+        if (keccak256(checkData) == keccak256(hex"01")) {
+            upkeepNeeded = false;
+            performData = checkData;
+            for (uint i = 0; i < biddingAuctions.length - 1; i++) {
+                if (Auction(biddingAuctions[i]).getBidTimeLeft() == 0) {
+                    upkeepNeeded = true;
+                }
+            }
+            return (upkeepNeeded, performData);
+        }
+
+        if (keccak256(checkData) == keccak256(hex"02")) {
+            upkeepNeeded = false;
+            performData = checkData;
+            for (uint i = 0; i < verifyWinnerAuctions.length - 1; i++) {
+                if (Auction(verifyWinnerAuctions[i]).getVerifyTimeLeft() == 0) {
+                    upkeepNeeded = true;
+                }
+            }
+            return (upkeepNeeded, performData);
+        }
+
+        if (keccak256(checkData) == keccak256(hex"03")) {
+            upkeepNeeded = false;
+            performData = checkData;
+            for (uint i = 0; i < pendingPaymentAuctions.length - 1; i++) {
+                if (
+                    Auction(pendingPaymentAuctions[i]).getPaymentTimeLeft() == 0
+                ) {
+                    upkeepNeeded = true;
+                }
+            }
+            return (upkeepNeeded, performData);
+        }
+    }
+
+    function performUpkeep(bytes calldata performData) external override {
+        if (keccak256(performData) == keccak256(hex"01")) {
+            for (uint i = 0; i < biddingAuctions.length - 1; i++) {
+                if (Auction(biddingAuctions[i]).getBidTimeLeft() == 0) {
+                    Auction(biddingAuctions[i]).endBidding();
+                }
+            }
+        }
+
+        if (keccak256(performData) == keccak256(hex"02")) {
+            for (uint i = 0; i < verifyWinnerAuctions.length - 1; i++) {
+                if (Auction(verifyWinnerAuctions[i]).getVerifyTimeLeft() == 0) {
+                    Auction(verifyWinnerAuctions[i]).verifyWinner(false);
+                }
+            }
+        }
+
+        if (keccak256(performData) == keccak256(hex"03")) {
+            for (uint i = 0; i < pendingPaymentAuctions.length - 1; i++) {
+                if (Auction(pendingPaymentAuctions[i]).getPaymentTimeLeft() == 0) {
+                    Auction(pendingPaymentAuctions[i]).closeAuction(Constants.AuctionEndState.PAYMENT_OVERDUE);
+                }
+            }
+        }
     }
 
     function addBiddingAuction(address _auctionAddress)
