@@ -27,8 +27,12 @@ error Auction_NoProceeds();
 4. Chainlink Keeper is needed for automated end bid + refund deposit, lock contract + send deposit to HAP owner
 5. Chainlink Oracle is needed to fetch the latest usd -> eth rate
 */
+library EventEmitter {
+    modifier onlyAuction(address _senderAddress) {
+        AuctionUtility.getContractType(_senderAddress);
+        _;
+    }
 
-contract AuctionManager is KeeperCompatibleInterface {
     event AuctionRegistered(
         address indexed auction,
         address seller,
@@ -127,233 +131,6 @@ contract AuctionManager is KeeperCompatibleInterface {
         uint256 retrieveAmount,
         uint256 retrievalTime
     );
-
-    // TODO: Maintain an array to check timeLeft of BIDDING auctions (if timeLeft==0, perform Upkeep)
-    // TODO: Maintain an array to check timeLeft of PENDING_PAYMENT auctions (if timeLeft==0, perform Upkeep)
-    address[] public biddingAuctions;
-    address[] public verifyWinnerAuctions;
-    address[] public pendingPaymentAuctions;
-    address auctionRegistryAdrress;
-
-    // TODO: chainlink keepers for automated transition to VERIFYING_WINNER state when the auction ended
-    // TODO: chainlink keepers for automated transition to ENDED state when payment timer's up
-
-    // TODO: emit event when Auction state changed
-    /*
-    1. Auction registered
-    2. Auction accepting bids
-    3. Auction closed bids (with winner declaration)
-    4. Auction awaiting payments (seller accepted winning bid)
-    5. Auction ended
-    */
-
-    // TODO: emit event when Bidder perform action
-    /*
-   1. Bidder submit bids
-   */
-
-    constructor(address _auctionRegistryAddress) {
-        auctionRegistryAdrress = _auctionRegistryAddress;
-    }
-
-    modifier onlyAuction(address _senderAddress) {
-        AuctionUtility.getContractType(_senderAddress);
-        _;
-    }
-
-    function getContractType() public pure returns (Constants.ContractType) {
-        return Constants.ContractType.AUCTION_MANAGER;
-    }
-
-    function createAuction(address _nftAddress, uint256 _tokenId) external {
-        // call AuctionRegistry, register auction
-        // create Auction contract
-        Auction newAuctionInstance = new Auction(
-            msg.sender,
-            address(this),
-            _nftAddress,
-            _tokenId
-        );
-        AuctionRegistry auctionRegistry = AuctionRegistry(
-            auctionRegistryAdrress
-        );
-        auctionRegistry.registerAuction(_tokenId, address(newAuctionInstance));
-    }
-
-    function checkUpkeep(bytes calldata checkData)
-        external
-        view
-        override
-        returns (bool upkeepNeeded, bytes memory performData)
-    {
-        if (keccak256(checkData) == keccak256(hex"01")) {
-            upkeepNeeded = false;
-            performData = checkData;
-            for (uint i = 0; i < biddingAuctions.length - 1; i++) {
-                if (Auction(biddingAuctions[i]).getBidTimeLeft() == 0) {
-                    upkeepNeeded = true;
-                }
-            }
-            return (upkeepNeeded, performData);
-        }
-
-        if (keccak256(checkData) == keccak256(hex"02")) {
-            upkeepNeeded = false;
-            performData = checkData;
-            for (uint i = 0; i < verifyWinnerAuctions.length - 1; i++) {
-                if (Auction(verifyWinnerAuctions[i]).getVerifyTimeLeft() == 0) {
-                    upkeepNeeded = true;
-                }
-            }
-            return (upkeepNeeded, performData);
-        }
-
-        if (keccak256(checkData) == keccak256(hex"03")) {
-            upkeepNeeded = false;
-            performData = checkData;
-            for (uint i = 0; i < pendingPaymentAuctions.length - 1; i++) {
-                if (
-                    Auction(pendingPaymentAuctions[i]).getPaymentTimeLeft() == 0
-                ) {
-                    upkeepNeeded = true;
-                }
-            }
-            return (upkeepNeeded, performData);
-        }
-    }
-
-    function performUpkeep(bytes calldata performData) external override {
-        if (keccak256(performData) == keccak256(hex"01")) {
-            for (uint i = 0; i < biddingAuctions.length - 1; i++) {
-                if (Auction(biddingAuctions[i]).getBidTimeLeft() == 0) {
-                    Auction(biddingAuctions[i]).endBidding();
-                }
-            }
-        }
-
-        if (keccak256(performData) == keccak256(hex"02")) {
-            for (uint i = 0; i < verifyWinnerAuctions.length - 1; i++) {
-                if (Auction(verifyWinnerAuctions[i]).getVerifyTimeLeft() == 0) {
-                    Auction(verifyWinnerAuctions[i]).verifyWinner(false);
-                }
-            }
-        }
-
-        if (keccak256(performData) == keccak256(hex"03")) {
-            for (uint i = 0; i < pendingPaymentAuctions.length - 1; i++) {
-                if (Auction(pendingPaymentAuctions[i]).getPaymentTimeLeft() == 0) {
-                    Auction(pendingPaymentAuctions[i]).closeAuction(Constants.AuctionEndState.PAYMENT_OVERDUE);
-                }
-            }
-        }
-    }
-
-    function addBiddingAuction(address _auctionAddress)
-        public
-        onlyAuction(msg.sender)
-    {
-        // TODO: to be called when bidding starts (by Auction.startAuction())
-        biddingAuctions.push(address(_auctionAddress));
-    }
-
-    function removeBiddingAuction(address _auctionAddress)
-        public
-        onlyAuction(msg.sender)
-    {
-        // TODO: to be called when bidding end time reached (by keepers)
-        uint auctionIndex = searchBiddingAuction(_auctionAddress);
-        for (uint i = auctionIndex; i < biddingAuctions.length - 1; i++) {
-            biddingAuctions[i] = biddingAuctions[i + 1];
-        }
-        biddingAuctions.pop();
-    }
-
-    function addVerifyWinnerAuction(address _auctionAddress)
-        public
-        onlyAuction(msg.sender)
-    {
-        // TODO: to be called when bidding end time reached (by keepers)
-        verifyWinnerAuctions.push(address(_auctionAddress));
-    }
-
-    function removeVerifyWinnerAuction(address _auctionAddress)
-        public
-        onlyAuction(msg.sender)
-    {
-        // TODO: to be called when winner paid (by Auction.payFullSettlement()) / payment expiry time reached (by keepers)
-        uint auctionIndex = searchVerifyWInnerAuction(_auctionAddress);
-        for (uint i = auctionIndex; i < verifyWinnerAuctions.length - 1; i++) {
-            verifyWinnerAuctions[i] = verifyWinnerAuctions[i + 1];
-        }
-        verifyWinnerAuctions.pop();
-    }
-
-    function addPendingPaymentAuction(address _auctionAddress)
-        public
-        onlyAuction(msg.sender)
-    {
-        // TODO: to be called when bidding end time reached (by keepers)
-        pendingPaymentAuctions.push(address(_auctionAddress));
-    }
-
-    function removePendingPaymentAuction(address _auctionAddress)
-        public
-        onlyAuction(msg.sender)
-    {
-        // TODO: to be called when winner paid (by Auction.payFullSettlement()) / payment expiry time reached (by keepers)
-        uint auctionIndex;
-        int searchResult = searchPendingPaymentAuction(_auctionAddress);
-        if (searchResult >= 0) {
-            auctionIndex = uint(searchResult);
-            for (
-                uint i = auctionIndex;
-                i < pendingPaymentAuctions.length - 1;
-                i++
-            ) {
-                pendingPaymentAuctions[i] = pendingPaymentAuctions[i + 1];
-            }
-            pendingPaymentAuctions.pop();
-        }
-    }
-
-    function searchBiddingAuction(address _auctionAddress)
-        internal
-        view
-        returns (uint)
-    {
-        for (uint i = 0; i < uint(biddingAuctions.length); i++) {
-            if (biddingAuctions[i] == _auctionAddress) {
-                return uint(i);
-            }
-        }
-        revert AuctionManager_BiddingAuctionNotFound();
-    }
-
-    function searchVerifyWInnerAuction(address _auctionAddress)
-        internal
-        view
-        returns (uint)
-    {
-        for (uint i = 0; i < uint(verifyWinnerAuctions.length); i++) {
-            if (verifyWinnerAuctions[i] == _auctionAddress) {
-                return uint(i);
-            }
-        }
-        revert AuctionManager_VerifyWinnerAuctionNotFound();
-    }
-
-    function searchPendingPaymentAuction(address _auctionAddress)
-        internal
-        view
-        returns (int)
-    {
-        for (uint i = 0; i < uint(pendingPaymentAuctions.length); i++) {
-            if (pendingPaymentAuctions[i] == _auctionAddress) {
-                return int(i);
-            }
-        }
-        revert AuctionManager_PendingPaymentAuctionNotFound();
-    }
 
     function emitAuctionRegistered(
         address _auction,
@@ -552,6 +329,239 @@ contract AuctionManager is KeeperCompatibleInterface {
     }
 }
 
+contract AuctionManager is KeeperCompatibleInterface {
+    // TODO: Maintain an array to check timeLeft of BIDDING auctions (if timeLeft==0, perform Upkeep)
+    // TODO: Maintain an array to check timeLeft of PENDING_PAYMENT auctions (if timeLeft==0, perform Upkeep)
+    address[] public biddingAuctions;
+    address[] public verifyWinnerAuctions;
+    address[] public pendingPaymentAuctions;
+    address auctionRegistryAdrress;
+
+    // TODO: chainlink keepers for automated transition to VERIFYING_WINNER state when the auction ended
+    // TODO: chainlink keepers for automated transition to ENDED state when payment timer's up
+
+    // TODO: emit event when Auction state changed
+    /*
+    1. Auction registered
+    2. Auction accepting bids
+    3. Auction closed bids (with winner declaration)
+    4. Auction awaiting payments (seller accepted winning bid)
+    5. Auction ended
+    */
+
+    // TODO: emit event when Bidder perform action
+    /*
+   1. Bidder submit bids
+   */
+
+    constructor(address _auctionRegistryAddress) {
+        auctionRegistryAdrress = _auctionRegistryAddress;
+    }
+
+    modifier onlyAuction(address _senderAddress) {
+        AuctionUtility.getContractType(_senderAddress);
+        _;
+    }
+
+    function getContractType() public pure returns (Constants.ContractType) {
+        return Constants.ContractType.AUCTION_MANAGER;
+    }
+
+    function createAuction(address _nftAddress, uint256 _tokenId) external {
+        // call AuctionRegistry, register auction
+        // create Auction contract
+        Auction newAuctionInstance = new Auction(
+            msg.sender,
+            address(this),
+            _nftAddress,
+            _tokenId
+        );
+        AuctionRegistry auctionRegistry = AuctionRegistry(
+            auctionRegistryAdrress
+        );
+        auctionRegistry.registerAuction(_tokenId, address(newAuctionInstance));
+    }
+
+    function checkUpkeep(bytes calldata checkData)
+        external
+        view
+        override
+        returns (bool upkeepNeeded, bytes memory performData)
+    {
+        if (keccak256(checkData) == keccak256(hex"01")) {
+            upkeepNeeded = false;
+            performData = checkData;
+            for (uint i = 0; i < biddingAuctions.length - 1; i++) {
+                if (Auction(biddingAuctions[i]).getBidTimeLeft() == 0) {
+                    upkeepNeeded = true;
+                }
+            }
+            return (upkeepNeeded, performData);
+        }
+
+        if (keccak256(checkData) == keccak256(hex"02")) {
+            upkeepNeeded = false;
+            performData = checkData;
+            for (uint i = 0; i < verifyWinnerAuctions.length - 1; i++) {
+                if (Auction(verifyWinnerAuctions[i]).getVerifyTimeLeft() == 0) {
+                    upkeepNeeded = true;
+                }
+            }
+            return (upkeepNeeded, performData);
+        }
+
+        if (keccak256(checkData) == keccak256(hex"03")) {
+            upkeepNeeded = false;
+            performData = checkData;
+            for (uint i = 0; i < pendingPaymentAuctions.length - 1; i++) {
+                if (
+                    Auction(pendingPaymentAuctions[i]).getPaymentTimeLeft() == 0
+                ) {
+                    upkeepNeeded = true;
+                }
+            }
+            return (upkeepNeeded, performData);
+        }
+    }
+
+    function performUpkeep(bytes calldata performData) external override {
+        if (keccak256(performData) == keccak256(hex"01")) {
+            for (uint i = 0; i < biddingAuctions.length - 1; i++) {
+                if (Auction(biddingAuctions[i]).getBidTimeLeft() == 0) {
+                    Auction(biddingAuctions[i]).endBidding();
+                }
+            }
+        }
+
+        if (keccak256(performData) == keccak256(hex"02")) {
+            for (uint i = 0; i < verifyWinnerAuctions.length - 1; i++) {
+                if (Auction(verifyWinnerAuctions[i]).getVerifyTimeLeft() == 0) {
+                    Auction(verifyWinnerAuctions[i]).verifyWinner(false);
+                }
+            }
+        }
+
+        if (keccak256(performData) == keccak256(hex"03")) {
+            for (uint i = 0; i < pendingPaymentAuctions.length - 1; i++) {
+                if (
+                    Auction(pendingPaymentAuctions[i]).getPaymentTimeLeft() == 0
+                ) {
+                    Auction(pendingPaymentAuctions[i]).closeAuction(
+                        Constants.AuctionEndState.PAYMENT_OVERDUE
+                    );
+                }
+            }
+        }
+    }
+
+    function addBiddingAuction(address _auctionAddress)
+        public
+        onlyAuction(msg.sender)
+    {
+        // TODO: to be called when bidding starts (by Auction.startAuction())
+        biddingAuctions.push(address(_auctionAddress));
+    }
+
+    function removeBiddingAuction(address _auctionAddress)
+        public
+        onlyAuction(msg.sender)
+    {
+        // TODO: to be called when bidding end time reached (by keepers)
+        uint auctionIndex = searchBiddingAuction(_auctionAddress);
+        for (uint i = auctionIndex; i < biddingAuctions.length - 1; i++) {
+            biddingAuctions[i] = biddingAuctions[i + 1];
+        }
+        biddingAuctions.pop();
+    }
+
+    function addVerifyWinnerAuction(address _auctionAddress)
+        public
+        onlyAuction(msg.sender)
+    {
+        // TODO: to be called when bidding end time reached (by keepers)
+        verifyWinnerAuctions.push(address(_auctionAddress));
+    }
+
+    function removeVerifyWinnerAuction(address _auctionAddress)
+        public
+        onlyAuction(msg.sender)
+    {
+        // TODO: to be called when winner paid (by Auction.payFullSettlement()) / payment expiry time reached (by keepers)
+        uint auctionIndex = searchVerifyWInnerAuction(_auctionAddress);
+        for (uint i = auctionIndex; i < verifyWinnerAuctions.length - 1; i++) {
+            verifyWinnerAuctions[i] = verifyWinnerAuctions[i + 1];
+        }
+        verifyWinnerAuctions.pop();
+    }
+
+    function addPendingPaymentAuction(address _auctionAddress)
+        public
+        onlyAuction(msg.sender)
+    {
+        // TODO: to be called when bidding end time reached (by keepers)
+        pendingPaymentAuctions.push(address(_auctionAddress));
+    }
+
+    function removePendingPaymentAuction(address _auctionAddress)
+        public
+        onlyAuction(msg.sender)
+    {
+        // TODO: to be called when winner paid (by Auction.payFullSettlement()) / payment expiry time reached (by keepers)
+        uint auctionIndex;
+        int searchResult = searchPendingPaymentAuction(_auctionAddress);
+        if (searchResult >= 0) {
+            auctionIndex = uint(searchResult);
+            for (
+                uint i = auctionIndex;
+                i < pendingPaymentAuctions.length - 1;
+                i++
+            ) {
+                pendingPaymentAuctions[i] = pendingPaymentAuctions[i + 1];
+            }
+            pendingPaymentAuctions.pop();
+        }
+    }
+
+    function searchBiddingAuction(address _auctionAddress)
+        internal
+        view
+        returns (uint)
+    {
+        for (uint i = 0; i < uint(biddingAuctions.length); i++) {
+            if (biddingAuctions[i] == _auctionAddress) {
+                return uint(i);
+            }
+        }
+        revert AuctionManager_BiddingAuctionNotFound();
+    }
+
+    function searchVerifyWInnerAuction(address _auctionAddress)
+        internal
+        view
+        returns (uint)
+    {
+        for (uint i = 0; i < uint(verifyWinnerAuctions.length); i++) {
+            if (verifyWinnerAuctions[i] == _auctionAddress) {
+                return uint(i);
+            }
+        }
+        revert AuctionManager_VerifyWinnerAuctionNotFound();
+    }
+
+    function searchPendingPaymentAuction(address _auctionAddress)
+        internal
+        view
+        returns (int)
+    {
+        for (uint i = 0; i < uint(pendingPaymentAuctions.length); i++) {
+            if (pendingPaymentAuctions[i] == _auctionAddress) {
+                return int(i);
+            }
+        }
+        revert AuctionManager_PendingPaymentAuctionNotFound();
+    }
+}
+
 contract AuctionRegistry {
     address public immutable owner;
     address public auctionManagerAddress;
@@ -684,7 +694,7 @@ contract Auction {
         tokenId = _tokenId;
         currAuctionState = AuctionState.REGISTERED;
         depositWei = AuctionUtility.convertUsdToWei(depositUSD);
-        auctionManager.emitAuctionRegistered(
+        EventEmitter.emitAuctionRegistered(
             address(this),
             _seller,
             _nftAddress,
@@ -768,7 +778,7 @@ contract Auction {
         highestBid = _startingBid;
         currAuctionState = AuctionState.BIDDING;
 
-        auctionManager.emitAuctionStartedBidding(
+        EventEmitter.emitAuctionStartedBidding(
             address(this),
             seller,
             nftAddress,
@@ -793,7 +803,7 @@ contract Auction {
             currAuctionState = AuctionState.VERIFYING_WINNER;
             verify_startTime = getBlockTime();
             verify_expiryTime = verify_startTime + verify_duration;
-            auctionManager.emitAuctionVerifyingWinner(
+            EventEmitter.emitAuctionVerifyingWinner(
                 address(this),
                 seller,
                 nftAddress,
@@ -819,7 +829,7 @@ contract Auction {
             payment_startTime = getBlockTime();
             payment_expiryTime = payment_startTime + payment_duration;
             currAuctionState = AuctionState.PENDING_PAYMENT;
-            auctionManager.emitAuctionPendingPayment(
+            EventEmitter.emitAuctionPendingPayment(
                 address(this),
                 seller,
                 nftAddress,
@@ -847,7 +857,7 @@ contract Auction {
         );
         currAuctionState = AuctionState.AUCTION_CLOSED; // TODO: emit event
         auctionEndState = _endState;
-        auctionManager.emitAuctionClosed(
+        EventEmitter.emitAuctionClosed(
             address(this),
             seller,
             nftAddress,
@@ -876,7 +886,7 @@ contract Auction {
             "Please pay the exact deposit amount!"
         );
         bidderToDeposits[msg.sender] += uint128(msg.value);
-        auctionManager.emitAuctionDepositPlaced(
+        EventEmitter.emitAuctionDepositPlaced(
             address(this),
             nftAddress,
             tokenId,
@@ -899,7 +909,7 @@ contract Auction {
 
         highestBid = _bidAmount;
         highestBidder = msg.sender;
-        auctionManager.emitAuctionBidPlaced(
+        EventEmitter.emitAuctionBidPlaced(
             address(this),
             nftAddress,
             tokenId,
@@ -923,7 +933,7 @@ contract Auction {
         bidderToDeposits[msg.sender] = 0;
         (bool sent, ) = payable(msg.sender).call{value: depositBalance}("");
         require(sent, "ETH withdrawal failed!");
-        auctionManager.emitAuctionDepositRetrieved(
+        EventEmitter.emitAuctionDepositRetrieved(
             address(this),
             nftAddress,
             tokenId,
@@ -950,7 +960,7 @@ contract Auction {
         fullSettlement[seller] = msg.value;
         winnerPaid = true;
         // TODO: transfer NFT ownership
-        auctionManager.emitAuctionFullSettlementPaid(
+        EventEmitter.emitAuctionFullSettlementPaid(
             address(this),
             nftAddress,
             tokenId,
@@ -970,7 +980,7 @@ contract Auction {
         fullSettlement[msg.sender] = 0;
         (bool sent, ) = payable(msg.sender).call{value: proceeds}("");
         require(sent, "ETH transfer failed");
-        auctionManager.emitAuctionProceedsRetrieved(
+        EventEmitter.emitAuctionProceedsRetrieved(
             address(this),
             nftAddress,
             tokenId,
