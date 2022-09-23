@@ -53,4 +53,12 @@ library Constants {
         AUCTION_MANAGER,
         AUCTION_REGISTRY
     }
+
+    enum AuctionEndState {
+        NOT_ENDED,
+        NO_BIDDER,
+        REJECTED_BY_SELLER,
+        PAYMENT_OVERDUE,
+        OWNERSHIP_TRANSFERRED
+    }
 }

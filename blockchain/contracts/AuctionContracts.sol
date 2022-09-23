@@ -6,6 +6,7 @@ import "../libraries/AuctionUtility.sol";
 
 error AuctionManager_BiddingAuctionNotFound();
 error AuctionManager_PendingPaymentAuctionNotFound();
+error AuctionManager_VerifyWinnerAuctionNotFound();
 
 error AuctionRegistry_RestrictedOwnerAccess();
 error AuctionRegistry__RestrictedManagerAccess();
@@ -27,9 +28,109 @@ error Auction_NoProceeds();
 */
 
 contract AuctionManager {
+    event AuctionRegistered(
+        address indexed auction,
+        address seller,
+        address indexed nftAddress,
+        uint256 indexed tokenId,
+        uint256 registerTime
+    );
+
+    event AuctionStartedBidding(
+        address indexed auction,
+        address seller,
+        address indexed nftAddress,
+        uint256 indexed tokenId,
+        uint256 depositWei,
+        uint256 bidStartTime,
+        uint256 bidEndTime,
+        uint256 startingBid
+    );
+
+    event AuctionVerifyingWinner(
+        address indexed auction,
+        address seller,
+        address nftAddress,
+        uint256 indexed tokenId,
+        address indexed winner,
+        uint256 winningBid,
+        uint256 bidStartTime,
+        uint256 expiryTime
+    );
+
+    event AuctionPendingPayment(
+        address indexed auction,
+        address seller,
+        address nftAddress,
+        uint256 indexed tokenId,
+        address indexed winner,
+        uint256 winningBid,
+        uint256 bidStartTime,
+        uint256 expiryTime
+    );
+
+    // if winner did not pay, in the event listener, change the deposit placed event record (boolean winnerWithdrawal to false)
+    event AuctionClosed(
+        address indexed auction,
+        address seller,
+        address nftAddress,
+        uint256 indexed tokenId,
+        uint256 closeTime,
+        address winner,
+        uint256 winningBid,
+        Constants.AuctionEndState indexed endState
+    );
+
+    event AuctionDepositPlaced(
+        address indexed auction,
+        address indexed nftAddress,
+        uint256 indexed tokenId,
+        address bidder,
+        uint256 depositAmount,
+        uint256 depositTime
+    );
+
+    event AuctionDepositRetrieved(
+        address indexed auction,
+        address indexed nftAddress,
+        uint256 indexed tokenId,
+        address bidder,
+        uint256 retrieveAmount,
+        uint256 retrievalTime
+    );
+
+    event AuctionBidPlaced(
+        address indexed auction,
+        address indexed nftAddress,
+        uint256 indexed tokenId,
+        address bidder,
+        uint256 bidAmount,
+        uint256 bidTime
+    );
+
+    event AuctionFullSettlementPaid(
+        address indexed auction,
+        address indexed nftAddress,
+        uint256 indexed tokenId,
+        address winner,
+        address seller,
+        uint256 paidAmount,
+        uint256 paidTime
+    );
+
+    event AuctionProceedsRetrieved(
+        address indexed auction,
+        address indexed nftAddress,
+        uint256 indexed tokenId,
+        address seller,
+        uint256 retrieveAmount,
+        uint256 retrievalTime
+    );
+
     // TODO: Maintain an array to check timeLeft of BIDDING auctions (if timeLeft==0, perform Upkeep)
     // TODO: Maintain an array to check timeLeft of PENDING_PAYMENT auctions (if timeLeft==0, perform Upkeep)
     address[] public biddingAuctions;
+    address[] public verifyWinnerAuctions;
     address[] public pendingPaymentAuctions;
     address auctionRegistryAdrress;
 
@@ -54,14 +155,24 @@ contract AuctionManager {
         auctionRegistryAdrress = _auctionRegistryAddress;
     }
 
+    modifier onlyAuction(address _senderAddress) {
+        AuctionUtility.getContractType(_senderAddress);
+        _;
+    }
+
     function getContractType() public pure returns (Constants.ContractType) {
         return Constants.ContractType.AUCTION_MANAGER;
     }
 
-    function createAuction(uint256 _tokenId) external {
+    function createAuction(address _nftAddress, uint256 _tokenId) external {
         // call AuctionRegistry, register auction
         // create Auction contract
-        Auction newAuctionInstance = new Auction(msg.sender, address(this));
+        Auction newAuctionInstance = new Auction(
+            msg.sender,
+            address(this),
+            _nftAddress,
+            _tokenId
+        );
         AuctionRegistry auctionRegistry = AuctionRegistry(
             auctionRegistryAdrress
         );
@@ -73,7 +184,7 @@ contract AuctionManager {
         biddingAuctions.push(address(_auctionAddress));
     }
 
-    function removeBiddingAuction(address _auctionAddress) public {
+    function removeBiddingAuction(address _auctionAddress) internal {
         // TODO: to be called when bidding end time reached (by keepers)
         uint auctionIndex = searchBiddingAuction(_auctionAddress);
         for (uint i = auctionIndex; i < biddingAuctions.length - 1; i++) {
@@ -82,7 +193,21 @@ contract AuctionManager {
         biddingAuctions.pop();
     }
 
-    function addPendingPaymentAuction(address _auctionAddress) public {
+    function addVerifyWinnerAuction(address _auctionAddress) internal {
+        // TODO: to be called when bidding end time reached (by keepers)
+        verifyWinnerAuctions.push(address(_auctionAddress));
+    }
+
+    function removeVerifyWinnerAuction(address _auctionAddress) public {
+        // TODO: to be called when winner paid (by Auction.payFullSettlement()) / payment expiry time reached (by keepers)
+        uint auctionIndex = searchVerifyWInnerAuction(_auctionAddress);
+        for (uint i = auctionIndex; i < verifyWinnerAuctions.length - 1; i++) {
+            verifyWinnerAuctions[i] = verifyWinnerAuctions[i + 1];
+        }
+        verifyWinnerAuctions.pop();
+    }
+
+    function addPendingPaymentAuction(address _auctionAddress) internal {
         // TODO: to be called when bidding end time reached (by keepers)
         pendingPaymentAuctions.push(address(_auctionAddress));
     }
@@ -113,6 +238,19 @@ contract AuctionManager {
         revert AuctionManager_BiddingAuctionNotFound();
     }
 
+    function searchVerifyWInnerAuction(address _auctionAddress)
+        internal
+        view
+        returns (uint)
+    {
+        for (uint i = 0; i < uint(verifyWinnerAuctions.length); i++) {
+            if (verifyWinnerAuctions[i] == _auctionAddress) {
+                return uint(i);
+            }
+        }
+        revert AuctionManager_VerifyWinnerAuctionNotFound();
+    }
+
     function searchPendingPaymentAuction(address _auctionAddress)
         internal
         view
@@ -124,6 +262,202 @@ contract AuctionManager {
             }
         }
         revert AuctionManager_PendingPaymentAuctionNotFound();
+    }
+
+    function emitAuctionRegistered(
+        address _auction,
+        address _seller,
+        address _nftAddress,
+        uint256 _tokenId,
+        uint256 _registerTime
+    ) public onlyAuction(msg.sender) {
+        emit AuctionRegistered(
+            _auction,
+            _seller,
+            _nftAddress,
+            _tokenId,
+            _registerTime
+        );
+    }
+
+    function emitAuctionStartedBidding(
+        address _auction,
+        address _seller,
+        address _nftAddress,
+        uint256 _tokenId,
+        uint256 _depositWei,
+        uint256 _startTime,
+        uint256 _bidEndTime,
+        uint256 _startingBid
+    ) public onlyAuction(msg.sender) {
+        emit AuctionStartedBidding(
+            _auction,
+            _seller,
+            _nftAddress,
+            _tokenId,
+            _depositWei,
+            _startTime,
+            _bidEndTime,
+            _startingBid
+        );
+    }
+
+    function emitAuctionVerifyingWinner(
+        address _auction,
+        address _seller,
+        address _nftAddress,
+        uint256 _tokenId,
+        address _winner,
+        uint256 _winningBid,
+        uint256 _startTime,
+        uint256 _expiryTime
+    ) public onlyAuction(msg.sender) {
+        emit AuctionVerifyingWinner(
+            _auction,
+            _seller,
+            _nftAddress,
+            _tokenId,
+            _winner,
+            _winningBid,
+            _startTime,
+            _expiryTime
+        );
+    }
+
+    function emitAuctionPendingPayment(
+        address _auction,
+        address _seller,
+        address _nftAddress,
+        uint256 _tokenId,
+        address _winner,
+        uint256 _winningBid,
+        uint256 _startTime,
+        uint256 _expiryTime
+    ) public onlyAuction(msg.sender) {
+        emit AuctionPendingPayment(
+            _auction,
+            _seller,
+            _nftAddress,
+            _tokenId,
+            _winner,
+            _winningBid,
+            _startTime,
+            _expiryTime
+        );
+    }
+
+    function emitAuctionClosed(
+        address _auction,
+        address _seller,
+        address _nftAddress,
+        uint256 _tokenId,
+        uint256 _closeTime,
+        address _winner,
+        uint256 _winningBid,
+        Constants.AuctionEndState _endState
+    ) public onlyAuction(msg.sender) {
+        emit AuctionClosed(
+            _auction,
+            _seller,
+            _nftAddress,
+            _tokenId,
+            _closeTime,
+            _winner,
+            _winningBid,
+            _endState
+        );
+    }
+
+    function emitAuctionDepositPlaced(
+        address _auction,
+        address _nftAddress,
+        uint256 _tokenId,
+        address _bidder,
+        uint256 _depositAmount,
+        uint256 _depositTime
+    ) public onlyAuction(msg.sender) {
+        emit AuctionDepositPlaced(
+            _auction,
+            _nftAddress,
+            _tokenId,
+            _bidder,
+            _depositAmount,
+            _depositTime
+        );
+    }
+
+    function emitAuctionBidPlaced(
+        address _auction,
+        address _nftAddress,
+        uint256 _tokenId,
+        address _bidder,
+        uint256 _bidAmount,
+        uint256 _bidTime
+    ) public onlyAuction(msg.sender) {
+        emit AuctionBidPlaced(
+            _auction,
+            _nftAddress,
+            _tokenId,
+            _bidder,
+            _bidAmount,
+            _bidTime
+        );
+    }
+
+    function emitAuctionFullSettlementPaid(
+        address _auction,
+        address _nftAddress,
+        uint256 _tokenId,
+        address _winner,
+        address _seller,
+        uint256 _paidAmount,
+        uint256 _paidTime
+    ) public onlyAuction(msg.sender) {
+        emit AuctionFullSettlementPaid(
+            _auction,
+            _nftAddress,
+            _tokenId,
+            _winner,
+            _seller,
+            _paidAmount,
+            _paidTime
+        );
+    }
+
+    function emitAuctionDepositRetrieved(
+        address _auction,
+        address _nftAddress,
+        uint256 _tokenId,
+        address _bidder,
+        uint256 _retrieveAmount,
+        uint256 _retrievalTime
+    ) public onlyAuction(msg.sender) {
+        emit AuctionDepositRetrieved(
+            _auction,
+            _nftAddress,
+            _tokenId,
+            _bidder,
+            _retrieveAmount,
+            _retrievalTime
+        );
+    }
+
+    function emitAuctionProceedsRetrieved(
+        address _auction,
+        address _nftAddress,
+        uint256 _tokenId,
+        address _seller,
+        uint256 _retrieveAmount,
+        uint256 _retrievalTime
+    ) public onlyAuction(msg.sender) {
+        emit AuctionProceedsRetrieved(
+            _auction,
+            _nftAddress,
+            _tokenId,
+            _seller,
+            _retrieveAmount,
+            _retrievalTime
+        );
     }
 }
 
@@ -158,7 +492,7 @@ contract AuctionRegistry {
         Auction auction = Auction(_auctionAddress);
         // call Auction.getEventState();
         if (
-            !(auction.inEndedState() ||
+            !(auction.inClosedState() ||
                 (tokenIdToAuctionAddress[_tokenId] == address(0x0)))
         ) {
             revert AuctionRegistry__AuctionOngoing();
@@ -217,25 +551,25 @@ contract Auction {
         PENDING_PAYMENT,
         AUCTION_CLOSED
     }
-    enum EndState {
-        NOT_ENDED,
-        NO_BIDDER,
-        REJECTED_BY_SELLER,
-        PAYMENT_OVERDUE,
-        OWNERSHIP_TRANSFERRED
-    }
 
+    address public nftAddress;
+    uint256 public tokenId;
     address public immutable auctionManagerAddress;
     address payable public seller;
     uint128 public depositUSD = 1;
-    uint256 public startTime;
-    uint256 public endTime;
+    uint256 public depositWei;
+    uint256 public bidStartTime;
+    uint256 public bidEndTime;
     uint128 public durationSec;
+    uint256 public verify_startTime;
+    uint256 public verify_expiryTime;
+    uint256 public verify_duration = 1 days;
     uint256 public payment_startTime;
     uint256 public payment_expiryTime;
     uint256 public payment_duration = 1 days;
     AuctionState public currAuctionState = AuctionState.REGISTERED;
-    EndState public auctionEndState = EndState.NOT_ENDED;
+    Constants.AuctionEndState public auctionEndState =
+        Constants.AuctionEndState.NOT_ENDED;
     uint256 public highestBid;
     address public highestBidder;
     bool winnerPaid = false;
@@ -243,22 +577,29 @@ contract Auction {
     mapping(address => uint256) private fullSettlement;
     AuctionManager private auctionManager;
 
-    event BiddingStarted();
-    event BiddingEnded(
-        address indexed seller,
-        address highestBidder,
-        uint256 highestBid
-    );
-    event Bid(address indexed bidder, uint256 amount);
-    event WithdrawDeposit(address indexed bidder, uint128 amount);
-
     // TODO: call AuctionManager to emit event
+    // TODO: chainlink keepers call function verifyAuction(false);
 
-    constructor(address _seller, address _auctionManagerAddress) {
+    constructor(
+        address _seller,
+        address _auctionManagerAddress,
+        address _nftAddress,
+        uint256 _tokenId
+    ) {
         seller = payable(_seller);
         auctionManagerAddress = _auctionManagerAddress;
         auctionManager = AuctionManager(auctionManagerAddress);
+        nftAddress = _nftAddress;
+        tokenId = _tokenId;
         currAuctionState = AuctionState.REGISTERED;
+        depositWei = AuctionUtility.convertUsdToWei(depositUSD);
+        auctionManager.emitAuctionRegistered(
+            address(this),
+            _seller,
+            _nftAddress,
+            _tokenId,
+            getBlockTime()
+        );
     }
 
     modifier onlySeller() {
@@ -318,7 +659,7 @@ contract Auction {
         }
     }
 
-    function inEndedState() public view returns (bool) {
+    function inClosedState() public view returns (bool) {
         if (currAuctionState == AuctionState.AUCTION_CLOSED) {
             return true;
         } else {
@@ -330,47 +671,75 @@ contract Auction {
         require(inRegisteredState(), "Auction not in Registered state!");
         require(msg.sender == seller, "Start auction requires owner!");
         require(_startingBid > 0, "Starting bid must be greater than 0 wei");
-        startTime = block.timestamp;
-        endTime = startTime + _durationSec;
+        bidStartTime = block.timestamp;
+        bidEndTime = bidStartTime + _durationSec;
         durationSec = _durationSec;
         highestBid = _startingBid;
         currAuctionState = AuctionState.BIDDING;
 
-        emit BiddingStarted();
+        auctionManager.emitAuctionStartedBidding(
+            address(this),
+            seller,
+            nftAddress,
+            tokenId,
+            depositWei,
+            bidStartTime,
+            bidEndTime,
+            _startingBid
+        );
     }
 
     function endBidding() public {
         require(inBiddingState(), "Auction not in StartedBidding state!");
         require(
-            block.timestamp >= endTime,
+            block.timestamp >= bidEndTime,
             "Auction has not reached end time yet!"
         );
         if (highestBidder == address(0x0)) {
-            closeAuction();
-            auctionEndState = EndState.NO_BIDDER;
+            closeAuction(Constants.AuctionEndState.NO_BIDDER);
         } else {
             currAuctionState = AuctionState.VERIFYING_WINNER;
-            // TODO: emit event
+            verify_startTime = getBlockTime();
+            verify_expiryTime = verify_startTime + verify_duration;
+            auctionManager.emitAuctionVerifyingWinner(
+                address(this),
+                seller,
+                nftAddress,
+                tokenId,
+                highestBidder,
+                highestBid,
+                verify_startTime,
+                verify_expiryTime
+            );
         }
-
-        emit BiddingEnded(seller, highestBidder, highestBid);
     }
 
     function verifyWinner(bool approveWinningBid) external onlySeller {
         require(inVerifyWinnerState(), "Auction not in VerifyingWinner state!");
+        require(
+            getVerifyTimeLeft() > 0,
+            "Seller did not verify in given time!"
+        );
         if (approveWinningBid) {
-            // TODO: emit event
             payment_startTime = getBlockTime();
             payment_expiryTime = payment_startTime + payment_duration;
             currAuctionState = AuctionState.PENDING_PAYMENT;
+            auctionManager.emitAuctionPendingPayment(
+                address(this),
+                seller,
+                nftAddress,
+                tokenId,
+                highestBidder,
+                highestBid,
+                payment_startTime,
+                payment_expiryTime
+            );
         } else {
-            // TODO: emit event
-            currAuctionState = AuctionState.AUCTION_CLOSED;
-            auctionEndState = EndState.REJECTED_BY_SELLER;
+            closeAuction(Constants.AuctionEndState.REJECTED_BY_SELLER);
         }
     }
 
-    function closeAuction() public {
+    function closeAuction(Constants.AuctionEndState _endState) public {
         // can only be closed when the winner pays or the payment pending expired (chainlink keepers trigger)
         require(
             ((currAuctionState == AuctionState.PENDING_PAYMENT) &&
@@ -379,11 +748,17 @@ contract Auction {
             "Function not to be called manually!"
         );
         currAuctionState = AuctionState.AUCTION_CLOSED; // TODO: emit event
-        if (winnerPaid) {
-            auctionEndState = EndState.OWNERSHIP_TRANSFERRED;
-        } else {
-            auctionEndState = EndState.PAYMENT_OVERDUE;
-        }
+        auctionEndState = _endState;
+        auctionManager.emitAuctionClosed(
+            address(this),
+            seller,
+            nftAddress,
+            tokenId,
+            getBlockTime(),
+            highestBidder,
+            highestBid,
+            _endState
+        );
     }
 
     function placeDeposit() external payable notForSeller {
@@ -393,16 +768,24 @@ contract Auction {
             "You have already deposited!"
         );
         require(
-            (msg.value >= getDepositInWei()),
+            (msg.value >= depositWei),
             "Please pay the exact deposit amount!"
         );
         bidderToDeposits[msg.sender] += uint128(msg.value);
+        auctionManager.emitAuctionDepositPlaced(
+            address(this),
+            nftAddress,
+            tokenId,
+            msg.sender,
+            msg.value,
+            getBlockTime()
+        );
     }
 
     function placeBid(uint256 _bidAmount) external notForSeller {
         require(inBiddingState(), "Auction not in StartedBidding state!");
         require(
-            (bidderToDeposits[msg.sender] >= getDepositInWei()),
+            (bidderToDeposits[msg.sender] >= depositWei),
             "Please deposit before bidding!"
         );
         require(
@@ -412,32 +795,48 @@ contract Auction {
 
         highestBid = _bidAmount;
         highestBidder = msg.sender;
-
-        emit Bid(msg.sender, _bidAmount);
+        auctionManager.emitAuctionBidPlaced(
+            address(this),
+            nftAddress,
+            tokenId,
+            msg.sender,
+            _bidAmount,
+            getBlockTime()
+        );
     }
 
     function withdrawDeposit() external payable {
         require(
             ((msg.sender != highestBidder) ||
-                (msg.sender == highestBidder && winnerPaid == true)),
+                (msg.sender == highestBidder && winnerPaid == true) ||
+                (msg.sender == highestBidder && inClosedState())),
             "You can only withdraw the deposit if you are not the highest bidder! or You won and paid for the full payment!"
         );
-        // TODO: requires bidder to settle full payment for withdrawal (full payment only when the seller accepted the result)
-        // TODO: requires bidder to not exceed the expiry date for full payment settlement
-        // TODO: close the auction when the expiry date is reached
+        // requires bidder to settle full payment for withdrawal (full payment only when the seller accepted the result)
+        // requires bidder to not exceed the expiry date for full payment settlement
+        // close the auction when the expiry date is reached
         uint128 depositBalance = bidderToDeposits[msg.sender];
         bidderToDeposits[msg.sender] = 0;
         (bool sent, ) = payable(msg.sender).call{value: depositBalance}("");
         require(sent, "ETH withdrawal failed!");
-
-        emit WithdrawDeposit(msg.sender, uint128(msg.value));
-        // TODO: event for bidder quit
+        auctionManager.emitAuctionDepositRetrieved(
+            address(this),
+            nftAddress,
+            tokenId,
+            msg.sender,
+            depositBalance,
+            getBlockTime()
+        );
     }
 
     function payFullSettlement() external payable onlyWinnerPayment {
         require(
             (inPendingPaymentState()),
             "Auction not in PendingPayment state!"
+        );
+        require(
+            (getPaymentTimeLeft() > 0),
+            "Payment window for full settlement closed!"
         );
         require(
             (msg.value == highestBid),
@@ -447,9 +846,16 @@ contract Auction {
         fullSettlement[seller] = msg.value;
         winnerPaid = true;
         // TODO: transfer NFT ownership
-        // TODO: change currState to ended
-        // TODO: update endState
-        closeAuction();
+        auctionManager.emitAuctionFullSettlementPaid(
+            address(this),
+            nftAddress,
+            tokenId,
+            msg.sender,
+            seller,
+            msg.value,
+            getBlockTime()
+        );
+        closeAuction(Constants.AuctionEndState.OWNERSHIP_TRANSFERRED);
     }
 
     function withdrawFullSettlement() external onlySeller {
@@ -460,18 +866,33 @@ contract Auction {
         fullSettlement[msg.sender] = 0;
         (bool sent, ) = payable(msg.sender).call{value: proceeds}("");
         require(sent, "ETH transfer failed");
-        // TODO: emit event
+        auctionManager.emitAuctionProceedsRetrieved(
+            address(this),
+            nftAddress,
+            tokenId,
+            msg.sender,
+            proceeds,
+            getBlockTime()
+        );
     }
 
     function getBlockTime() public view returns (uint256) {
         return (block.timestamp);
     }
 
-    function getTimeLeft() public view returns (uint256) {
-        if (getBlockTime() > endTime) {
+    function getBidTimeLeft() public view returns (uint256) {
+        if (getBlockTime() > bidEndTime) {
             return 0;
         } else {
-            return (endTime - getBlockTime());
+            return (bidEndTime - getBlockTime());
+        }
+    }
+
+    function getVerifyTimeLeft() public view returns (uint256) {
+        if (getBlockTime() > verify_expiryTime) {
+            return 0;
+        } else {
+            return (verify_expiryTime - getBlockTime());
         }
     }
 
@@ -481,9 +902,5 @@ contract Auction {
         } else {
             return (payment_expiryTime - getBlockTime());
         }
-    }
-
-    function getDepositInWei() public view returns (uint256) {
-        return (AuctionUtility.convertUsdToWei(depositUSD));
     }
 }
