@@ -27,7 +27,7 @@ error Auction_NoProceeds();
 4. Chainlink Keeper is needed for automated end bid + refund deposit, lock contract + send deposit to HAP owner
 5. Chainlink Oracle is needed to fetch the latest usd -> eth rate
 */
-library EventEmitter {
+contract EventEmitter {
     modifier onlyAuction(address _senderAddress) {
         AuctionUtility.getContractType(_senderAddress);
         _;
@@ -336,6 +336,7 @@ contract AuctionManager is KeeperCompatibleInterface {
     address[] public verifyWinnerAuctions;
     address[] public pendingPaymentAuctions;
     address auctionRegistryAdrress;
+    address eventEmitterAddress;
 
     // TODO: chainlink keepers for automated transition to VERIFYING_WINNER state when the auction ended
     // TODO: chainlink keepers for automated transition to ENDED state when payment timer's up
@@ -354,8 +355,9 @@ contract AuctionManager is KeeperCompatibleInterface {
    1. Bidder submit bids
    */
 
-    constructor(address _auctionRegistryAddress) {
+    constructor(address _auctionRegistryAddress, address _eventEmitterAddress) {
         auctionRegistryAdrress = _auctionRegistryAddress;
+        eventEmitterAddress = _eventEmitterAddress;
     }
 
     modifier onlyAuction(address _senderAddress) {
@@ -373,13 +375,18 @@ contract AuctionManager is KeeperCompatibleInterface {
         Auction newAuctionInstance = new Auction(
             msg.sender,
             address(this),
+            eventEmitterAddress,
             _nftAddress,
             _tokenId
         );
         AuctionRegistry auctionRegistry = AuctionRegistry(
             auctionRegistryAdrress
         );
-        auctionRegistry.registerAuction(_tokenId, address(newAuctionInstance));
+        auctionRegistry.registerAuction(
+            _nftAddress,
+            _tokenId,
+            address(newAuctionInstance)
+        );
     }
 
     function checkUpkeep(bytes calldata checkData)
@@ -567,7 +574,7 @@ contract AuctionRegistry {
     address public auctionManagerAddress;
     AuctionManager private auctionManager;
 
-    mapping(uint256 => address) public tokenIdToAuctionAddress;
+    mapping(address => mapping(uint256 => address)) public auctionListings;
 
     constructor() {
         owner = msg.sender;
@@ -587,14 +594,18 @@ contract AuctionRegistry {
         _;
     }
 
-    modifier onlyAuctionInactive(uint256 _tokenId, address _auctionAddress) {
+    modifier onlyAuctionInactive(
+        address _nftAddress,
+        uint256 _tokenId,
+        address _auctionAddress
+    ) {
         // if event still not ended, unable to create a same auction for the NFT
         // create interface of Auction.sol
         Auction auction = Auction(_auctionAddress);
         // call Auction.getEventState();
         if (
             !(auction.inClosedState() ||
-                (tokenIdToAuctionAddress[_tokenId] == address(0x0)))
+                (auctionListings[_nftAddress][_tokenId] == address(0x0)))
         ) {
             revert AuctionRegistry__AuctionOngoing();
         }
@@ -613,14 +624,18 @@ contract AuctionRegistry {
         auctionManager = AuctionManager(auctionManagerAddress);
     }
 
-    function registerAuction(uint256 _tokenId, address _auctionAddress)
+    function registerAuction(
+        address _nftAddress,
+        uint256 _tokenId,
+        address _auctionAddress
+    )
         public
         onlyAuctionManager
-        onlyAuctionInactive(_tokenId, _auctionAddress)
+        onlyAuctionInactive(_nftAddress, _tokenId, _auctionAddress)
     {
         // if NFT id not in map, store the NFT -> address mapping
         // else if NFT id already exist, update the mapping
-        tokenIdToAuctionAddress[_tokenId] = _auctionAddress; // this line does it all
+        auctionListings[_nftAddress][_tokenId] = _auctionAddress; // this line does it all
     }
 
     // TODO: registerTechnician
@@ -655,7 +670,9 @@ contract Auction {
 
     address public nftAddress;
     uint256 public tokenId;
-    address public immutable auctionManagerAddress;
+    address private immutable auctionManagerAddress;
+    AuctionManager private immutable auctionManager;
+    EventEmitter private immutable eventEmitter;
     address payable public seller;
     uint128 public depositUSD = 1;
     uint256 public depositWei;
@@ -676,7 +693,6 @@ contract Auction {
     bool winnerPaid = false;
     mapping(address => uint128) private bidderToDeposits;
     mapping(address => uint256) private fullSettlement;
-    AuctionManager private auctionManager;
 
     // TODO: call AuctionManager to emit event
     // TODO: chainlink keepers call function verifyAuction(false);
@@ -684,17 +700,19 @@ contract Auction {
     constructor(
         address _seller,
         address _auctionManagerAddress,
+        address _eventEmitterAddress,
         address _nftAddress,
         uint256 _tokenId
     ) {
         seller = payable(_seller);
         auctionManagerAddress = _auctionManagerAddress;
-        auctionManager = AuctionManager(auctionManagerAddress);
+        auctionManager = AuctionManager(_auctionManagerAddress);
+        eventEmitter = EventEmitter(_eventEmitterAddress);
         nftAddress = _nftAddress;
         tokenId = _tokenId;
         currAuctionState = AuctionState.REGISTERED;
         depositWei = AuctionUtility.convertUsdToWei(depositUSD);
-        EventEmitter.emitAuctionRegistered(
+        eventEmitter.emitAuctionRegistered(
             address(this),
             _seller,
             _nftAddress,
@@ -778,7 +796,7 @@ contract Auction {
         highestBid = _startingBid;
         currAuctionState = AuctionState.BIDDING;
 
-        EventEmitter.emitAuctionStartedBidding(
+        eventEmitter.emitAuctionStartedBidding(
             address(this),
             seller,
             nftAddress,
@@ -803,7 +821,7 @@ contract Auction {
             currAuctionState = AuctionState.VERIFYING_WINNER;
             verify_startTime = getBlockTime();
             verify_expiryTime = verify_startTime + verify_duration;
-            EventEmitter.emitAuctionVerifyingWinner(
+            eventEmitter.emitAuctionVerifyingWinner(
                 address(this),
                 seller,
                 nftAddress,
@@ -829,7 +847,7 @@ contract Auction {
             payment_startTime = getBlockTime();
             payment_expiryTime = payment_startTime + payment_duration;
             currAuctionState = AuctionState.PENDING_PAYMENT;
-            EventEmitter.emitAuctionPendingPayment(
+            eventEmitter.emitAuctionPendingPayment(
                 address(this),
                 seller,
                 nftAddress,
@@ -857,7 +875,7 @@ contract Auction {
         );
         currAuctionState = AuctionState.AUCTION_CLOSED; // TODO: emit event
         auctionEndState = _endState;
-        EventEmitter.emitAuctionClosed(
+        eventEmitter.emitAuctionClosed(
             address(this),
             seller,
             nftAddress,
@@ -886,7 +904,7 @@ contract Auction {
             "Please pay the exact deposit amount!"
         );
         bidderToDeposits[msg.sender] += uint128(msg.value);
-        EventEmitter.emitAuctionDepositPlaced(
+        eventEmitter.emitAuctionDepositPlaced(
             address(this),
             nftAddress,
             tokenId,
@@ -909,7 +927,7 @@ contract Auction {
 
         highestBid = _bidAmount;
         highestBidder = msg.sender;
-        EventEmitter.emitAuctionBidPlaced(
+        eventEmitter.emitAuctionBidPlaced(
             address(this),
             nftAddress,
             tokenId,
@@ -933,7 +951,7 @@ contract Auction {
         bidderToDeposits[msg.sender] = 0;
         (bool sent, ) = payable(msg.sender).call{value: depositBalance}("");
         require(sent, "ETH withdrawal failed!");
-        EventEmitter.emitAuctionDepositRetrieved(
+        eventEmitter.emitAuctionDepositRetrieved(
             address(this),
             nftAddress,
             tokenId,
@@ -960,7 +978,7 @@ contract Auction {
         fullSettlement[seller] = msg.value;
         winnerPaid = true;
         // TODO: transfer NFT ownership
-        EventEmitter.emitAuctionFullSettlementPaid(
+        eventEmitter.emitAuctionFullSettlementPaid(
             address(this),
             nftAddress,
             tokenId,
@@ -980,7 +998,7 @@ contract Auction {
         fullSettlement[msg.sender] = 0;
         (bool sent, ) = payable(msg.sender).call{value: proceeds}("");
         require(sent, "ETH transfer failed");
-        EventEmitter.emitAuctionProceedsRetrieved(
+        eventEmitter.emitAuctionProceedsRetrieved(
             address(this),
             nftAddress,
             tokenId,
