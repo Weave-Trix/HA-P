@@ -1,0 +1,31 @@
+{
+    "name": "BMW G20 320i M-Sport",
+    "description": "Vehicle Ownership Certificate issued by Ministry of Transport IICP",
+    "image": "https://ipfs.io/ipfs/QmReqovyX1LKcC75Nd1t5KqCSQzcqBCFfPo3XAJmZQ4eEz",
+    "attributes": [
+        {
+            "trait_type": "Manufacture Year",
+            "value": "2022"
+        },
+        {
+            "trait_type": "Color",
+            "value": "Black"
+        },
+        {
+            "trait_type": "Displacement",
+            "value": 2000
+        },
+        {
+            "trait_type": "Chassis Number",
+            "value": "CN832491233284"
+        },
+        {
+            "trait_type": "Engine Number",
+            "value": "EN13512462341"
+        },
+        {
+            "trait_type": "Origin",
+            "value": "Locally Assembled"
+        }
+    ]
+}

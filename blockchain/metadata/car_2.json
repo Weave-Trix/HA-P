@@ -1,0 +1,31 @@
+{
+    "name": "Volkswagon Tiguan All-Space R-Line",
+    "description": "Vehicle Ownership Certificate issued by Ministry of Transport IICP",
+    "image": "https://ipfs.io/ipfs/QmSwsDW8fX2X2sMnyeVGrgqewVyLB2k3tdjoj4C9mWXFuv",
+    "attributes": [
+        {
+            "trait_type": "Manufacture Year",
+            "value": "2018"
+        },
+        {
+            "trait_type": "Color",
+            "value": "Silver"
+        },
+        {
+            "trait_type": "Displacement",
+            "value": 1394
+        },
+        {
+            "trait_type": "Chassis Number",
+            "value": "CN745245271343473"
+        },
+        {
+            "trait_type": "Engine Number",
+            "value": "EN23423315134"
+        },
+        {
+            "trait_type": "Origin",
+            "value": "Import Used"
+        }
+    ]
+}
