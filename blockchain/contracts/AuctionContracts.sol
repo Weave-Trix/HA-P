@@ -329,7 +329,188 @@ contract EventEmitter {
     }
 }
 
-contract AuctionManager is KeeperCompatibleInterface {
+contract AuctionRegistry {
+    address public immutable owner;
+    address public auctionManagerAddress;
+    AuctionManager private auctionManager;
+
+    mapping(address => mapping(uint256 => address)) public auctionListings;
+
+    constructor() {
+        owner = msg.sender;
+    }
+
+    modifier onlyOwner() {
+        if (msg.sender != owner) {
+            revert AuctionRegistry_RestrictedOwnerAccess();
+        }
+        _;
+    }
+
+    modifier onlyAuctionManager() {
+        if (msg.sender != auctionManagerAddress) {
+            revert AuctionRegistry__RestrictedManagerAccess();
+        }
+        _;
+    }
+
+    modifier onlyAuctionInactive(
+        address _nftAddress,
+        uint256 _tokenId,
+        address _auctionAddress
+    ) {
+        // if event still not ended, unable to create a same auction for the NFT
+        // create interface of Auction.sol
+        Auction auction = Auction(_auctionAddress);
+        // call Auction.getEventState();
+        if (
+            !(auction.inClosedState() ||
+                (auctionListings[_nftAddress][_tokenId] == address(0x0)))
+        ) {
+            revert AuctionRegistry__AuctionOngoing();
+        }
+        _;
+    }
+
+    function getContractType() public pure returns (Constants.ContractType) {
+        return Constants.ContractType.AUCTION_REGISTRY;
+    }
+
+    function setAuctionManagerAddress(address _auctionManagerAddress)
+        public
+        onlyOwner
+    {
+        auctionManagerAddress = _auctionManagerAddress;
+        auctionManager = AuctionManager(auctionManagerAddress);
+    }
+
+    function registerAuction(
+        address _nftAddress,
+        uint256 _tokenId,
+        address _auctionAddress
+    )
+        public
+        onlyAuctionManager
+        onlyAuctionInactive(_nftAddress, _tokenId, _auctionAddress)
+    {
+        // if NFT id not in map, store the NFT -> address mapping
+        // else if NFT id already exist, update the mapping
+        auctionListings[_nftAddress][_tokenId] = _auctionAddress; // this line does it all
+    }
+
+    // TODO: registerTechnician
+}
+
+contract AuctionKeeper is KeeperCompatibleInterface {
+    address public immutable owner;
+    address public auctionManagerAddress;
+    AuctionManager private auctionManager;
+
+    constructor(address _auctionManagerAddress) {
+        owner = msg.sender;
+        auctionManager = AuctionManager(_auctionManagerAddress);
+    }
+
+    modifier onlyOwner() {
+        if (msg.sender != owner) {
+            revert AuctionRegistry_RestrictedOwnerAccess();
+        }
+        _;
+    }
+
+    function setAuctionManagerAddress(address _auctionManagerAddress)
+        public
+        onlyOwner
+    {
+        auctionManagerAddress = _auctionManagerAddress;
+        auctionManager = AuctionManager(auctionManagerAddress);
+    }
+
+    function checkUpkeep(bytes calldata checkData)
+        external
+        view
+        override
+        returns (bool upkeepNeeded, bytes memory performData)
+    {
+        if (keccak256(checkData) == keccak256(hex"01")) {
+            address[] memory biddingAuctions = auctionManager
+                .getBiddingAuctions();
+            upkeepNeeded = false;
+            performData = checkData;
+            for (uint i = 0; i < biddingAuctions.length - 1; i++) {
+                if (Auction(biddingAuctions[i]).getBidTimeLeft() == 0) {
+                    upkeepNeeded = true;
+                }
+            }
+            return (upkeepNeeded, performData);
+        }
+
+        if (keccak256(checkData) == keccak256(hex"02")) {
+            address[] memory verifyWinnerAuctions = auctionManager
+                .getVerifyWinnerAuctions();
+            upkeepNeeded = false;
+            performData = checkData;
+            for (uint i = 0; i < verifyWinnerAuctions.length - 1; i++) {
+                if (Auction(verifyWinnerAuctions[i]).getVerifyTimeLeft() == 0) {
+                    upkeepNeeded = true;
+                }
+            }
+            return (upkeepNeeded, performData);
+        }
+
+        if (keccak256(checkData) == keccak256(hex"03")) {
+            address[] memory pendingPaymentAuctions = auctionManager
+                .getPendingPaymentAuctions();
+            upkeepNeeded = false;
+            performData = checkData;
+            for (uint i = 0; i < pendingPaymentAuctions.length - 1; i++) {
+                if (
+                    Auction(pendingPaymentAuctions[i]).getPaymentTimeLeft() == 0
+                ) {
+                    upkeepNeeded = true;
+                }
+            }
+            return (upkeepNeeded, performData);
+        }
+    }
+
+    function performUpkeep(bytes calldata performData) external override {
+        address[] memory biddingAuctions = auctionManager.getBiddingAuctions();
+        if (keccak256(performData) == keccak256(hex"01")) {
+            for (uint i = 0; i < biddingAuctions.length - 1; i++) {
+                if (Auction(biddingAuctions[i]).getBidTimeLeft() == 0) {
+                    Auction(biddingAuctions[i]).endBidding();
+                }
+            }
+        }
+
+        if (keccak256(performData) == keccak256(hex"02")) {
+            address[] memory verifyWinnerAuctions = auctionManager
+                .getVerifyWinnerAuctions();
+            for (uint i = 0; i < verifyWinnerAuctions.length - 1; i++) {
+                if (Auction(verifyWinnerAuctions[i]).getVerifyTimeLeft() == 0) {
+                    Auction(verifyWinnerAuctions[i]).verifyWinner(false);
+                }
+            }
+        }
+
+        if (keccak256(performData) == keccak256(hex"03")) {
+            address[] memory pendingPaymentAuctions = auctionManager
+                .getPendingPaymentAuctions();
+            for (uint i = 0; i < pendingPaymentAuctions.length - 1; i++) {
+                if (
+                    Auction(pendingPaymentAuctions[i]).getPaymentTimeLeft() == 0
+                ) {
+                    Auction(pendingPaymentAuctions[i]).closeAuction(
+                        Constants.AuctionEndState.PAYMENT_OVERDUE
+                    );
+                }
+            }
+        }
+    }
+}
+
+contract AuctionManager {
     // TODO: Maintain an array to check timeLeft of BIDDING auctions (if timeLeft==0, perform Upkeep)
     // TODO: Maintain an array to check timeLeft of PENDING_PAYMENT auctions (if timeLeft==0, perform Upkeep)
     address[] public biddingAuctions;
@@ -337,6 +518,7 @@ contract AuctionManager is KeeperCompatibleInterface {
     address[] public pendingPaymentAuctions;
     address auctionRegistryAdrress;
     address eventEmitterAddress;
+    address auctionKeeperAddress;
 
     // TODO: chainlink keepers for automated transition to VERIFYING_WINNER state when the auction ended
     // TODO: chainlink keepers for automated transition to ENDED state when payment timer's up
@@ -355,14 +537,35 @@ contract AuctionManager is KeeperCompatibleInterface {
    1. Bidder submit bids
    */
 
-    constructor(address _auctionRegistryAddress, address _eventEmitterAddress) {
+    constructor(
+        address _auctionRegistryAddress,
+        address _eventEmitterAddress,
+        address _auctionKeeperAddress
+    ) {
         auctionRegistryAdrress = _auctionRegistryAddress;
         eventEmitterAddress = _eventEmitterAddress;
+        auctionKeeperAddress = _auctionKeeperAddress;
     }
 
     modifier onlyAuction(address _senderAddress) {
         AuctionUtility.getContractType(_senderAddress);
         _;
+    }
+
+    function getBiddingAuctions() public view returns (address[] memory) {
+        return biddingAuctions;
+    }
+
+    function getVerifyWinnerAuctions() public view returns (address[] memory) {
+        return verifyWinnerAuctions;
+    }
+
+    function getPendingPaymentAuctions()
+        public
+        view
+        returns (address[] memory)
+    {
+        return pendingPaymentAuctions;
     }
 
     function getContractType() public pure returns (Constants.ContractType) {
@@ -376,6 +579,7 @@ contract AuctionManager is KeeperCompatibleInterface {
             msg.sender,
             address(this),
             eventEmitterAddress,
+            auctionKeeperAddress,
             _nftAddress,
             _tokenId
         );
@@ -387,78 +591,6 @@ contract AuctionManager is KeeperCompatibleInterface {
             _tokenId,
             address(newAuctionInstance)
         );
-    }
-
-    function checkUpkeep(bytes calldata checkData)
-        external
-        view
-        override
-        returns (bool upkeepNeeded, bytes memory performData)
-    {
-        if (keccak256(checkData) == keccak256(hex"01")) {
-            upkeepNeeded = false;
-            performData = checkData;
-            for (uint i = 0; i < biddingAuctions.length - 1; i++) {
-                if (Auction(biddingAuctions[i]).getBidTimeLeft() == 0) {
-                    upkeepNeeded = true;
-                }
-            }
-            return (upkeepNeeded, performData);
-        }
-
-        if (keccak256(checkData) == keccak256(hex"02")) {
-            upkeepNeeded = false;
-            performData = checkData;
-            for (uint i = 0; i < verifyWinnerAuctions.length - 1; i++) {
-                if (Auction(verifyWinnerAuctions[i]).getVerifyTimeLeft() == 0) {
-                    upkeepNeeded = true;
-                }
-            }
-            return (upkeepNeeded, performData);
-        }
-
-        if (keccak256(checkData) == keccak256(hex"03")) {
-            upkeepNeeded = false;
-            performData = checkData;
-            for (uint i = 0; i < pendingPaymentAuctions.length - 1; i++) {
-                if (
-                    Auction(pendingPaymentAuctions[i]).getPaymentTimeLeft() == 0
-                ) {
-                    upkeepNeeded = true;
-                }
-            }
-            return (upkeepNeeded, performData);
-        }
-    }
-
-    function performUpkeep(bytes calldata performData) external override {
-        if (keccak256(performData) == keccak256(hex"01")) {
-            for (uint i = 0; i < biddingAuctions.length - 1; i++) {
-                if (Auction(biddingAuctions[i]).getBidTimeLeft() == 0) {
-                    Auction(biddingAuctions[i]).endBidding();
-                }
-            }
-        }
-
-        if (keccak256(performData) == keccak256(hex"02")) {
-            for (uint i = 0; i < verifyWinnerAuctions.length - 1; i++) {
-                if (Auction(verifyWinnerAuctions[i]).getVerifyTimeLeft() == 0) {
-                    Auction(verifyWinnerAuctions[i]).verifyWinner(false);
-                }
-            }
-        }
-
-        if (keccak256(performData) == keccak256(hex"03")) {
-            for (uint i = 0; i < pendingPaymentAuctions.length - 1; i++) {
-                if (
-                    Auction(pendingPaymentAuctions[i]).getPaymentTimeLeft() == 0
-                ) {
-                    Auction(pendingPaymentAuctions[i]).closeAuction(
-                        Constants.AuctionEndState.PAYMENT_OVERDUE
-                    );
-                }
-            }
-        }
     }
 
     function addBiddingAuction(address _auctionAddress)
@@ -569,78 +701,6 @@ contract AuctionManager is KeeperCompatibleInterface {
     }
 }
 
-contract AuctionRegistry {
-    address public immutable owner;
-    address public auctionManagerAddress;
-    AuctionManager private auctionManager;
-
-    mapping(address => mapping(uint256 => address)) public auctionListings;
-
-    constructor() {
-        owner = msg.sender;
-    }
-
-    modifier onlyOwner() {
-        if (msg.sender != owner) {
-            revert AuctionRegistry_RestrictedOwnerAccess();
-        }
-        _;
-    }
-
-    modifier onlyAuctionManager() {
-        if (msg.sender != auctionManagerAddress) {
-            revert AuctionRegistry__RestrictedManagerAccess();
-        }
-        _;
-    }
-
-    modifier onlyAuctionInactive(
-        address _nftAddress,
-        uint256 _tokenId,
-        address _auctionAddress
-    ) {
-        // if event still not ended, unable to create a same auction for the NFT
-        // create interface of Auction.sol
-        Auction auction = Auction(_auctionAddress);
-        // call Auction.getEventState();
-        if (
-            !(auction.inClosedState() ||
-                (auctionListings[_nftAddress][_tokenId] == address(0x0)))
-        ) {
-            revert AuctionRegistry__AuctionOngoing();
-        }
-        _;
-    }
-
-    function getContractType() public pure returns (Constants.ContractType) {
-        return Constants.ContractType.AUCTION_REGISTRY;
-    }
-
-    function setAuctionManagerAddress(address _auctionManagerAddress)
-        public
-        onlyOwner
-    {
-        auctionManagerAddress = _auctionManagerAddress;
-        auctionManager = AuctionManager(auctionManagerAddress);
-    }
-
-    function registerAuction(
-        address _nftAddress,
-        uint256 _tokenId,
-        address _auctionAddress
-    )
-        public
-        onlyAuctionManager
-        onlyAuctionInactive(_nftAddress, _tokenId, _auctionAddress)
-    {
-        // if NFT id not in map, store the NFT -> address mapping
-        // else if NFT id already exist, update the mapping
-        auctionListings[_nftAddress][_tokenId] = _auctionAddress; // this line does it all
-    }
-
-    // TODO: registerTechnician
-}
-
 /*
 1. Seller can start the auction directly or choose to send the vehicle for verification
 2. Seller must set the duration for the auction and the starting price for the auction
@@ -670,6 +730,7 @@ contract Auction {
 
     address public nftAddress;
     uint256 public tokenId;
+    address private immutable auctionKeeperAddress;
     address private immutable auctionManagerAddress;
     AuctionManager private immutable auctionManager;
     EventEmitter private immutable eventEmitter;
@@ -701,11 +762,13 @@ contract Auction {
         address _seller,
         address _auctionManagerAddress,
         address _eventEmitterAddress,
+        address _auctionKeeperAddress,
         address _nftAddress,
         uint256 _tokenId
     ) {
         seller = payable(_seller);
         auctionManagerAddress = _auctionManagerAddress;
+        auctionKeeperAddress = _auctionKeeperAddress;
         auctionManager = AuctionManager(_auctionManagerAddress);
         eventEmitter = EventEmitter(_eventEmitterAddress);
         nftAddress = _nftAddress;
@@ -723,6 +786,13 @@ contract Auction {
 
     modifier onlySeller() {
         if (msg.sender != seller) {
+            revert Auction_RestrictedSellerAccess();
+        }
+        _;
+    }
+
+    modifier onlySellerOrKeeper() {
+        if ((msg.sender != seller) && (msg.sender != auctionKeeperAddress)) {
             revert Auction_RestrictedSellerAccess();
         }
         _;
@@ -836,7 +906,7 @@ contract Auction {
         auctionManager.addVerifyWinnerAuction(address(this));
     }
 
-    function verifyWinner(bool approveWinningBid) external onlySeller {
+    function verifyWinner(bool approveWinningBid) external onlySellerOrKeeper {
         // TODO: when timer's up, keepers call this function, verifyWinner(false)
         require(inVerifyWinnerState(), "Auction not in VerifyingWinner state!");
         require(
@@ -870,7 +940,8 @@ contract Auction {
         require(
             ((currAuctionState == AuctionState.PENDING_PAYMENT) &&
                 (msg.sender == highestBidder)) ||
-                (msg.sender == auctionManagerAddress),
+                (msg.sender == auctionManagerAddress) ||
+                (msg.sender == auctionKeeperAddress),
             "Function not to be called manually!"
         );
         currAuctionState = AuctionState.AUCTION_CLOSED; // TODO: emit event
