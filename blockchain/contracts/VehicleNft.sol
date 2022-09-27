@@ -11,7 +11,7 @@ contract VOC is ERC721, ERC721Burnable {
         _;
     }
 
-    modifier onlyVeheicleNotRegistered(string memory _chassisNum) {
+    modifier onlyVehicleNotRegistered(string memory _chassisNum) {
         require(
             chassisNumToBool[_chassisNum] != true,
             "Vehicle already registered!"
@@ -52,7 +52,7 @@ contract VOC is ERC721, ERC721Burnable {
     )
         public
         onlyAuthority
-        onlyVeheicleNotRegistered(_chassisNum)
+        onlyVehicleNotRegistered(_chassisNum)
         returns (uint256)
     {
         _tokenIds.increment();
@@ -79,11 +79,19 @@ contract VOC is ERC721, ERC721Burnable {
         return tokenIdToTokenUri[tokenId];
     }
 
+    function setAuditResult(address _auction, bool _valid)
+        external
+        onlyAuthority
+    {
+        (bool sent, ) = _auction.call(abi.encodeWithSignature("setAuditResult(bool)", _valid));
+        require(sent, "unable to send audit result");
+    }
+
     function transferFrom(
         address from,
         address to,
         uint256 tokenId
-    ) public virtual override onlyAuthority {
+    ) public override onlyAuthority {
         //solhint-disable-next-line max-line-length
         require(
             _isApprovedOrOwner(_msgSender(), tokenId),
@@ -100,7 +108,7 @@ contract VOC is ERC721, ERC721Burnable {
         emit NftBurned(ownerOf(tokenId), tokenId);
     }
 
-    function getAuthorityAddress()  public view returns (address) {
+    function getAuthorityAddress() public view returns (address) {
         return authority;
     }
 }

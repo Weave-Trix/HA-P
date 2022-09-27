@@ -105,14 +105,15 @@ contract EventEmitter {
         uint256 endTime
     );
 
-    event AuctionPendingAudit(
+    event AuctionAuditResult(
         address indexed auction,
         address seller,
         address nftAddress,
         uint256 indexed tokenId,
         address indexed winner,
         uint256 winningBid,
-        bool winnerPaid
+        uint256 time,
+        bool pass
     );
 
     // if winner did not pay, in the event listener, change the deposit placed event record (boolean winnerWithdrawal to false)
@@ -156,20 +157,29 @@ contract EventEmitter {
 
     event AuctionFullSettlementPaid(
         address indexed auction,
-        address indexed nftAddress,
-        uint256 indexed tokenId,
-        address winner,
+        address nftAddress,
+        uint256 tokenId,
+        address indexed winner,
         address seller,
-        uint256 paidAmount,
+        uint256 indexed paidAmount,
         uint256 paidTime
     );
 
     event AuctionProceedsRetrieved(
         address indexed auction,
-        address indexed nftAddress,
-        uint256 indexed tokenId,
-        address seller,
-        uint256 retrieveAmount,
+        address nftAddress,
+        uint256 tokenId,
+        address indexed seller,
+        uint256 indexed retrieveAmount,
+        uint256 retrievalTime
+    );
+
+    event AuctionProceedsRefunded(
+        address indexed auction,
+        address nftAddress,
+        uint256 tokenId,
+        address winner,
+        uint256 indexed refundAmount,
         uint256 retrievalTime
     );
 
@@ -252,6 +262,28 @@ contract EventEmitter {
             _winningBid,
             _startTime,
             _expiryTime
+        );
+    }
+
+    function emitAuctionAuditResult(
+        address _auction,
+        address _seller,
+        address _nftAddress,
+        uint256 _tokenId,
+        address _winner,
+        uint256 _winningBid,
+        uint256 _time,
+        bool _pass
+    ) public onlyAuction(msg.sender) {
+        emit AuctionAuditResult(
+            _auction,
+            _seller,
+            _nftAddress,
+            _tokenId,
+            _winner,
+            _winningBid,
+            _time,
+            _pass
         );
     }
 
@@ -365,6 +397,24 @@ contract EventEmitter {
             _tokenId,
             _seller,
             _retrieveAmount,
+            _retrievalTime
+        );
+    }
+
+    function emitAuctionProceedsRefunded(
+        address _auction,
+        address _nftAddress,
+        uint256 _tokenId,
+        address _winner,
+        uint256 _refundAmount,
+        uint256 _retrievalTime
+    ) public onlyAuction(msg.sender) {
+        emit AuctionProceedsRefunded(
+            _auction,
+            _nftAddress,
+            _tokenId,
+            _winner,
+            _refundAmount,
             _retrievalTime
         );
     }
@@ -862,6 +912,11 @@ contract Auction {
         _;
     }
 
+    modifier onlyNftContract() {
+        require(msg.sender == nftAddress);
+        _;
+    }
+
     function getContractType() public pure returns (Constants.ContractType) {
         return Constants.ContractType.AUCTION;
     }
@@ -1143,15 +1198,48 @@ contract Auction {
         );
     }
 
-    function setAuditResult(address _user, bool _valid)
-        external
-        onlyAuthority(_user)
-    {
+    function refundFullSettlement() external {
+        require(
+            msg.sender == highestBidder,
+            "Refund can only be made to payer!"
+        );
+        require(
+            auctionEndState == Constants.AuctionEndState.AUDIT_REJECTED,
+            "Inegligible for refund!"
+        );
+        uint256 proceeds = fullSettlement[highestBidder];
+        if (proceeds <= 0) {
+            revert Auction_NoProceeds();
+        }
+        fullSettlement[highestBidder] = 0;
+        (bool sent, ) = payable(msg.sender).call{value: proceeds}("");
+        require(sent, "ETH transfer failed");
+        eventEmitter.emitAuctionProceedsRefunded(
+            address(this),
+            nftAddress,
+            tokenId,
+            msg.sender,
+            proceeds,
+            getBlockTime()
+        );
+    }
+
+    function setAuditResult(bool _valid) external onlyNftContract {
         if (_valid == true) {
-            closeAuction(Constants.AuctionEndState.OWNERSHIP_TRANSFERRED); // NFT transfer in VehicleNFT
+            closeAuction(Constants.AuctionEndState.OWNERSHIP_TRANSFERRED);
         } else {
             closeAuction(Constants.AuctionEndState.AUDIT_REJECTED);
         }
+        eventEmitter.emitAuctionAuditResult(
+            address(this),
+            seller,
+            nftAddress,
+            tokenId,
+            highestBidder,
+            highestBid,
+            getBlockTime(),
+            _valid
+        );
     }
 
     function getBlockTime() public view returns (uint256) {
