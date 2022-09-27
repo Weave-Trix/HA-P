@@ -59,6 +59,7 @@ library Constants {
         NO_BIDDER,
         REJECTED_BY_SELLER,
         PAYMENT_OVERDUE,
+        AUDIT_REJECTED,
         OWNERSHIP_TRANSFERRED
     }
 }

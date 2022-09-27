@@ -12,15 +12,26 @@ contract VOC is ERC721, ERC721Burnable {
     }
 
     modifier onlyVeheicleNotRegistered(string memory _chassisNum) {
-        require(chassisNumToBool[_chassisNum] != true, "Vehicle already registered!");
+        require(
+            chassisNumToBool[_chassisNum] != true,
+            "Vehicle already registered!"
+        );
         _;
     }
 
-    event NftMinted(address indexed owner, string tokenURI, uint256 indexed tokenId);
+    event NftMinted(
+        address indexed owner,
+        string tokenURI,
+        uint256 indexed tokenId
+    );
 
     event NftBurned(address indexed owner, uint256 indexed tokenId);
 
-    event NftTransferred(address indexed prev_Owner, address indexed curr_Owner, uint256 indexed tokenId);
+    event NftTransferred(
+        address indexed prev_Owner,
+        address indexed curr_Owner,
+        uint256 indexed tokenId
+    );
 
     using Counters for Counters.Counter;
     address private authority;
@@ -34,7 +45,11 @@ contract VOC is ERC721, ERC721Burnable {
         authority = msg.sender;
     }
 
-    function registerVehicle(address _owner, string memory _tokenURI, string memory _chassisNum)
+    function registerVehicle(
+        address _owner,
+        string memory _tokenURI,
+        string memory _chassisNum
+    )
         public
         onlyAuthority
         onlyVeheicleNotRegistered(_chassisNum)
@@ -83,5 +98,9 @@ contract VOC is ERC721, ERC721Burnable {
         //solhint-disable-next-line max-line-length
         _burn(tokenId);
         emit NftBurned(ownerOf(tokenId), tokenId);
+    }
+
+    function getAuthorityAddress()  public view returns (address) {
+        return authority;
     }
 }
