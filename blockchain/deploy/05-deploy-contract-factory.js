@@ -1,7 +1,9 @@
 const { network } = require("hardhat");
+const fs = require("fs");
 const {
   developmentChains,
   VERIFICATION_BLOCK_CONFIRMATIONS,
+  contractAddressFile,
 } = require("../helper-hardhat-config");
 const { verify } = require("../utils/verify");
 
@@ -13,7 +15,16 @@ module.exports = async function ({ getNamedAccounts, deployments }) {
     ? 1
     : VERIFICATION_BLOCK_CONFIRMATIONS;
 
-  const args = [];
+  const currentAddresses = JSON.parse(
+    fs.readFileSync(contractAddressFile, "utf8")
+  );
+
+  const args = [
+    currentAddresses["AuctionRegistry"][chainId][
+      currentAddresses["AuctionRegistry"][chainId].length - 1
+    ],
+  ];
+
   const contractFactory = await deploy("ContractFactory", {
     from: deployer,
     args: args,

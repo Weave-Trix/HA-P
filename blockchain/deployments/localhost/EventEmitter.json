@@ -1,0 +1,1123 @@
+{
+  "address": "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",
+  "abi": [
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "auction",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "seller",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "nftAddress",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "tokenId",
+          "type": "uint256"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "winner",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "winningBid",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "time",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "bool",
+          "name": "pass",
+          "type": "bool"
+        }
+      ],
+      "name": "AuctionAuditResult",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "auction",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "nftAddress",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "tokenId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "bidder",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "bidAmount",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "bidTime",
+          "type": "uint256"
+        }
+      ],
+      "name": "AuctionBidPlaced",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "auction",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "seller",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "nftAddress",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "tokenId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "closeTime",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "winner",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "winningBid",
+          "type": "uint256"
+        },
+        {
+          "indexed": true,
+          "internalType": "enum Constants.AuctionEndState",
+          "name": "endState",
+          "type": "uint8"
+        }
+      ],
+      "name": "AuctionClosed",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "auction",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "nftAddress",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "tokenId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "bidder",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "depositAmount",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "depositTime",
+          "type": "uint256"
+        }
+      ],
+      "name": "AuctionDepositPlaced",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "auction",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "nftAddress",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "tokenId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "bidder",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "retrieveAmount",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "retrievalTime",
+          "type": "uint256"
+        }
+      ],
+      "name": "AuctionDepositRetrieved",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "auction",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "nftAddress",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "tokenId",
+          "type": "uint256"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "winner",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "seller",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "paidAmount",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "paidTime",
+          "type": "uint256"
+        }
+      ],
+      "name": "AuctionFullSettlementPaid",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "auction",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "seller",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "nftAddress",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "tokenId",
+          "type": "uint256"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "winner",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "winningBid",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "startTime",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "endTime",
+          "type": "uint256"
+        }
+      ],
+      "name": "AuctionPendingPayment",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "auction",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "nftAddress",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "tokenId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "winner",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "refundAmount",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "retrievalTime",
+          "type": "uint256"
+        }
+      ],
+      "name": "AuctionProceedsRefunded",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "auction",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "nftAddress",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "tokenId",
+          "type": "uint256"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "seller",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "retrieveAmount",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "retrievalTime",
+          "type": "uint256"
+        }
+      ],
+      "name": "AuctionProceedsRetrieved",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "auction",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "seller",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "nftAddress",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "tokenId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "registerTime",
+          "type": "uint256"
+        }
+      ],
+      "name": "AuctionRegistered",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "auction",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "seller",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "nftAddress",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "tokenId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "depositWei",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "bidStartTime",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "bidEndTime",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "startingBid",
+          "type": "uint256"
+        }
+      ],
+      "name": "AuctionStartedBidding",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "auction",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "seller",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "nftAddress",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "tokenId",
+          "type": "uint256"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "winner",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "winningBid",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "startTime",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "endTime",
+          "type": "uint256"
+        }
+      ],
+      "name": "AuctionVerifyingWinner",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_auction",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_seller",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_nftAddress",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_tokenId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "_winner",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_winningBid",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_time",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bool",
+          "name": "_pass",
+          "type": "bool"
+        }
+      ],
+      "name": "emitAuctionAuditResult",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_auction",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_nftAddress",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_tokenId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "_bidder",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_bidAmount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_bidTime",
+          "type": "uint256"
+        }
+      ],
+      "name": "emitAuctionBidPlaced",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_auction",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_seller",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_nftAddress",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_tokenId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_closeTime",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "_winner",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_winningBid",
+          "type": "uint256"
+        },
+        {
+          "internalType": "enum Constants.AuctionEndState",
+          "name": "_endState",
+          "type": "uint8"
+        }
+      ],
+      "name": "emitAuctionClosed",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_auction",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_nftAddress",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_tokenId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "_bidder",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_depositAmount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_depositTime",
+          "type": "uint256"
+        }
+      ],
+      "name": "emitAuctionDepositPlaced",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_auction",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_nftAddress",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_tokenId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "_bidder",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_retrieveAmount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_retrievalTime",
+          "type": "uint256"
+        }
+      ],
+      "name": "emitAuctionDepositRetrieved",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_auction",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_nftAddress",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_tokenId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "_winner",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_seller",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_paidAmount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_paidTime",
+          "type": "uint256"
+        }
+      ],
+      "name": "emitAuctionFullSettlementPaid",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_auction",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_seller",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_nftAddress",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_tokenId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "_winner",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_winningBid",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_startTime",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_expiryTime",
+          "type": "uint256"
+        }
+      ],
+      "name": "emitAuctionPendingPayment",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_auction",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_nftAddress",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_tokenId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "_winner",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_refundAmount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_retrievalTime",
+          "type": "uint256"
+        }
+      ],
+      "name": "emitAuctionProceedsRefunded",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_auction",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_nftAddress",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_tokenId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "_seller",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_retrieveAmount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_retrievalTime",
+          "type": "uint256"
+        }
+      ],
+      "name": "emitAuctionProceedsRetrieved",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_auction",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_seller",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_nftAddress",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_tokenId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_registerTime",
+          "type": "uint256"
+        }
+      ],
+      "name": "emitAuctionRegistered",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_auction",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_seller",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_nftAddress",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_tokenId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_depositWei",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_startTime",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_bidEndTime",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_startingBid",
+          "type": "uint256"
+        }
+      ],
+      "name": "emitAuctionStartedBidding",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_auction",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_seller",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_nftAddress",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_tokenId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "_winner",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_winningBid",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_startTime",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_expiryTime",
+          "type": "uint256"
+        }
+      ],
+      "name": "emitAuctionVerifyingWinner",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "transactionHash": "0xbaed71d52d4a05ab1987895c3ef950ced690f71f816b6a6c67cb31af090f364e",
+  "receipt": {
+    "to": null,
+    "from": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+    "contractAddress": "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",
+    "transactionIndex": 0,
+    "gasUsed": "1090029",
+    "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "blockHash": "0x719eb2d4d74131c310797f1de30cd672040c4b749298a2596642dda2a079d4f8",
+    "transactionHash": "0xbaed71d52d4a05ab1987895c3ef950ced690f71f816b6a6c67cb31af090f364e",
+    "logs": [],
+    "blockNumber": 4,
+    "cumulativeGasUsed": "1090029",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [],
+  "numDeployments": 1,
+  "solcInputHash": "122ea963491bf0364bb069582fb886f0",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.8+commit.dddeac2f\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"auction\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"seller\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"nftAddress\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"winner\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"winningBid\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"time\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"bool\",\"name\":\"pass\",\"type\":\"bool\"}],\"name\":\"AuctionAuditResult\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"auction\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"nftAddress\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"bidder\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"bidAmount\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"bidTime\",\"type\":\"uint256\"}],\"name\":\"AuctionBidPlaced\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"auction\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"seller\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"nftAddress\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"closeTime\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"winner\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"winningBid\",\"type\":\"uint256\"},{\"indexed\":true,\"internalType\":\"enum Constants.AuctionEndState\",\"name\":\"endState\",\"type\":\"uint8\"}],\"name\":\"AuctionClosed\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"auction\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"nftAddress\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"bidder\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"depositAmount\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"depositTime\",\"type\":\"uint256\"}],\"name\":\"AuctionDepositPlaced\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"auction\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"nftAddress\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"bidder\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"retrieveAmount\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"retrievalTime\",\"type\":\"uint256\"}],\"name\":\"AuctionDepositRetrieved\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"auction\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"nftAddress\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"winner\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"seller\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"paidAmount\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"paidTime\",\"type\":\"uint256\"}],\"name\":\"AuctionFullSettlementPaid\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"auction\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"seller\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"nftAddress\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"winner\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"winningBid\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"startTime\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"endTime\",\"type\":\"uint256\"}],\"name\":\"AuctionPendingPayment\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"auction\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"nftAddress\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"winner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"refundAmount\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"retrievalTime\",\"type\":\"uint256\"}],\"name\":\"AuctionProceedsRefunded\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"auction\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"nftAddress\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"seller\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"retrieveAmount\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"retrievalTime\",\"type\":\"uint256\"}],\"name\":\"AuctionProceedsRetrieved\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"auction\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"seller\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"nftAddress\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"registerTime\",\"type\":\"uint256\"}],\"name\":\"AuctionRegistered\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"auction\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"seller\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"nftAddress\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"depositWei\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"bidStartTime\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"bidEndTime\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"startingBid\",\"type\":\"uint256\"}],\"name\":\"AuctionStartedBidding\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"auction\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"seller\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"nftAddress\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"winner\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"winningBid\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"startTime\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"endTime\",\"type\":\"uint256\"}],\"name\":\"AuctionVerifyingWinner\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_auction\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_seller\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_nftAddress\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"_tokenId\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"_winner\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"_winningBid\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_time\",\"type\":\"uint256\"},{\"internalType\":\"bool\",\"name\":\"_pass\",\"type\":\"bool\"}],\"name\":\"emitAuctionAuditResult\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_auction\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_nftAddress\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"_tokenId\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"_bidder\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"_bidAmount\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_bidTime\",\"type\":\"uint256\"}],\"name\":\"emitAuctionBidPlaced\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_auction\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_seller\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_nftAddress\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"_tokenId\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_closeTime\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"_winner\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"_winningBid\",\"type\":\"uint256\"},{\"internalType\":\"enum Constants.AuctionEndState\",\"name\":\"_endState\",\"type\":\"uint8\"}],\"name\":\"emitAuctionClosed\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_auction\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_nftAddress\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"_tokenId\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"_bidder\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"_depositAmount\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_depositTime\",\"type\":\"uint256\"}],\"name\":\"emitAuctionDepositPlaced\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_auction\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_nftAddress\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"_tokenId\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"_bidder\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"_retrieveAmount\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_retrievalTime\",\"type\":\"uint256\"}],\"name\":\"emitAuctionDepositRetrieved\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_auction\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_nftAddress\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"_tokenId\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"_winner\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_seller\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"_paidAmount\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_paidTime\",\"type\":\"uint256\"}],\"name\":\"emitAuctionFullSettlementPaid\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_auction\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_seller\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_nftAddress\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"_tokenId\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"_winner\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"_winningBid\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_startTime\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_expiryTime\",\"type\":\"uint256\"}],\"name\":\"emitAuctionPendingPayment\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_auction\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_nftAddress\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"_tokenId\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"_winner\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"_refundAmount\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_retrievalTime\",\"type\":\"uint256\"}],\"name\":\"emitAuctionProceedsRefunded\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_auction\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_nftAddress\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"_tokenId\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"_seller\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"_retrieveAmount\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_retrievalTime\",\"type\":\"uint256\"}],\"name\":\"emitAuctionProceedsRetrieved\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_auction\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_seller\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_nftAddress\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"_tokenId\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_registerTime\",\"type\":\"uint256\"}],\"name\":\"emitAuctionRegistered\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_auction\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_seller\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_nftAddress\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"_tokenId\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_depositWei\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_startTime\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_bidEndTime\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_startingBid\",\"type\":\"uint256\"}],\"name\":\"emitAuctionStartedBidding\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_auction\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_seller\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_nftAddress\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"_tokenId\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"_winner\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"_winningBid\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_startTime\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_expiryTime\",\"type\":\"uint256\"}],\"name\":\"emitAuctionVerifyingWinner\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/AuctionContracts.sol\":\"EventEmitter\"},\"evmVersion\":\"london\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"@chainlink/contracts/src/v0.8/KeeperBase.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.0;\\n\\ncontract KeeperBase {\\n  error OnlySimulatedBackend();\\n\\n  /**\\n   * @notice method that allows it to be simulated via eth_call by checking that\\n   * the sender is the zero address.\\n   */\\n  function preventExecution() internal view {\\n    if (tx.origin != address(0)) {\\n      revert OnlySimulatedBackend();\\n    }\\n  }\\n\\n  /**\\n   * @notice modifier that allows it to be simulated via eth_call by checking\\n   * that the sender is the zero address.\\n   */\\n  modifier cannotExecute() {\\n    preventExecution();\\n    _;\\n  }\\n}\\n\",\"keccak256\":\"0x5dc972fdf3a524312e68ef6d2e58bcdaf965d08d9415aefa289207350c2bc85a\",\"license\":\"MIT\"},\"@chainlink/contracts/src/v0.8/KeeperCompatible.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.0;\\n\\nimport \\\"./KeeperBase.sol\\\";\\nimport \\\"./interfaces/KeeperCompatibleInterface.sol\\\";\\n\\nabstract contract KeeperCompatible is KeeperBase, KeeperCompatibleInterface {}\\n\",\"keccak256\":\"0xfdb84fea1ee213662ae66b95d4f620be73b7af5ede58be3d330b222b9b566d95\",\"license\":\"MIT\"},\"@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.0;\\n\\ninterface AggregatorV3Interface {\\n  function decimals() external view returns (uint8);\\n\\n  function description() external view returns (string memory);\\n\\n  function version() external view returns (uint256);\\n\\n  // getRoundData and latestRoundData should both raise \\\"No data present\\\"\\n  // if they do not have data to report, instead of returning unset values\\n  // which could be misinterpreted as actual reported values.\\n  function getRoundData(uint80 _roundId)\\n    external\\n    view\\n    returns (\\n      uint80 roundId,\\n      int256 answer,\\n      uint256 startedAt,\\n      uint256 updatedAt,\\n      uint80 answeredInRound\\n    );\\n\\n  function latestRoundData()\\n    external\\n    view\\n    returns (\\n      uint80 roundId,\\n      int256 answer,\\n      uint256 startedAt,\\n      uint256 updatedAt,\\n      uint80 answeredInRound\\n    );\\n}\\n\",\"keccak256\":\"0xf2b6c9adb3552254df1445b73563cf014434ff5e78663e9b961b6c059506ceb5\",\"license\":\"MIT\"},\"@chainlink/contracts/src/v0.8/interfaces/KeeperCompatibleInterface.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.0;\\n\\ninterface KeeperCompatibleInterface {\\n  /**\\n   * @notice method that is simulated by the keepers to see if any work actually\\n   * needs to be performed. This method does does not actually need to be\\n   * executable, and since it is only ever simulated it can consume lots of gas.\\n   * @dev To ensure that it is never called, you may want to add the\\n   * cannotExecute modifier from KeeperBase to your implementation of this\\n   * method.\\n   * @param checkData specified in the upkeep registration so it is always the\\n   * same for a registered upkeep. This can easily be broken down into specific\\n   * arguments using `abi.decode`, so multiple upkeeps can be registered on the\\n   * same contract and easily differentiated by the contract.\\n   * @return upkeepNeeded boolean to indicate whether the keeper should call\\n   * performUpkeep or not.\\n   * @return performData bytes that the keeper should call performUpkeep with, if\\n   * upkeep is needed. If you would like to encode data to decode later, try\\n   * `abi.encode`.\\n   */\\n  function checkUpkeep(bytes calldata checkData) external returns (bool upkeepNeeded, bytes memory performData);\\n\\n  /**\\n   * @notice method that is actually executed by the keepers, via the registry.\\n   * The data returned by the checkUpkeep simulation will be passed into\\n   * this method to actually be executed.\\n   * @dev The input to this method should not be trusted, and the caller of the\\n   * method should not even be restricted to any single registry. Anyone should\\n   * be able call it, and the input should be validated, there is no guarantee\\n   * that the data passed in is the performData returned from checkUpkeep. This\\n   * could happen due to malicious keepers, racing keepers, or simply a state\\n   * change while the performUpkeep transaction is waiting for confirmation.\\n   * Always validate the data passed in.\\n   * @param performData is the data which was passed back from the checkData\\n   * simulation. If it is encoded, it can easily be decoded into other types by\\n   * calling `abi.decode`. This data should not be trusted, and should be\\n   * validated against the contract's current state.\\n   */\\n  function performUpkeep(bytes calldata performData) external;\\n}\\n\",\"keccak256\":\"0xb6577cda6b731b655aebcb6e3c24f8658d3f4c5eda07200622d07d4570af33ea\",\"license\":\"MIT\"},\"contracts/AuctionContracts.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.8;\\n\\nimport \\\"@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol\\\";\\nimport \\\"@chainlink/contracts/src/v0.8/KeeperCompatible.sol\\\";\\nimport \\\"../libraries/AuctionUtility.sol\\\";\\n\\nerror AuctionManager_BiddingAuctionNotFound();\\nerror AuctionManager_PendingPaymentAuctionNotFound();\\nerror AuctionManager_VerifyWinnerAuctionNotFound();\\nerror AuctionManager_PendingAuditAuctionNotFound();\\n\\nerror AuctionRegistry_RestrictedOwnerAccess();\\nerror AuctionRegistry__RestrictedManagerAccess();\\nerror AuctionRegistry__AuctionOngoing();\\n\\nerror Auction_RestrictedSellerAccess();\\nerror Auction_NotInPendingPaymentState();\\nerror Auction_RestrictedWinnerPaymentAccess();\\nerror Auction_SelfBiddingIsNotAllowed();\\nerror Auction_NoProceeds();\\nerror Auction_UnauthorizedAccess();\\n\\n/*\\n1. Seller can register a new vehicle by minting a vehicle NFT\\n2. Seller can host an auction for vehicles NFT that they own by creating a new BiddingHost contract\\n3. BiddingHost can call HAP to emit events \\n    to record each bid, extend bid end time, end bid, and record pending payments\\n4. Chainlink Keeper is needed for automated end bid + refund deposit, lock contract + send deposit to HAP owner\\n5. Chainlink Oracle is needed to fetch the latest usd -> eth rate\\n*/\\ncontract ContractFactory {\\n    address public immutable owner;\\n    address public auctionManagerAddress;\\n    address public auctionRegistryAddress;\\n    AuctionManager private auctionManager;\\n    AuctionRegistry private auctionRegistry;\\n\\n    constructor() {\\n        owner = msg.sender;\\n    }\\n\\n    modifier onlyOwner() {\\n        if (msg.sender != owner) {\\n            revert AuctionRegistry_RestrictedOwnerAccess();\\n        }\\n        _;\\n    }\\n\\n    modifier onlyAuctionManager() {\\n        if (msg.sender != auctionManagerAddress) {\\n            revert AuctionRegistry__RestrictedManagerAccess();\\n        }\\n        _;\\n    }\\n\\n    function setAuctionManagerAddress(address _auctionManagerAddress)\\n        public\\n        onlyOwner\\n    {\\n        auctionManagerAddress = _auctionManagerAddress;\\n        auctionManager = AuctionManager(auctionManagerAddress);\\n    }\\n\\n    function createAuction(\\n        address _nftAddress,\\n        uint256 _tokenId,\\n        address _eventEmitterAddress,\\n        address _auctionKeeperAddress\\n    ) public onlyAuctionManager {\\n        // call AuctionRegistry, register auction\\n        // create Auction contract\\n        Auction newAuctionInstance = new Auction(\\n            msg.sender,\\n            address(this),\\n            _eventEmitterAddress,\\n            _auctionKeeperAddress,\\n            _nftAddress,\\n            _tokenId\\n        );\\n        auctionRegistry.registerAuction(\\n            _nftAddress,\\n            _tokenId,\\n            address(newAuctionInstance)\\n        );\\n    }\\n}\\n\\ncontract EventEmitter {\\n    modifier onlyAuction(address _senderAddress) {\\n        AuctionUtility.getContractType(_senderAddress);\\n        _;\\n    }\\n\\n    event AuctionRegistered(\\n        address indexed auction,\\n        address seller,\\n        address indexed nftAddress,\\n        uint256 indexed tokenId,\\n        uint256 registerTime\\n    );\\n\\n    event AuctionStartedBidding(\\n        address indexed auction,\\n        address seller,\\n        address indexed nftAddress,\\n        uint256 indexed tokenId,\\n        uint256 depositWei,\\n        uint256 bidStartTime,\\n        uint256 bidEndTime,\\n        uint256 startingBid\\n    );\\n\\n    event AuctionVerifyingWinner(\\n        address indexed auction,\\n        address seller,\\n        address nftAddress,\\n        uint256 indexed tokenId,\\n        address indexed winner,\\n        uint256 winningBid,\\n        uint256 startTime,\\n        uint256 endTime\\n    );\\n\\n    event AuctionPendingPayment(\\n        address indexed auction,\\n        address seller,\\n        address nftAddress,\\n        uint256 indexed tokenId,\\n        address indexed winner,\\n        uint256 winningBid,\\n        uint256 startTime,\\n        uint256 endTime\\n    );\\n\\n    event AuctionAuditResult(\\n        address indexed auction,\\n        address seller,\\n        address nftAddress,\\n        uint256 indexed tokenId,\\n        address indexed winner,\\n        uint256 winningBid,\\n        uint256 time,\\n        bool pass\\n    );\\n\\n    // if winner did not pay, in the event listener, change the deposit placed event record (boolean winnerWithdrawal to false)\\n    event AuctionClosed(\\n        address indexed auction,\\n        address seller,\\n        address nftAddress,\\n        uint256 indexed tokenId,\\n        uint256 closeTime,\\n        address winner,\\n        uint256 winningBid,\\n        Constants.AuctionEndState indexed endState\\n    );\\n\\n    event AuctionDepositPlaced(\\n        address indexed auction,\\n        address indexed nftAddress,\\n        uint256 indexed tokenId,\\n        address bidder,\\n        uint256 depositAmount,\\n        uint256 depositTime\\n    );\\n\\n    event AuctionDepositRetrieved(\\n        address indexed auction,\\n        address indexed nftAddress,\\n        uint256 indexed tokenId,\\n        address bidder,\\n        uint256 retrieveAmount,\\n        uint256 retrievalTime\\n    );\\n\\n    event AuctionBidPlaced(\\n        address indexed auction,\\n        address indexed nftAddress,\\n        uint256 indexed tokenId,\\n        address bidder,\\n        uint256 bidAmount,\\n        uint256 bidTime\\n    );\\n\\n    event AuctionFullSettlementPaid(\\n        address indexed auction,\\n        address nftAddress,\\n        uint256 tokenId,\\n        address indexed winner,\\n        address seller,\\n        uint256 indexed paidAmount,\\n        uint256 paidTime\\n    );\\n\\n    event AuctionProceedsRetrieved(\\n        address indexed auction,\\n        address nftAddress,\\n        uint256 tokenId,\\n        address indexed seller,\\n        uint256 indexed retrieveAmount,\\n        uint256 retrievalTime\\n    );\\n\\n    event AuctionProceedsRefunded(\\n        address indexed auction,\\n        address nftAddress,\\n        uint256 tokenId,\\n        address winner,\\n        uint256 indexed refundAmount,\\n        uint256 retrievalTime\\n    );\\n\\n    function emitAuctionRegistered(\\n        address _auction,\\n        address _seller,\\n        address _nftAddress,\\n        uint256 _tokenId,\\n        uint256 _registerTime\\n    ) public onlyAuction(msg.sender) {\\n        emit AuctionRegistered(\\n            _auction,\\n            _seller,\\n            _nftAddress,\\n            _tokenId,\\n            _registerTime\\n        );\\n    }\\n\\n    function emitAuctionStartedBidding(\\n        address _auction,\\n        address _seller,\\n        address _nftAddress,\\n        uint256 _tokenId,\\n        uint256 _depositWei,\\n        uint256 _startTime,\\n        uint256 _bidEndTime,\\n        uint256 _startingBid\\n    ) public onlyAuction(msg.sender) {\\n        emit AuctionStartedBidding(\\n            _auction,\\n            _seller,\\n            _nftAddress,\\n            _tokenId,\\n            _depositWei,\\n            _startTime,\\n            _bidEndTime,\\n            _startingBid\\n        );\\n    }\\n\\n    function emitAuctionVerifyingWinner(\\n        address _auction,\\n        address _seller,\\n        address _nftAddress,\\n        uint256 _tokenId,\\n        address _winner,\\n        uint256 _winningBid,\\n        uint256 _startTime,\\n        uint256 _expiryTime\\n    ) public onlyAuction(msg.sender) {\\n        emit AuctionVerifyingWinner(\\n            _auction,\\n            _seller,\\n            _nftAddress,\\n            _tokenId,\\n            _winner,\\n            _winningBid,\\n            _startTime,\\n            _expiryTime\\n        );\\n    }\\n\\n    function emitAuctionPendingPayment(\\n        address _auction,\\n        address _seller,\\n        address _nftAddress,\\n        uint256 _tokenId,\\n        address _winner,\\n        uint256 _winningBid,\\n        uint256 _startTime,\\n        uint256 _expiryTime\\n    ) public onlyAuction(msg.sender) {\\n        emit AuctionPendingPayment(\\n            _auction,\\n            _seller,\\n            _nftAddress,\\n            _tokenId,\\n            _winner,\\n            _winningBid,\\n            _startTime,\\n            _expiryTime\\n        );\\n    }\\n\\n    function emitAuctionAuditResult(\\n        address _auction,\\n        address _seller,\\n        address _nftAddress,\\n        uint256 _tokenId,\\n        address _winner,\\n        uint256 _winningBid,\\n        uint256 _time,\\n        bool _pass\\n    ) public onlyAuction(msg.sender) {\\n        emit AuctionAuditResult(\\n            _auction,\\n            _seller,\\n            _nftAddress,\\n            _tokenId,\\n            _winner,\\n            _winningBid,\\n            _time,\\n            _pass\\n        );\\n    }\\n\\n    function emitAuctionClosed(\\n        address _auction,\\n        address _seller,\\n        address _nftAddress,\\n        uint256 _tokenId,\\n        uint256 _closeTime,\\n        address _winner,\\n        uint256 _winningBid,\\n        Constants.AuctionEndState _endState\\n    ) public onlyAuction(msg.sender) {\\n        emit AuctionClosed(\\n            _auction,\\n            _seller,\\n            _nftAddress,\\n            _tokenId,\\n            _closeTime,\\n            _winner,\\n            _winningBid,\\n            _endState\\n        );\\n    }\\n\\n    function emitAuctionDepositPlaced(\\n        address _auction,\\n        address _nftAddress,\\n        uint256 _tokenId,\\n        address _bidder,\\n        uint256 _depositAmount,\\n        uint256 _depositTime\\n    ) public onlyAuction(msg.sender) {\\n        emit AuctionDepositPlaced(\\n            _auction,\\n            _nftAddress,\\n            _tokenId,\\n            _bidder,\\n            _depositAmount,\\n            _depositTime\\n        );\\n    }\\n\\n    function emitAuctionBidPlaced(\\n        address _auction,\\n        address _nftAddress,\\n        uint256 _tokenId,\\n        address _bidder,\\n        uint256 _bidAmount,\\n        uint256 _bidTime\\n    ) public onlyAuction(msg.sender) {\\n        emit AuctionBidPlaced(\\n            _auction,\\n            _nftAddress,\\n            _tokenId,\\n            _bidder,\\n            _bidAmount,\\n            _bidTime\\n        );\\n    }\\n\\n    function emitAuctionFullSettlementPaid(\\n        address _auction,\\n        address _nftAddress,\\n        uint256 _tokenId,\\n        address _winner,\\n        address _seller,\\n        uint256 _paidAmount,\\n        uint256 _paidTime\\n    ) public onlyAuction(msg.sender) {\\n        emit AuctionFullSettlementPaid(\\n            _auction,\\n            _nftAddress,\\n            _tokenId,\\n            _winner,\\n            _seller,\\n            _paidAmount,\\n            _paidTime\\n        );\\n    }\\n\\n    function emitAuctionDepositRetrieved(\\n        address _auction,\\n        address _nftAddress,\\n        uint256 _tokenId,\\n        address _bidder,\\n        uint256 _retrieveAmount,\\n        uint256 _retrievalTime\\n    ) public onlyAuction(msg.sender) {\\n        emit AuctionDepositRetrieved(\\n            _auction,\\n            _nftAddress,\\n            _tokenId,\\n            _bidder,\\n            _retrieveAmount,\\n            _retrievalTime\\n        );\\n    }\\n\\n    function emitAuctionProceedsRetrieved(\\n        address _auction,\\n        address _nftAddress,\\n        uint256 _tokenId,\\n        address _seller,\\n        uint256 _retrieveAmount,\\n        uint256 _retrievalTime\\n    ) public onlyAuction(msg.sender) {\\n        emit AuctionProceedsRetrieved(\\n            _auction,\\n            _nftAddress,\\n            _tokenId,\\n            _seller,\\n            _retrieveAmount,\\n            _retrievalTime\\n        );\\n    }\\n\\n    function emitAuctionProceedsRefunded(\\n        address _auction,\\n        address _nftAddress,\\n        uint256 _tokenId,\\n        address _winner,\\n        uint256 _refundAmount,\\n        uint256 _retrievalTime\\n    ) public onlyAuction(msg.sender) {\\n        emit AuctionProceedsRefunded(\\n            _auction,\\n            _nftAddress,\\n            _tokenId,\\n            _winner,\\n            _refundAmount,\\n            _retrievalTime\\n        );\\n    }\\n}\\n\\ncontract AuctionRegistry {\\n    address public immutable owner;\\n    address public auctionManagerAddress;\\n    AuctionManager private auctionManager;\\n\\n    mapping(address => mapping(uint256 => address)) public auctionListings;\\n\\n    constructor() {\\n        owner = msg.sender;\\n    }\\n\\n    modifier onlyOwner() {\\n        if (msg.sender != owner) {\\n            revert AuctionRegistry_RestrictedOwnerAccess();\\n        }\\n        _;\\n    }\\n\\n    modifier onlyAuctionManager() {\\n        if (msg.sender != auctionManagerAddress) {\\n            revert AuctionRegistry__RestrictedManagerAccess();\\n        }\\n        _;\\n    }\\n\\n    modifier onlyAuctionInactive(\\n        address _nftAddress,\\n        uint256 _tokenId,\\n        address _auctionAddress\\n    ) {\\n        // if event still not ended, unable to create a same auction for the NFT\\n        // create interface of Auction.sol\\n        Auction auction = Auction(_auctionAddress);\\n        // call Auction.getEventState();\\n        if (\\n            (!(auctionListings[_nftAddress][_tokenId] == address(0x0)) || !(auction.inClosedState()))\\n        ) {\\n            revert AuctionRegistry__AuctionOngoing();\\n        }\\n        _;\\n    }\\n\\n    function getContractType() public pure returns (Constants.ContractType) {\\n        return Constants.ContractType.AUCTION_REGISTRY;\\n    }\\n\\n    function setAuctionManagerAddress(address _auctionManagerAddress)\\n        public\\n        onlyOwner\\n    {\\n        auctionManagerAddress = _auctionManagerAddress;\\n        auctionManager = AuctionManager(auctionManagerAddress);\\n    }\\n\\n    function registerAuction(\\n        address _nftAddress,\\n        uint256 _tokenId,\\n        address _auctionAddress\\n    )\\n        public\\n        onlyAuctionManager\\n        onlyAuctionInactive(_nftAddress, _tokenId, _auctionAddress)\\n    {\\n        // if NFT id not in map, store the NFT -> address mapping\\n        // else if NFT id already exist, update the mapping\\n        auctionListings[_nftAddress][_tokenId] = _auctionAddress; // this line does it all\\n    }\\n\\n    // TODO: registerTechnician\\n}\\n\\ncontract AuctionKeeper is KeeperCompatibleInterface {\\n    address public immutable owner;\\n    address public auctionManagerAddress;\\n    AuctionManager private auctionManager;\\n\\n    constructor() {\\n        owner = msg.sender;\\n    }\\n\\n    modifier onlyOwner() {\\n        if (msg.sender != owner) {\\n            revert AuctionRegistry_RestrictedOwnerAccess();\\n        }\\n        _;\\n    }\\n\\n    function setAuctionManagerAddress(address _auctionManagerAddress)\\n        public\\n        onlyOwner\\n    {\\n        auctionManagerAddress = _auctionManagerAddress;\\n        auctionManager = AuctionManager(auctionManagerAddress);\\n    }\\n\\n    function checkUpkeep(bytes calldata checkData)\\n        external\\n        view\\n        override\\n        returns (bool upkeepNeeded, bytes memory performData)\\n    {\\n        if (keccak256(checkData) == keccak256(hex\\\"01\\\")) {\\n            address[] memory biddingAuctions = auctionManager\\n                .getBiddingAuctions();\\n            upkeepNeeded = false;\\n            performData = checkData;\\n            for (uint i = 0; i < biddingAuctions.length - 1; i++) {\\n                if (Auction(biddingAuctions[i]).getBidTimeLeft() == 0) {\\n                    upkeepNeeded = true;\\n                }\\n            }\\n            return (upkeepNeeded, performData);\\n        }\\n\\n        if (keccak256(checkData) == keccak256(hex\\\"02\\\")) {\\n            address[] memory verifyWinnerAuctions = auctionManager\\n                .getVerifyWinnerAuctions();\\n            upkeepNeeded = false;\\n            performData = checkData;\\n            for (uint i = 0; i < verifyWinnerAuctions.length - 1; i++) {\\n                if (Auction(verifyWinnerAuctions[i]).getVerifyTimeLeft() == 0) {\\n                    upkeepNeeded = true;\\n                }\\n            }\\n            return (upkeepNeeded, performData);\\n        }\\n\\n        if (keccak256(checkData) == keccak256(hex\\\"03\\\")) {\\n            address[] memory pendingPaymentAuctions = auctionManager\\n                .getPendingPaymentAuctions();\\n            upkeepNeeded = false;\\n            performData = checkData;\\n            for (uint i = 0; i < pendingPaymentAuctions.length - 1; i++) {\\n                if (\\n                    Auction(pendingPaymentAuctions[i]).getPaymentTimeLeft() == 0\\n                ) {\\n                    upkeepNeeded = true;\\n                }\\n            }\\n            return (upkeepNeeded, performData);\\n        }\\n    }\\n\\n    function performUpkeep(bytes calldata performData) external override {\\n        address[] memory biddingAuctions = auctionManager.getBiddingAuctions();\\n        if (keccak256(performData) == keccak256(hex\\\"01\\\")) {\\n            for (uint i = 0; i < biddingAuctions.length - 1; i++) {\\n                if (Auction(biddingAuctions[i]).getBidTimeLeft() == 0) {\\n                    Auction(biddingAuctions[i]).endBidding();\\n                }\\n            }\\n        }\\n\\n        if (keccak256(performData) == keccak256(hex\\\"02\\\")) {\\n            address[] memory verifyWinnerAuctions = auctionManager\\n                .getVerifyWinnerAuctions();\\n            for (uint i = 0; i < verifyWinnerAuctions.length - 1; i++) {\\n                if (Auction(verifyWinnerAuctions[i]).getVerifyTimeLeft() == 0) {\\n                    Auction(verifyWinnerAuctions[i]).verifyWinner(false);\\n                }\\n            }\\n        }\\n\\n        if (keccak256(performData) == keccak256(hex\\\"03\\\")) {\\n            address[] memory pendingPaymentAuctions = auctionManager\\n                .getPendingPaymentAuctions();\\n            for (uint i = 0; i < pendingPaymentAuctions.length - 1; i++) {\\n                if (\\n                    Auction(pendingPaymentAuctions[i]).getPaymentTimeLeft() == 0\\n                ) {\\n                    Auction(pendingPaymentAuctions[i]).closeAuction(\\n                        Constants.AuctionEndState.PAYMENT_OVERDUE\\n                    );\\n                }\\n            }\\n        }\\n    }\\n}\\n\\ncontract AuctionManager {\\n    // TODO: Maintain an array to check timeLeft of BIDDING auctions (if timeLeft==0, perform Upkeep)\\n    // TODO: Maintain an array to check timeLeft of PENDING_PAYMENT auctions (if timeLeft==0, perform Upkeep)\\n    address[] public biddingAuctions;\\n    address[] public verifyWinnerAuctions;\\n    address[] public pendingPaymentAuctions;\\n    address auctionRegistryAddress;\\n    address eventEmitterAddress;\\n    address auctionKeeperAddress;\\n    address contractFactoryAddress;\\n\\n    // TODO: chainlink keepers for automated transition to VERIFYING_WINNER state when the auction ended\\n    // TODO: chainlink keepers for automated transition to ENDED state when payment timer's up\\n\\n    // TODO: emit event when Auction state changed\\n    /*\\n    1. Auction registered\\n    2. Auction accepting bids\\n    3. Auction closed bids (with winner declaration)\\n    4. Auction awaiting payments (seller accepted winning bid)\\n    5. Auction ended\\n    */\\n\\n    // TODO: emit event when Bidder perform action\\n    /*\\n   1. Bidder submit bids\\n   */\\n\\n    constructor(\\n        address _auctionRegistryAddress,\\n        address _eventEmitterAddress,\\n        address _auctionKeeperAddress,\\n        address _contractFactoryAddress\\n    ) {\\n        auctionRegistryAddress = _auctionRegistryAddress;\\n        eventEmitterAddress = _eventEmitterAddress;\\n        auctionKeeperAddress = _auctionKeeperAddress;\\n        contractFactoryAddress = _contractFactoryAddress;\\n    }\\n\\n    function createAuction(address _nftAddress, uint256 _tokenId) external {\\n        ContractFactory contractFactory = ContractFactory(\\n            contractFactoryAddress\\n        );\\n        contractFactory.createAuction(\\n            _nftAddress,\\n            _tokenId,\\n            eventEmitterAddress,\\n            auctionKeeperAddress\\n        );\\n    }\\n\\n    function getBiddingAuctions() public view returns (address[] memory) {\\n        return biddingAuctions;\\n    }\\n\\n    function getVerifyWinnerAuctions() public view returns (address[] memory) {\\n        return verifyWinnerAuctions;\\n    }\\n\\n    function getPendingPaymentAuctions()\\n        public\\n        view\\n        returns (address[] memory)\\n    {\\n        return pendingPaymentAuctions;\\n    }\\n\\n    function getContractType() public pure returns (Constants.ContractType) {\\n        return Constants.ContractType.AUCTION_MANAGER;\\n    }\\n\\n    function addBiddingAuction(address _auctionAddress) public {\\n        require(\\n            AuctionUtility.getContractType(msg.sender) ==\\n                Constants.ContractType.AUCTION\\n        );\\n        // TODO: to be called when bidding starts (by Auction.startAuction())\\n        biddingAuctions.push(address(_auctionAddress));\\n    }\\n\\n    function removeBiddingAuction(address _auctionAddress) public {\\n        require(\\n            AuctionUtility.getContractType(msg.sender) ==\\n                Constants.ContractType.AUCTION\\n        );\\n        // TODO: to be called when bidding end time reached (by keepers)\\n        uint auctionIndex = searchBiddingAuction(_auctionAddress);\\n        for (uint i = auctionIndex; i < biddingAuctions.length - 1; i++) {\\n            biddingAuctions[i] = biddingAuctions[i + 1];\\n        }\\n        biddingAuctions.pop();\\n    }\\n\\n    function addVerifyWinnerAuction(address _auctionAddress) public {\\n        require(\\n            AuctionUtility.getContractType(msg.sender) ==\\n                Constants.ContractType.AUCTION\\n        );\\n        // TODO: to be called when bidding end time reached (by keepers)\\n        verifyWinnerAuctions.push(address(_auctionAddress));\\n    }\\n\\n    function removeVerifyWinnerAuction(address _auctionAddress) public {\\n        require(\\n            AuctionUtility.getContractType(msg.sender) ==\\n                Constants.ContractType.AUCTION\\n        );\\n        // TODO: to be called when winner paid (by Auction.payFullSettlement()) / payment expiry time reached (by keepers)\\n        uint auctionIndex = searchVerifyWInnerAuction(_auctionAddress);\\n        for (uint i = auctionIndex; i < verifyWinnerAuctions.length - 1; i++) {\\n            verifyWinnerAuctions[i] = verifyWinnerAuctions[i + 1];\\n        }\\n        verifyWinnerAuctions.pop();\\n    }\\n\\n    function addPendingPaymentAuction(address _auctionAddress) public {\\n        require(\\n            AuctionUtility.getContractType(msg.sender) ==\\n                Constants.ContractType.AUCTION\\n        );\\n        // TODO: to be called when bidding end time reached (by keepers)\\n        pendingPaymentAuctions.push(address(_auctionAddress));\\n    }\\n\\n    function removePendingPaymentAuction(address _auctionAddress) public {\\n        require(\\n            AuctionUtility.getContractType(msg.sender) ==\\n                Constants.ContractType.AUCTION\\n        );\\n        // TODO: to be called when winner paid (by Auction.payFullSettlement()) / payment expiry time reached (by keepers)\\n        uint auctionIndex;\\n        int searchResult = searchPendingPaymentAuction(_auctionAddress);\\n        if (searchResult >= 0) {\\n            auctionIndex = uint(searchResult);\\n            for (\\n                uint i = auctionIndex;\\n                i < pendingPaymentAuctions.length - 1;\\n                i++\\n            ) {\\n                pendingPaymentAuctions[i] = pendingPaymentAuctions[i + 1];\\n            }\\n            pendingPaymentAuctions.pop();\\n        }\\n    }\\n\\n    function searchBiddingAuction(address _auctionAddress)\\n        public\\n        view\\n        returns (uint)\\n    {\\n        for (uint i = 0; i < uint(biddingAuctions.length); i++) {\\n            if (biddingAuctions[i] == _auctionAddress) {\\n                return uint(i);\\n            }\\n        }\\n        revert AuctionManager_BiddingAuctionNotFound();\\n    }\\n\\n    function searchVerifyWInnerAuction(address _auctionAddress)\\n        public\\n        view\\n        returns (uint)\\n    {\\n        for (uint i = 0; i < uint(verifyWinnerAuctions.length); i++) {\\n            if (verifyWinnerAuctions[i] == _auctionAddress) {\\n                return uint(i);\\n            }\\n        }\\n        revert AuctionManager_VerifyWinnerAuctionNotFound();\\n    }\\n\\n    function searchPendingPaymentAuction(address _auctionAddress)\\n        public\\n        view\\n        returns (int)\\n    {\\n        for (uint i = 0; i < uint(pendingPaymentAuctions.length); i++) {\\n            if (pendingPaymentAuctions[i] == _auctionAddress) {\\n                return int(i);\\n            }\\n        }\\n        revert AuctionManager_PendingPaymentAuctionNotFound();\\n    }\\n}\\n\\n/*\\n1. Seller can start the auction directly or choose to send the vehicle for verification\\n2. Seller must set the duration for the auction and the starting price for the auction\\n3. Bidder can join the auction by paying a deposit of 500$, the deposit only has to be paid once\\n4. The deposit can be reclaimed by bidder after the auction ends,\\n    if the bidder lost the auction or \\n    the bidder won the auction and settled the full payment of the vehicle\\n5. Bidder can bid for the vehicle provided that the new bid is higher than the current highest bid\\n6. Seller cannot bid on their own auction\\n7. When the highese bid is updated within 60 seconds of the ending time, \\n    the duration of the auction will be reset to 3 minutes\\n8. The winner of the auction will be the bidder with the highest bid when the auction ends\\n9. The ownership of the auction will be transferred to the winner once the winner settled the payment\\n10. The payment must be exactly the amount of the winning bid\\n11. The payment must be made within 1 day(s) after the auction ends, \\n    otherwise payment cannot be made and the NFT will not be transferred\\n12. If no one bid on the vehicle after the bidding time is up, the auctin will end with EndState.NO_BIDDER\\n*/\\ncontract Auction {\\n    enum AuctionState {\\n        REGISTERED,\\n        BIDDING,\\n        VERIFYING_WINNER,\\n        PENDING_PAYMENT,\\n        PENDING_AUDIT,\\n        AUCTION_CLOSED\\n    }\\n\\n    address public nftAddress;\\n    uint256 public tokenId;\\n    address private immutable auctionKeeperAddress;\\n    address private immutable auctionManagerAddress;\\n    AuctionManager private immutable auctionManager;\\n    EventEmitter private immutable eventEmitter;\\n    address payable public seller;\\n    uint128 public depositUSD = 1;\\n    uint256 public depositWei;\\n    uint256 public bidStartTime;\\n    uint256 public bidEndTime;\\n    uint128 public durationSec;\\n    uint256 public verify_startTime;\\n    uint256 public verify_expiryTime;\\n    uint256 public verify_duration = 1 days;\\n    uint256 public payment_startTime;\\n    uint256 public payment_expiryTime;\\n    uint256 public payment_duration = 1 days;\\n    AuctionState public currAuctionState = AuctionState.REGISTERED;\\n    Constants.AuctionEndState public auctionEndState =\\n        Constants.AuctionEndState.NOT_ENDED;\\n    uint256 public highestBid;\\n    address public highestBidder;\\n    bool winnerPaid = false;\\n    mapping(address => uint128) private bidderToDeposits;\\n    mapping(address => uint256) private fullSettlement;\\n\\n    // TODO: call AuctionManager to emit event\\n    // TODO: chainlink keepers call function verifyAuction(false);\\n\\n    constructor(\\n        address _seller,\\n        address _auctionManagerAddress,\\n        address _eventEmitterAddress,\\n        address _auctionKeeperAddress,\\n        address _nftAddress,\\n        uint256 _tokenId\\n    ) {\\n        seller = payable(_seller);\\n        auctionManagerAddress = _auctionManagerAddress;\\n        auctionKeeperAddress = _auctionKeeperAddress;\\n        auctionManager = AuctionManager(_auctionManagerAddress);\\n        eventEmitter = EventEmitter(_eventEmitterAddress);\\n        nftAddress = _nftAddress;\\n        tokenId = _tokenId;\\n        currAuctionState = AuctionState.REGISTERED;\\n        depositWei = AuctionUtility.convertUsdToWei(depositUSD);\\n        eventEmitter.emitAuctionRegistered(\\n            address(this),\\n            _seller,\\n            _nftAddress,\\n            _tokenId,\\n            getBlockTime()\\n        );\\n    }\\n\\n    modifier onlySeller() {\\n        if (msg.sender != seller) {\\n            revert Auction_RestrictedSellerAccess();\\n        }\\n        _;\\n    }\\n\\n    modifier onlySellerOrKeeper() {\\n        if ((msg.sender != seller) && (msg.sender != auctionKeeperAddress)) {\\n            revert Auction_RestrictedSellerAccess();\\n        }\\n        _;\\n    }\\n\\n    modifier onlyWinnerPayment() {\\n        if (msg.sender != highestBidder && !(inPendingPaymentState())) {\\n            revert Auction_RestrictedWinnerPaymentAccess();\\n        }\\n        _;\\n    }\\n\\n    modifier notForSeller() {\\n        if (msg.sender == seller) {\\n            revert Auction_SelfBiddingIsNotAllowed();\\n        }\\n        _;\\n    }\\n\\n    modifier onlyAuthority(address _user) {\\n        (bool success, bytes memory data) = nftAddress.call(\\n            abi.encodeWithSignature(\\\"getAuthorityAddress()\\\")\\n        );\\n        require(success, \\\"Unable to determine the contract type!\\\");\\n        address authority = abi.decode(data, (address));\\n        if (_user != authority) {\\n            revert Auction_UnauthorizedAccess();\\n        }\\n        _;\\n    }\\n\\n    modifier onlyNftContract() {\\n        require(msg.sender == nftAddress);\\n        _;\\n    }\\n\\n    function getContractType() public pure returns (Constants.ContractType) {\\n        return Constants.ContractType.AUCTION;\\n    }\\n\\n    function inRegisteredState() public view returns (bool) {\\n        if (currAuctionState == AuctionState.REGISTERED) {\\n            return true;\\n        } else {\\n            return false;\\n        }\\n    }\\n\\n    function inBiddingState() public view returns (bool) {\\n        if (currAuctionState == AuctionState.BIDDING) {\\n            return true;\\n        } else {\\n            return false;\\n        }\\n    }\\n\\n    function inVerifyWinnerState() public view returns (bool) {\\n        if (currAuctionState == AuctionState.VERIFYING_WINNER) {\\n            return true;\\n        } else {\\n            return false;\\n        }\\n    }\\n\\n    function inPendingPaymentState() public view returns (bool) {\\n        if (currAuctionState == AuctionState.PENDING_PAYMENT) {\\n            return true;\\n        } else {\\n            return false;\\n        }\\n    }\\n\\n    function inPendingAuditState() public view returns (bool) {\\n        if (currAuctionState == AuctionState.PENDING_AUDIT) {\\n            return true;\\n        } else {\\n            return false;\\n        }\\n    }\\n\\n    function inClosedState() public view returns (bool) {\\n        if (currAuctionState == AuctionState.AUCTION_CLOSED) {\\n            return true;\\n        } else {\\n            return false;\\n        }\\n    }\\n\\n    function startAuction(uint128 _durationSec, uint128 _startingBid) external {\\n        require(inRegisteredState(), \\\"Auction not in Registered state!\\\");\\n        require(msg.sender == seller, \\\"Start auction requires owner!\\\");\\n        require(_startingBid > 0, \\\"Starting bid must be greater than 0 wei\\\");\\n        bidStartTime = block.timestamp;\\n        bidEndTime = bidStartTime + _durationSec;\\n        durationSec = _durationSec;\\n        highestBid = _startingBid;\\n        currAuctionState = AuctionState.BIDDING;\\n\\n        eventEmitter.emitAuctionStartedBidding(\\n            address(this),\\n            seller,\\n            nftAddress,\\n            tokenId,\\n            depositWei,\\n            bidStartTime,\\n            bidEndTime,\\n            _startingBid\\n        );\\n        auctionManager.addBiddingAuction(address(this));\\n    }\\n\\n    function endBidding() public {\\n        require(inBiddingState(), \\\"Auction not in StartedBidding state!\\\");\\n        require(\\n            block.timestamp >= bidEndTime,\\n            \\\"Auction has not reached end time yet!\\\"\\n        );\\n        if (highestBidder == address(0x0)) {\\n            closeAuction(Constants.AuctionEndState.NO_BIDDER);\\n        } else {\\n            currAuctionState = AuctionState.VERIFYING_WINNER;\\n            verify_startTime = getBlockTime();\\n            verify_expiryTime = verify_startTime + verify_duration;\\n            eventEmitter.emitAuctionVerifyingWinner(\\n                address(this),\\n                seller,\\n                nftAddress,\\n                tokenId,\\n                highestBidder,\\n                highestBid,\\n                verify_startTime,\\n                verify_expiryTime\\n            );\\n        }\\n        auctionManager.removeBiddingAuction(address(this));\\n        auctionManager.addVerifyWinnerAuction(address(this));\\n    }\\n\\n    function verifyWinner(bool approveWinningBid) external onlySellerOrKeeper {\\n        // TODO: when timer's up, keepers call this function, verifyWinner(false)\\n        require(inVerifyWinnerState(), \\\"Auction not in VerifyingWinner state!\\\");\\n        require(\\n            getVerifyTimeLeft() > 0,\\n            \\\"Seller did not verify in given time!\\\"\\n        );\\n        if (approveWinningBid) {\\n            payment_startTime = getBlockTime();\\n            payment_expiryTime = payment_startTime + payment_duration;\\n            currAuctionState = AuctionState.PENDING_PAYMENT;\\n            eventEmitter.emitAuctionPendingPayment(\\n                address(this),\\n                seller,\\n                nftAddress,\\n                tokenId,\\n                highestBidder,\\n                highestBid,\\n                payment_startTime,\\n                payment_expiryTime\\n            );\\n            auctionManager.removeVerifyWinnerAuction(address(this));\\n            auctionManager.addPendingPaymentAuction(address(this));\\n        } else {\\n            closeAuction(Constants.AuctionEndState.REJECTED_BY_SELLER);\\n            auctionManager.removeVerifyWinnerAuction(address(this));\\n        }\\n    }\\n\\n    function closeAuction(Constants.AuctionEndState _endState) public {\\n        // can only be closed when the winner pays or the payment pending expired (chainlink keepers trigger)\\n        require(\\n            ((currAuctionState == AuctionState.PENDING_PAYMENT) &&\\n                (msg.sender == highestBidder)) ||\\n                (msg.sender == auctionManagerAddress) ||\\n                (msg.sender == auctionKeeperAddress),\\n            \\\"Function not to be called manually!\\\"\\n        );\\n        currAuctionState = AuctionState.AUCTION_CLOSED; // TODO: emit event\\n        auctionEndState = _endState;\\n        eventEmitter.emitAuctionClosed(\\n            address(this),\\n            seller,\\n            nftAddress,\\n            tokenId,\\n            getBlockTime(),\\n            highestBidder,\\n            highestBid,\\n            _endState\\n        );\\n        if ((_endState == Constants.AuctionEndState.PAYMENT_OVERDUE)) {\\n            auctionManager.removePendingPaymentAuction(address(this));\\n        }\\n    }\\n\\n    function placeDeposit() external payable notForSeller {\\n        require(inBiddingState(), \\\"Auction not in StartedBidding state!\\\");\\n        require(\\n            (bidderToDeposits[msg.sender] == 0),\\n            \\\"You have already deposited!\\\"\\n        );\\n        require(\\n            (msg.value >= depositWei),\\n            \\\"Please pay the exact deposit amount!\\\"\\n        );\\n        bidderToDeposits[msg.sender] += uint128(msg.value);\\n        eventEmitter.emitAuctionDepositPlaced(\\n            address(this),\\n            nftAddress,\\n            tokenId,\\n            msg.sender,\\n            msg.value,\\n            getBlockTime()\\n        );\\n    }\\n\\n    function placeBid(uint256 _bidAmount) external notForSeller {\\n        require(inBiddingState(), \\\"Auction not in StartedBidding state!\\\");\\n        require(\\n            (bidderToDeposits[msg.sender] >= depositWei),\\n            \\\"Please deposit before bidding!\\\"\\n        );\\n        require(\\n            _bidAmount > highestBid,\\n            \\\"Your bid is lower than the current highest bid!\\\"\\n        );\\n\\n        highestBid = _bidAmount;\\n        highestBidder = msg.sender;\\n        eventEmitter.emitAuctionBidPlaced(\\n            address(this),\\n            nftAddress,\\n            tokenId,\\n            msg.sender,\\n            _bidAmount,\\n            getBlockTime()\\n        );\\n    }\\n\\n    function withdrawDeposit() external payable {\\n        require(\\n            ((msg.sender != highestBidder) ||\\n                (msg.sender == highestBidder && winnerPaid == true) ||\\n                (msg.sender == highestBidder && inClosedState())),\\n            \\\"You can only withdraw the deposit if you are not the highest bidder! or You won and paid for the full payment!\\\"\\n        );\\n        // requires bidder to settle full payment for withdrawal (full payment only when the seller accepted the result)\\n        // requires bidder to not exceed the expiry date for full payment settlement\\n        // close the auction when the expiry date is reached\\n        uint128 depositBalance = bidderToDeposits[msg.sender];\\n        bidderToDeposits[msg.sender] = 0;\\n        (bool sent, ) = payable(msg.sender).call{value: depositBalance}(\\\"\\\");\\n        require(sent, \\\"ETH withdrawal failed!\\\");\\n        eventEmitter.emitAuctionDepositRetrieved(\\n            address(this),\\n            nftAddress,\\n            tokenId,\\n            msg.sender,\\n            depositBalance,\\n            getBlockTime()\\n        );\\n    }\\n\\n    function payFullSettlement() external payable onlyWinnerPayment {\\n        require(\\n            (inPendingPaymentState()),\\n            \\\"Auction not in PendingPayment state!\\\"\\n        );\\n        require(\\n            (getPaymentTimeLeft() > 0),\\n            \\\"Payment window for full settlement closed!\\\"\\n        );\\n        require(\\n            (msg.value == highestBid),\\n            \\\"Payment value must be equal to your winning bid!\\\"\\n        );\\n        require((!winnerPaid), \\\"You have paid!\\\");\\n        fullSettlement[seller] = msg.value;\\n        winnerPaid = true;\\n        auctionManager.removePendingPaymentAuction(address(this));\\n        eventEmitter.emitAuctionFullSettlementPaid(\\n            address(this),\\n            nftAddress,\\n            tokenId,\\n            msg.sender,\\n            seller,\\n            msg.value,\\n            getBlockTime()\\n        );\\n        currAuctionState = AuctionState.PENDING_AUDIT;\\n    }\\n\\n    function withdrawFullSettlement() external onlySeller {\\n        require(\\n            (currAuctionState != AuctionState.PENDING_AUDIT),\\n            \\\"Auction still pending for audit!\\\"\\n        );\\n        require(\\n            (auctionEndState ==\\n                Constants.AuctionEndState.OWNERSHIP_TRANSFERRED),\\n            \\\"Auction ownership not transferred!\\\"\\n        );\\n        uint256 proceeds = fullSettlement[msg.sender];\\n        if (proceeds <= 0) {\\n            revert Auction_NoProceeds();\\n        }\\n        fullSettlement[msg.sender] = 0;\\n        (bool sent, ) = payable(msg.sender).call{value: proceeds}(\\\"\\\");\\n        require(sent, \\\"ETH transfer failed\\\");\\n        eventEmitter.emitAuctionProceedsRetrieved(\\n            address(this),\\n            nftAddress,\\n            tokenId,\\n            msg.sender,\\n            proceeds,\\n            getBlockTime()\\n        );\\n    }\\n\\n    function refundFullSettlement() external {\\n        require(\\n            msg.sender == highestBidder,\\n            \\\"Refund can only be made to payer!\\\"\\n        );\\n        require(\\n            auctionEndState == Constants.AuctionEndState.AUDIT_REJECTED,\\n            \\\"Inegligible for refund!\\\"\\n        );\\n        uint256 proceeds = fullSettlement[highestBidder];\\n        if (proceeds <= 0) {\\n            revert Auction_NoProceeds();\\n        }\\n        fullSettlement[highestBidder] = 0;\\n        (bool sent, ) = payable(msg.sender).call{value: proceeds}(\\\"\\\");\\n        require(sent, \\\"ETH transfer failed\\\");\\n        eventEmitter.emitAuctionProceedsRefunded(\\n            address(this),\\n            nftAddress,\\n            tokenId,\\n            msg.sender,\\n            proceeds,\\n            getBlockTime()\\n        );\\n    }\\n\\n    function setAuditResult(bool _valid) external onlyNftContract {\\n        if (_valid == true) {\\n            closeAuction(Constants.AuctionEndState.OWNERSHIP_TRANSFERRED);\\n        } else {\\n            closeAuction(Constants.AuctionEndState.AUDIT_REJECTED);\\n        }\\n        eventEmitter.emitAuctionAuditResult(\\n            address(this),\\n            seller,\\n            nftAddress,\\n            tokenId,\\n            highestBidder,\\n            highestBid,\\n            getBlockTime(),\\n            _valid\\n        );\\n    }\\n\\n    function getBlockTime() public view returns (uint256) {\\n        return (block.timestamp);\\n    }\\n\\n    function getBidTimeLeft() public view returns (uint256) {\\n        if (getBlockTime() > bidEndTime) {\\n            return 0;\\n        } else {\\n            return (bidEndTime - getBlockTime());\\n        }\\n    }\\n\\n    function getVerifyTimeLeft() public view returns (uint256) {\\n        if (getBlockTime() > verify_expiryTime) {\\n            return 0;\\n        } else {\\n            return (verify_expiryTime - getBlockTime());\\n        }\\n    }\\n\\n    function getPaymentTimeLeft() public view returns (uint256) {\\n        if (getBlockTime() > payment_expiryTime) {\\n            return 0;\\n        } else {\\n            return (payment_expiryTime - getBlockTime());\\n        }\\n    }\\n}\\n\",\"keccak256\":\"0xaf6f43b1294012baf15b52fbb48a8d3c6b4e46c03267184f1bb036f86cd4bd65\",\"license\":\"MIT\"},\"libraries/AuctionUtility.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.8;\\nimport \\\"@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol\\\";\\n\\nlibrary AuctionUtility {\\n    function getWeiPerUsdRate() internal view returns (uint256) {\\n        // for testnet\\n        /*\\n        AggregatorV3Interface priceFeed = AggregatorV3Interface(\\n            0xD4a33860578De61DBAbDc8BFdb98FD742fA7028e\\n        );\\n        (, int256 price, , , ) = priceFeed.latestRoundData(); // WeiPerUsd (in 8 decimals)\\n        */\\n        // for local network\\n        int256 price = 132102000000;\\n\\n        return uint256(price * 1e10);\\n    }\\n\\n    function convertWeiToUsd(uint256 p_weiAmount)\\n        internal\\n        view\\n        returns (uint256)\\n    {\\n        uint256 ethRate = getWeiPerUsdRate();\\n        uint256 usdEquivalent = (p_weiAmount * ethRate) / (1e18 * 1e18);\\n        return usdEquivalent;\\n    }\\n\\n    function convertUsdToWei(uint256 p_usdAmount)\\n        internal\\n        view\\n        returns (uint256)\\n    {\\n        uint256 ethRate = getWeiPerUsdRate();\\n        uint256 weiEquivalent = (1e18 * 1e18) / (p_usdAmount * ethRate);\\n        return weiEquivalent;\\n    }\\n\\n    function hourToSec(uint inHours) internal pure returns (uint256 inMinutes) {\\n        return (inHours * 60 * 60);\\n    }\\n\\n    function getContractType(address _contractAddress)\\n        internal\\n        returns (Constants.ContractType)\\n    {\\n        (bool success, bytes memory data) = _contractAddress.call(\\n            abi.encodeWithSignature(\\\"getContractType()\\\")\\n        );\\n        require(success, \\\"Unable to determine the contract type!\\\");\\n        return abi.decode(data, (Constants.ContractType));\\n    }\\n}\\n\\nlibrary Constants {\\n    enum ContractType {\\n        AUCTION,\\n        AUCTION_MANAGER,\\n        AUCTION_REGISTRY\\n    }\\n\\n    enum AuctionEndState {\\n        NOT_ENDED,\\n        NO_BIDDER,\\n        REJECTED_BY_SELLER,\\n        PAYMENT_OVERDUE,\\n        AUDIT_REJECTED,\\n        OWNERSHIP_TRANSFERRED\\n    }\\n}\\n\",\"keccak256\":\"0x1ded7b86954e04e74862d3412f456a7c8873cb3f4cb488c0771f2460948ca387\",\"license\":\"MIT\"}},\"version\":1}",
+  "bytecode": "0x608060405234801561001057600080fd5b506112c7806100206000396000f3fe608060405234801561001057600080fd5b50600436106100b45760003560e01c8063917e705811610071578063917e705814610161578063a02cc9571461017d578063ae69121c14610199578063be86097e146101b5578063d3b63be8146101d1578063e08ea11a146101ed576100b4565b806318f6b768146100b95780631b5f9c3f146100d55780632eca920f146100f15780632f7a085b1461010d57806379cb66b9146101295780638dcf508d14610145575b600080fd5b6100d360048036038101906100ce91906109df565b610209565b005b6100ef60048036038101906100ea9190610a95565b61028d565b005b61010b60048036038101906101069190610b47565b6102f6565b005b61012760048036038101906101229190610bfd565b610376565b005b610143600480360381019061013e9190610ceb565b6103fa565b005b61015f600480360381019061015a9190610da1565b61047e565b005b61017b600480360381019061017691906109df565b6104ff565b005b61019760048036038101906101929190610a95565b610583565b005b6101b360048036038101906101ae9190610a95565b610601565b005b6101cf60048036038101906101ca9190610a95565b61067f565b005b6101eb60048036038101906101e69190610a95565b6106fd565b005b61020760048036038101906102029190610e43565b61077b565b005b33610213816107f6565b508473ffffffffffffffffffffffffffffffffffffffff16868a73ffffffffffffffffffffffffffffffffffffffff167fc2a076433ad22c84f267eeffa04dc73052536776a7d487430ed7a2c4a4677d648b8b89898960405161027a959493929190610edc565b60405180910390a4505050505050505050565b33610297816107f6565b50828773ffffffffffffffffffffffffffffffffffffffff167f35033a0586b2eb3fcd9bb02fcf12cd8bfa21ac20a855963258fdb987f009367c888888876040516102e59493929190610f2f565b60405180910390a350505050505050565b33610300816107f6565b5081600581111561031457610313610f74565b5b868a73ffffffffffffffffffffffffffffffffffffffff167fc5afeb842b1ee0a786f0181fd50d600ada6f7182ac63862b96f7f442770648b28b8b8a8a8a604051610363959493929190610fa3565b60405180910390a4505050505050505050565b33610380816107f6565b50858773ffffffffffffffffffffffffffffffffffffffff168a73ffffffffffffffffffffffffffffffffffffffff167f24eb4b3ed711873687e910758f75270c9463ed43b0ed071bdd590a4300bcd88e8b898989896040516103e7959493929190610ff6565b60405180910390a4505050505050505050565b33610404816107f6565b508473ffffffffffffffffffffffffffffffffffffffff16868a73ffffffffffffffffffffffffffffffffffffffff167f9508ec25b144da066199b5989b94395f140d3fa4b4b89d9d1fe759b3a56207818b8b89898960405161046b959493929190611058565b60405180910390a4505050505050505050565b33610488816107f6565b50828573ffffffffffffffffffffffffffffffffffffffff168973ffffffffffffffffffffffffffffffffffffffff167fd9aab4ab40bdf963884f8195430dfa8cfb4f612db68e77014f08b1572104386d8a8a89886040516104ed9493929190610f2f565b60405180910390a45050505050505050565b33610509816107f6565b508473ffffffffffffffffffffffffffffffffffffffff16868a73ffffffffffffffffffffffffffffffffffffffff167fff4bb47ee7dfdeaa91aa6bb72cb414f4a5417cb8b7856c50518377140a76f84f8b8b898989604051610570959493929190610edc565b60405180910390a4505050505050505050565b3361058d816107f6565b50848673ffffffffffffffffffffffffffffffffffffffff168873ffffffffffffffffffffffffffffffffffffffff167f9ae6f0a8ca0d7d683b3c09bd0ae5753f0e32122471cfd78314043b23098a6c248787876040516105f0939291906110ab565b60405180910390a450505050505050565b3361060b816107f6565b50848673ffffffffffffffffffffffffffffffffffffffff168873ffffffffffffffffffffffffffffffffffffffff167f61f5631971566b3768bafba61e9d2a9b41fcffa03bd2a2c2226c2187b9d4fbb487878760405161066e939291906110ab565b60405180910390a450505050505050565b33610689816107f6565b50828473ffffffffffffffffffffffffffffffffffffffff168873ffffffffffffffffffffffffffffffffffffffff167f7569a47fcb55a5f63c8124400d576611f2035190cb270c5d6f9d3fdfc020be468989876040516106ec939291906110ab565b60405180910390a450505050505050565b33610707816107f6565b50848673ffffffffffffffffffffffffffffffffffffffff168873ffffffffffffffffffffffffffffffffffffffff167f2babdf2515139b15f37dbc4b16e25fe27d46327703abc50cd73c7acb5369e3cc87878760405161076a939291906110ab565b60405180910390a450505050505050565b33610785816107f6565b50828473ffffffffffffffffffffffffffffffffffffffff168773ffffffffffffffffffffffffffffffffffffffff167f34d6b4d35fa401c6a7d3efae588ddd17d510ceb459bf4af495f1498706fd44c188866040516107e69291906110e2565b60405180910390a4505050505050565b60008060008373ffffffffffffffffffffffffffffffffffffffff166040516024016040516020818303038152906040527fc51a29e0000000000000000000000000000000000000000000000000000000007bffffffffffffffffffffffffffffffffffffffffffffffffffffffff19166020820180517bffffffffffffffffffffffffffffffffffffffffffffffffffffffff83818316178352505050506040516108a29190611185565b6000604051808303816000865af19150503d80600081146108df576040519150601f19603f3d011682016040523d82523d6000602084013e6108e4565b606091505b509150915081610929576040517f08c379a00000000000000000000000000000000000000000000000000000000081526004016109209061121f565b60405180910390fd5b8080602001905181019061093d9190611264565b92505050919050565b600080fd5b600073ffffffffffffffffffffffffffffffffffffffff82169050919050565b60006109768261094b565b9050919050565b6109868161096b565b811461099157600080fd5b50565b6000813590506109a38161097d565b92915050565b6000819050919050565b6109bc816109a9565b81146109c757600080fd5b50565b6000813590506109d9816109b3565b92915050565b600080600080600080600080610100898b031215610a00576109ff610946565b5b6000610a0e8b828c01610994565b9850506020610a1f8b828c01610994565b9750506040610a308b828c01610994565b9650506060610a418b828c016109ca565b9550506080610a528b828c01610994565b94505060a0610a638b828c016109ca565b93505060c0610a748b828c016109ca565b92505060e0610a858b828c016109ca565b9150509295985092959890939650565b60008060008060008060c08789031215610ab257610ab1610946565b5b6000610ac089828a01610994565b9650506020610ad189828a01610994565b9550506040610ae289828a016109ca565b9450506060610af389828a01610994565b9350506080610b0489828a016109ca565b92505060a0610b1589828a016109ca565b9150509295509295509295565b60068110610b2f57600080fd5b50565b600081359050610b4181610b22565b92915050565b600080600080600080600080610100898b031215610b6857610b67610946565b5b6000610b768b828c01610994565b9850506020610b878b828c01610994565b9750506040610b988b828c01610994565b9650506060610ba98b828c016109ca565b9550506080610bba8b828c016109ca565b94505060a0610bcb8b828c01610994565b93505060c0610bdc8b828c016109ca565b92505060e0610bed8b828c01610b32565b9150509295985092959890939650565b600080600080600080600080610100898b031215610c1e57610c1d610946565b5b6000610c2c8b828c01610994565b9850506020610c3d8b828c01610994565b9750506040610c4e8b828c01610994565b9650506060610c5f8b828c016109ca565b9550506080610c708b828c016109ca565b94505060a0610c818b828c016109ca565b93505060c0610c928b828c016109ca565b92505060e0610ca38b828c016109ca565b9150509295985092959890939650565b60008115159050919050565b610cc881610cb3565b8114610cd357600080fd5b50565b600081359050610ce581610cbf565b92915050565b600080600080600080600080610100898b031215610d0c57610d0b610946565b5b6000610d1a8b828c01610994565b9850506020610d2b8b828c01610994565b9750506040610d3c8b828c01610994565b9650506060610d4d8b828c016109ca565b9550506080610d5e8b828c01610994565b94505060a0610d6f8b828c016109ca565b93505060c0610d808b828c016109ca565b92505060e0610d918b828c01610cd6565b9150509295985092959890939650565b600080600080600080600060e0888a031215610dc057610dbf610946565b5b6000610dce8a828b01610994565b9750506020610ddf8a828b01610994565b9650506040610df08a828b016109ca565b9550506060610e018a828b01610994565b9450506080610e128a828b01610994565b93505060a0610e238a828b016109ca565b92505060c0610e348a828b016109ca565b91505092959891949750929550565b600080600080600060a08688031215610e5f57610e5e610946565b5b6000610e6d88828901610994565b9550506020610e7e88828901610994565b9450506040610e8f88828901610994565b9350506060610ea0888289016109ca565b9250506080610eb1888289016109ca565b9150509295509295909350565b610ec78161096b565b82525050565b610ed6816109a9565b82525050565b600060a082019050610ef16000830188610ebe565b610efe6020830187610ebe565b610f0b6040830186610ecd565b610f186060830185610ecd565b610f256080830184610ecd565b9695505050505050565b6000608082019050610f446000830187610ebe565b610f516020830186610ecd565b610f5e6040830185610ebe565b610f6b6060830184610ecd565b95945050505050565b7f4e487b7100000000000000000000000000000000000000000000000000000000600052602160045260246000fd5b600060a082019050610fb86000830188610ebe565b610fc56020830187610ebe565b610fd26040830186610ecd565b610fdf6060830185610ebe565b610fec6080830184610ecd565b9695505050505050565b600060a08201905061100b6000830188610ebe565b6110186020830187610ecd565b6110256040830186610ecd565b6110326060830185610ecd565b61103f6080830184610ecd565b9695505050505050565b61105281610cb3565b82525050565b600060a08201905061106d6000830188610ebe565b61107a6020830187610ebe565b6110876040830186610ecd565b6110946060830185610ecd565b6110a16080830184611049565b9695505050505050565b60006060820190506110c06000830186610ebe565b6110cd6020830185610ecd565b6110da6040830184610ecd565b949350505050565b60006040820190506110f76000830185610ebe565b6111046020830184610ecd565b9392505050565b600081519050919050565b600081905092915050565b60005b8381101561113f578082015181840152602081019050611124565b8381111561114e576000848401525b50505050565b600061115f8261110b565b6111698185611116565b9350611179818560208601611121565b80840191505092915050565b60006111918284611154565b915081905092915050565b600082825260208201905092915050565b7f556e61626c6520746f2064657465726d696e652074686520636f6e747261637460008201527f2074797065210000000000000000000000000000000000000000000000000000602082015250565b600061120960268361119c565b9150611214826111ad565b604082019050919050565b60006020820190508181036000830152611238816111fc565b9050919050565b6003811061124c57600080fd5b50565b60008151905061125e8161123f565b92915050565b60006020828403121561127a57611279610946565b5b60006112888482850161124f565b9150509291505056fea264697066735822122055f82d7e9b0d7289634c73c26dbad542149329bd9be5dee45b8d2737876944d964736f6c63430008080033",
+  "deployedBytecode": "0x608060405234801561001057600080fd5b50600436106100b45760003560e01c8063917e705811610071578063917e705814610161578063a02cc9571461017d578063ae69121c14610199578063be86097e146101b5578063d3b63be8146101d1578063e08ea11a146101ed576100b4565b806318f6b768146100b95780631b5f9c3f146100d55780632eca920f146100f15780632f7a085b1461010d57806379cb66b9146101295780638dcf508d14610145575b600080fd5b6100d360048036038101906100ce91906109df565b610209565b005b6100ef60048036038101906100ea9190610a95565b61028d565b005b61010b60048036038101906101069190610b47565b6102f6565b005b61012760048036038101906101229190610bfd565b610376565b005b610143600480360381019061013e9190610ceb565b6103fa565b005b61015f600480360381019061015a9190610da1565b61047e565b005b61017b600480360381019061017691906109df565b6104ff565b005b61019760048036038101906101929190610a95565b610583565b005b6101b360048036038101906101ae9190610a95565b610601565b005b6101cf60048036038101906101ca9190610a95565b61067f565b005b6101eb60048036038101906101e69190610a95565b6106fd565b005b61020760048036038101906102029190610e43565b61077b565b005b33610213816107f6565b508473ffffffffffffffffffffffffffffffffffffffff16868a73ffffffffffffffffffffffffffffffffffffffff167fc2a076433ad22c84f267eeffa04dc73052536776a7d487430ed7a2c4a4677d648b8b89898960405161027a959493929190610edc565b60405180910390a4505050505050505050565b33610297816107f6565b50828773ffffffffffffffffffffffffffffffffffffffff167f35033a0586b2eb3fcd9bb02fcf12cd8bfa21ac20a855963258fdb987f009367c888888876040516102e59493929190610f2f565b60405180910390a350505050505050565b33610300816107f6565b5081600581111561031457610313610f74565b5b868a73ffffffffffffffffffffffffffffffffffffffff167fc5afeb842b1ee0a786f0181fd50d600ada6f7182ac63862b96f7f442770648b28b8b8a8a8a604051610363959493929190610fa3565b60405180910390a4505050505050505050565b33610380816107f6565b50858773ffffffffffffffffffffffffffffffffffffffff168a73ffffffffffffffffffffffffffffffffffffffff167f24eb4b3ed711873687e910758f75270c9463ed43b0ed071bdd590a4300bcd88e8b898989896040516103e7959493929190610ff6565b60405180910390a4505050505050505050565b33610404816107f6565b508473ffffffffffffffffffffffffffffffffffffffff16868a73ffffffffffffffffffffffffffffffffffffffff167f9508ec25b144da066199b5989b94395f140d3fa4b4b89d9d1fe759b3a56207818b8b89898960405161046b959493929190611058565b60405180910390a4505050505050505050565b33610488816107f6565b50828573ffffffffffffffffffffffffffffffffffffffff168973ffffffffffffffffffffffffffffffffffffffff167fd9aab4ab40bdf963884f8195430dfa8cfb4f612db68e77014f08b1572104386d8a8a89886040516104ed9493929190610f2f565b60405180910390a45050505050505050565b33610509816107f6565b508473ffffffffffffffffffffffffffffffffffffffff16868a73ffffffffffffffffffffffffffffffffffffffff167fff4bb47ee7dfdeaa91aa6bb72cb414f4a5417cb8b7856c50518377140a76f84f8b8b898989604051610570959493929190610edc565b60405180910390a4505050505050505050565b3361058d816107f6565b50848673ffffffffffffffffffffffffffffffffffffffff168873ffffffffffffffffffffffffffffffffffffffff167f9ae6f0a8ca0d7d683b3c09bd0ae5753f0e32122471cfd78314043b23098a6c248787876040516105f0939291906110ab565b60405180910390a450505050505050565b3361060b816107f6565b50848673ffffffffffffffffffffffffffffffffffffffff168873ffffffffffffffffffffffffffffffffffffffff167f61f5631971566b3768bafba61e9d2a9b41fcffa03bd2a2c2226c2187b9d4fbb487878760405161066e939291906110ab565b60405180910390a450505050505050565b33610689816107f6565b50828473ffffffffffffffffffffffffffffffffffffffff168873ffffffffffffffffffffffffffffffffffffffff167f7569a47fcb55a5f63c8124400d576611f2035190cb270c5d6f9d3fdfc020be468989876040516106ec939291906110ab565b60405180910390a450505050505050565b33610707816107f6565b50848673ffffffffffffffffffffffffffffffffffffffff168873ffffffffffffffffffffffffffffffffffffffff167f2babdf2515139b15f37dbc4b16e25fe27d46327703abc50cd73c7acb5369e3cc87878760405161076a939291906110ab565b60405180910390a450505050505050565b33610785816107f6565b50828473ffffffffffffffffffffffffffffffffffffffff168773ffffffffffffffffffffffffffffffffffffffff167f34d6b4d35fa401c6a7d3efae588ddd17d510ceb459bf4af495f1498706fd44c188866040516107e69291906110e2565b60405180910390a4505050505050565b60008060008373ffffffffffffffffffffffffffffffffffffffff166040516024016040516020818303038152906040527fc51a29e0000000000000000000000000000000000000000000000000000000007bffffffffffffffffffffffffffffffffffffffffffffffffffffffff19166020820180517bffffffffffffffffffffffffffffffffffffffffffffffffffffffff83818316178352505050506040516108a29190611185565b6000604051808303816000865af19150503d80600081146108df576040519150601f19603f3d011682016040523d82523d6000602084013e6108e4565b606091505b509150915081610929576040517f08c379a00000000000000000000000000000000000000000000000000000000081526004016109209061121f565b60405180910390fd5b8080602001905181019061093d9190611264565b92505050919050565b600080fd5b600073ffffffffffffffffffffffffffffffffffffffff82169050919050565b60006109768261094b565b9050919050565b6109868161096b565b811461099157600080fd5b50565b6000813590506109a38161097d565b92915050565b6000819050919050565b6109bc816109a9565b81146109c757600080fd5b50565b6000813590506109d9816109b3565b92915050565b600080600080600080600080610100898b031215610a00576109ff610946565b5b6000610a0e8b828c01610994565b9850506020610a1f8b828c01610994565b9750506040610a308b828c01610994565b9650506060610a418b828c016109ca565b9550506080610a528b828c01610994565b94505060a0610a638b828c016109ca565b93505060c0610a748b828c016109ca565b92505060e0610a858b828c016109ca565b9150509295985092959890939650565b60008060008060008060c08789031215610ab257610ab1610946565b5b6000610ac089828a01610994565b9650506020610ad189828a01610994565b9550506040610ae289828a016109ca565b9450506060610af389828a01610994565b9350506080610b0489828a016109ca565b92505060a0610b1589828a016109ca565b9150509295509295509295565b60068110610b2f57600080fd5b50565b600081359050610b4181610b22565b92915050565b600080600080600080600080610100898b031215610b6857610b67610946565b5b6000610b768b828c01610994565b9850506020610b878b828c01610994565b9750506040610b988b828c01610994565b9650506060610ba98b828c016109ca565b9550506080610bba8b828c016109ca565b94505060a0610bcb8b828c01610994565b93505060c0610bdc8b828c016109ca565b92505060e0610bed8b828c01610b32565b9150509295985092959890939650565b600080600080600080600080610100898b031215610c1e57610c1d610946565b5b6000610c2c8b828c01610994565b9850506020610c3d8b828c01610994565b9750506040610c4e8b828c01610994565b9650506060610c5f8b828c016109ca565b9550506080610c708b828c016109ca565b94505060a0610c818b828c016109ca565b93505060c0610c928b828c016109ca565b92505060e0610ca38b828c016109ca565b9150509295985092959890939650565b60008115159050919050565b610cc881610cb3565b8114610cd357600080fd5b50565b600081359050610ce581610cbf565b92915050565b600080600080600080600080610100898b031215610d0c57610d0b610946565b5b6000610d1a8b828c01610994565b9850506020610d2b8b828c01610994565b9750506040610d3c8b828c01610994565b9650506060610d4d8b828c016109ca565b9550506080610d5e8b828c01610994565b94505060a0610d6f8b828c016109ca565b93505060c0610d808b828c016109ca565b92505060e0610d918b828c01610cd6565b9150509295985092959890939650565b600080600080600080600060e0888a031215610dc057610dbf610946565b5b6000610dce8a828b01610994565b9750506020610ddf8a828b01610994565b9650506040610df08a828b016109ca565b9550506060610e018a828b01610994565b9450506080610e128a828b01610994565b93505060a0610e238a828b016109ca565b92505060c0610e348a828b016109ca565b91505092959891949750929550565b600080600080600060a08688031215610e5f57610e5e610946565b5b6000610e6d88828901610994565b9550506020610e7e88828901610994565b9450506040610e8f88828901610994565b9350506060610ea0888289016109ca565b9250506080610eb1888289016109ca565b9150509295509295909350565b610ec78161096b565b82525050565b610ed6816109a9565b82525050565b600060a082019050610ef16000830188610ebe565b610efe6020830187610ebe565b610f0b6040830186610ecd565b610f186060830185610ecd565b610f256080830184610ecd565b9695505050505050565b6000608082019050610f446000830187610ebe565b610f516020830186610ecd565b610f5e6040830185610ebe565b610f6b6060830184610ecd565b95945050505050565b7f4e487b7100000000000000000000000000000000000000000000000000000000600052602160045260246000fd5b600060a082019050610fb86000830188610ebe565b610fc56020830187610ebe565b610fd26040830186610ecd565b610fdf6060830185610ebe565b610fec6080830184610ecd565b9695505050505050565b600060a08201905061100b6000830188610ebe565b6110186020830187610ecd565b6110256040830186610ecd565b6110326060830185610ecd565b61103f6080830184610ecd565b9695505050505050565b61105281610cb3565b82525050565b600060a08201905061106d6000830188610ebe565b61107a6020830187610ebe565b6110876040830186610ecd565b6110946060830185610ecd565b6110a16080830184611049565b9695505050505050565b60006060820190506110c06000830186610ebe565b6110cd6020830185610ecd565b6110da6040830184610ecd565b949350505050565b60006040820190506110f76000830185610ebe565b6111046020830184610ecd565b9392505050565b600081519050919050565b600081905092915050565b60005b8381101561113f578082015181840152602081019050611124565b8381111561114e576000848401525b50505050565b600061115f8261110b565b6111698185611116565b9350611179818560208601611121565b80840191505092915050565b60006111918284611154565b915081905092915050565b600082825260208201905092915050565b7f556e61626c6520746f2064657465726d696e652074686520636f6e747261637460008201527f2074797065210000000000000000000000000000000000000000000000000000602082015250565b600061120960268361119c565b9150611214826111ad565b604082019050919050565b60006020820190508181036000830152611238816111fc565b9050919050565b6003811061124c57600080fd5b50565b60008151905061125e8161123f565b92915050565b60006020828403121561127a57611279610946565b5b60006112888482850161124f565b9150509291505056fea264697066735822122055f82d7e9b0d7289634c73c26dbad542149329bd9be5dee45b8d2737876944d964736f6c63430008080033",
+  "devdoc": {
+    "kind": "dev",
+    "methods": {},
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {},
+    "version": 1
+  },
+  "storageLayout": {
+    "storage": [],
+    "types": null
+  }
+}

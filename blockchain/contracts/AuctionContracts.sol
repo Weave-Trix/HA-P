@@ -5,12 +5,8 @@ import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 import "@chainlink/contracts/src/v0.8/KeeperCompatible.sol";
 import "../libraries/AuctionUtility.sol";
 
-error AuctionManager_BiddingAuctionNotFound();
-error AuctionManager_PendingPaymentAuctionNotFound();
-error AuctionManager_VerifyWinnerAuctionNotFound();
-error AuctionManager_PendingAuditAuctionNotFound();
-
 error AuctionRegistry_RestrictedOwnerAccess();
+error AuctionRegistry_RestrictedContractFactoryAccess();
 error AuctionRegistry__RestrictedManagerAccess();
 error AuctionRegistry__AuctionOngoing();
 
@@ -20,6 +16,9 @@ error Auction_RestrictedWinnerPaymentAccess();
 error Auction_SelfBiddingIsNotAllowed();
 error Auction_NoProceeds();
 error Auction_UnauthorizedAccess();
+
+error ContractFactory__RestrictedManagerAccess();
+error ContractFactory_RestrictedOwnerAccess();
 
 /*
 1. Seller can register a new vehicle by minting a vehicle NFT
@@ -36,22 +35,28 @@ contract ContractFactory {
     AuctionManager private auctionManager;
     AuctionRegistry private auctionRegistry;
 
-    constructor() {
+    constructor(address _auctionRegistryAddress) {
         owner = msg.sender;
+        auctionRegistryAddress = _auctionRegistryAddress;
+        auctionRegistry = AuctionRegistry(_auctionRegistryAddress);
     }
 
     modifier onlyOwner() {
         if (msg.sender != owner) {
-            revert AuctionRegistry_RestrictedOwnerAccess();
+            revert ContractFactory_RestrictedOwnerAccess();
         }
         _;
     }
 
     modifier onlyAuctionManager() {
         if (msg.sender != auctionManagerAddress) {
-            revert AuctionRegistry__RestrictedManagerAccess();
+            revert ContractFactory__RestrictedManagerAccess();
         }
         _;
+    }
+
+    function getContractType() public pure returns (Constants.ContractType) {
+        return Constants.ContractType.CONTRACT_FACTORY;
     }
 
     function setAuctionManagerAddress(address _auctionManagerAddress)
@@ -78,6 +83,7 @@ contract ContractFactory {
             _nftAddress,
             _tokenId
         );
+
         auctionRegistry.registerAuction(
             _nftAddress,
             _tokenId,
@@ -88,7 +94,11 @@ contract ContractFactory {
 
 contract EventEmitter {
     modifier onlyAuction(address _senderAddress) {
-        AuctionUtility.getContractType(_senderAddress);
+        require(
+            (AuctionUtility.getContractType(_senderAddress) ==
+                Constants.ContractType.AUCTION),
+            "eventEmit can only be called by Auction"
+        );
         _;
     }
 
@@ -217,7 +227,7 @@ contract EventEmitter {
         address _nftAddress,
         uint256 _tokenId,
         uint256 _registerTime
-    ) public onlyAuction(msg.sender) {
+    ) public {
         emit AuctionRegistered(
             _auction,
             _seller,
@@ -473,6 +483,16 @@ contract AuctionRegistry {
         _;
     }
 
+    modifier onlyContractFactory() {
+        if (
+            AuctionUtility.getContractType(msg.sender) !=
+            Constants.ContractType.CONTRACT_FACTORY
+        ) {
+            revert AuctionRegistry_RestrictedContractFactoryAccess();
+        }
+        _;
+    }
+
     modifier onlyAuctionInactive(
         address _nftAddress,
         uint256 _tokenId,
@@ -482,11 +502,11 @@ contract AuctionRegistry {
         // create interface of Auction.sol
         Auction auction = Auction(_auctionAddress);
         // call Auction.getEventState();
-        if (
-            (!(auctionListings[_nftAddress][_tokenId] == address(0x0)) || !(auction.inClosedState()))
-        ) {
-            revert AuctionRegistry__AuctionOngoing();
-        }
+        require(
+            auctionListings[_nftAddress][_tokenId] == address(0x0) ||
+                !auction.inClosedState(),
+            "Duplicate auction for the vehicle is active!"
+        );
         _;
     }
 
@@ -508,7 +528,7 @@ contract AuctionRegistry {
         address _auctionAddress
     )
         public
-        onlyAuctionManager
+        onlyContractFactory
         onlyAuctionInactive(_nftAddress, _tokenId, _auctionAddress)
     {
         // if NFT id not in map, store the NFT -> address mapping
@@ -714,11 +734,15 @@ contract AuctionManager {
                 Constants.ContractType.AUCTION
         );
         // TODO: to be called when bidding end time reached (by keepers)
-        uint auctionIndex = searchBiddingAuction(_auctionAddress);
-        for (uint i = auctionIndex; i < biddingAuctions.length - 1; i++) {
-            biddingAuctions[i] = biddingAuctions[i + 1];
+        uint auctionIndex;
+        int searchResult = searchBiddingAuction(_auctionAddress);
+        if (searchResult >= 0) {
+            auctionIndex = uint(searchResult);
+            for (uint i = auctionIndex; i < biddingAuctions.length - 1; i++) {
+                biddingAuctions[i] = biddingAuctions[i + 1];
+            }
+            biddingAuctions.pop();
         }
-        biddingAuctions.pop();
     }
 
     function addVerifyWinnerAuction(address _auctionAddress) public {
@@ -736,11 +760,19 @@ contract AuctionManager {
                 Constants.ContractType.AUCTION
         );
         // TODO: to be called when winner paid (by Auction.payFullSettlement()) / payment expiry time reached (by keepers)
-        uint auctionIndex = searchVerifyWInnerAuction(_auctionAddress);
-        for (uint i = auctionIndex; i < verifyWinnerAuctions.length - 1; i++) {
-            verifyWinnerAuctions[i] = verifyWinnerAuctions[i + 1];
+        uint auctionIndex;
+        int searchResult = searchVerifyWinnerAuction(_auctionAddress);
+        if (searchResult >= 0) {
+            auctionIndex = uint(searchResult);
+            for (
+                uint i = auctionIndex;
+                i < verifyWinnerAuctions.length - 1;
+                i++
+            ) {
+                verifyWinnerAuctions[i] = verifyWinnerAuctions[i + 1];
+            }
+            verifyWinnerAuctions.pop();
         }
-        verifyWinnerAuctions.pop();
     }
 
     function addPendingPaymentAuction(address _auctionAddress) public {
@@ -776,27 +808,27 @@ contract AuctionManager {
     function searchBiddingAuction(address _auctionAddress)
         public
         view
-        returns (uint)
+        returns (int)
     {
         for (uint i = 0; i < uint(biddingAuctions.length); i++) {
             if (biddingAuctions[i] == _auctionAddress) {
-                return uint(i);
+                return int(i);
             }
         }
-        revert AuctionManager_BiddingAuctionNotFound();
+        return -1;
     }
 
-    function searchVerifyWInnerAuction(address _auctionAddress)
+    function searchVerifyWinnerAuction(address _auctionAddress)
         public
         view
-        returns (uint)
+        returns (int)
     {
         for (uint i = 0; i < uint(verifyWinnerAuctions.length); i++) {
             if (verifyWinnerAuctions[i] == _auctionAddress) {
-                return uint(i);
+                return int(i);
             }
         }
-        revert AuctionManager_VerifyWinnerAuctionNotFound();
+        return -1;
     }
 
     function searchPendingPaymentAuction(address _auctionAddress)
@@ -809,7 +841,7 @@ contract AuctionManager {
                 return int(i);
             }
         }
-        revert AuctionManager_PendingPaymentAuctionNotFound();
+        return -1;
     }
 }
 
@@ -843,10 +875,10 @@ contract Auction {
 
     address public nftAddress;
     uint256 public tokenId;
-    address private immutable auctionKeeperAddress;
-    address private immutable auctionManagerAddress;
-    AuctionManager private immutable auctionManager;
-    EventEmitter private immutable eventEmitter;
+    address private auctionKeeperAddress;
+    address private auctionManagerAddress;
+    AuctionManager private auctionManager;
+    EventEmitter private eventEmitter;
     address payable public seller;
     uint128 public depositUSD = 1;
     uint256 public depositWei;
@@ -893,7 +925,7 @@ contract Auction {
             _seller,
             _nftAddress,
             _tokenId,
-            getBlockTime()
+            block.timestamp
         );
     }
 

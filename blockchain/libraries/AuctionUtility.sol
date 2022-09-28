@@ -57,7 +57,8 @@ library Constants {
     enum ContractType {
         AUCTION,
         AUCTION_MANAGER,
-        AUCTION_REGISTRY
+        AUCTION_REGISTRY,
+        CONTRACT_FACTORY
     }
 
     enum AuctionEndState {
