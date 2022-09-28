@@ -30,13 +30,44 @@ error Auction_UnauthorizedAccess();
 5. Chainlink Oracle is needed to fetch the latest usd -> eth rate
 */
 contract ContractFactory {
+    address public immutable owner;
+    address public auctionManagerAddress;
+    address public auctionRegistryAddress;
+    AuctionManager private auctionManager;
+    AuctionRegistry private auctionRegistry;
+
+    constructor() {
+        owner = msg.sender;
+    }
+
+    modifier onlyOwner() {
+        if (msg.sender != owner) {
+            revert AuctionRegistry_RestrictedOwnerAccess();
+        }
+        _;
+    }
+
+    modifier onlyAuctionManager() {
+        if (msg.sender != auctionManagerAddress) {
+            revert AuctionRegistry__RestrictedManagerAccess();
+        }
+        _;
+    }
+
+    function setAuctionManagerAddress(address _auctionManagerAddress)
+        public
+        onlyOwner
+    {
+        auctionManagerAddress = _auctionManagerAddress;
+        auctionManager = AuctionManager(auctionManagerAddress);
+    }
+
     function createAuction(
         address _nftAddress,
         uint256 _tokenId,
         address _eventEmitterAddress,
-        address _auctionKeeperAddress,
-        address _auctionRegistryAddress
-    ) public {
+        address _auctionKeeperAddress
+    ) public onlyAuctionManager {
         // call AuctionRegistry, register auction
         // create Auction contract
         Auction newAuctionInstance = new Auction(
@@ -46,9 +77,6 @@ contract ContractFactory {
             _auctionKeeperAddress,
             _nftAddress,
             _tokenId
-        );
-        AuctionRegistry auctionRegistry = AuctionRegistry(
-            _auctionRegistryAddress
         );
         auctionRegistry.registerAuction(
             _nftAddress,
@@ -455,8 +483,7 @@ contract AuctionRegistry {
         Auction auction = Auction(_auctionAddress);
         // call Auction.getEventState();
         if (
-            !(auction.inClosedState() ||
-                (auctionListings[_nftAddress][_tokenId] == address(0x0)))
+            (!(auctionListings[_nftAddress][_tokenId] == address(0x0)) || !(auction.inClosedState()))
         ) {
             revert AuctionRegistry__AuctionOngoing();
         }
@@ -497,9 +524,8 @@ contract AuctionKeeper is KeeperCompatibleInterface {
     address public auctionManagerAddress;
     AuctionManager private auctionManager;
 
-    constructor(address _auctionManagerAddress) {
+    constructor() {
         owner = msg.sender;
-        auctionManager = AuctionManager(_auctionManagerAddress);
     }
 
     modifier onlyOwner() {
@@ -649,8 +675,7 @@ contract AuctionManager {
             _nftAddress,
             _tokenId,
             eventEmitterAddress,
-            auctionKeeperAddress,
-            auctionRegistryAddress
+            auctionKeeperAddress
         );
     }
 

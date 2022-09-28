@@ -5,7 +5,13 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 
-contract VOC is ERC721, ERC721Burnable {
+contract VehicleNft is ERC721, ERC721Burnable {
+    constructor(string memory _name, string memory _symbol)
+        ERC721(_name, _symbol)
+    {
+        authority = msg.sender;
+    }
+
     modifier onlyAuthority() {
         require(msg.sender == authority, "Unauthorized function access!");
         _;
@@ -38,12 +44,6 @@ contract VOC is ERC721, ERC721Burnable {
     Counters.Counter private _tokenIds;
     mapping(uint256 => string) private tokenIdToTokenUri;
     mapping(string => bool) private chassisNumToBool;
-
-    constructor(string memory _name, string memory _symbol)
-        ERC721(_name, _symbol)
-    {
-        authority = msg.sender;
-    }
 
     function registerVehicle(
         address _owner,

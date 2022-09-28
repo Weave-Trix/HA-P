@@ -3,16 +3,22 @@ pragma solidity ^0.8.8;
 import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 
 library AuctionUtility {
-    function getWeiPerUsdRate() public view returns (uint256) {
+    function getWeiPerUsdRate() internal view returns (uint256) {
+        // for testnet
+        /*
         AggregatorV3Interface priceFeed = AggregatorV3Interface(
             0xD4a33860578De61DBAbDc8BFdb98FD742fA7028e
         );
         (, int256 price, , , ) = priceFeed.latestRoundData(); // WeiPerUsd (in 8 decimals)
+        */
+        // for local network
+        int256 price = 132102000000;
+
         return uint256(price * 1e10);
     }
 
     function convertWeiToUsd(uint256 p_weiAmount)
-        public
+        internal
         view
         returns (uint256)
     {
@@ -22,7 +28,7 @@ library AuctionUtility {
     }
 
     function convertUsdToWei(uint256 p_usdAmount)
-        public
+        internal
         view
         returns (uint256)
     {
@@ -31,12 +37,12 @@ library AuctionUtility {
         return weiEquivalent;
     }
 
-    function hourToSec(uint inHours) public pure returns (uint256 inMinutes) {
+    function hourToSec(uint inHours) internal pure returns (uint256 inMinutes) {
         return (inHours * 60 * 60);
     }
 
     function getContractType(address _contractAddress)
-        public
+        internal
         returns (Constants.ContractType)
     {
         (bool success, bytes memory data) = _contractAddress.call(
