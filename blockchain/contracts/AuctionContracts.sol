@@ -68,6 +68,7 @@ contract ContractFactory {
     }
 
     function createAuction(
+        address _seller,
         address _nftAddress,
         uint256 _tokenId,
         address _eventEmitterAddress,
@@ -76,14 +77,14 @@ contract ContractFactory {
         // call AuctionRegistry, register auction
         // create Auction contract
         Auction newAuctionInstance = new Auction(
-            msg.sender,
-            address(this),
+            _seller,
+            auctionManagerAddress,
             _eventEmitterAddress,
             _auctionKeeperAddress,
             _nftAddress,
             _tokenId
         );
-
+        
         auctionRegistry.registerAuction(
             _nftAddress,
             _tokenId,
@@ -484,10 +485,7 @@ contract AuctionRegistry {
     }
 
     modifier onlyContractFactory() {
-        if (
-            AuctionUtility.getContractType(msg.sender) !=
-            Constants.ContractType.CONTRACT_FACTORY
-        ) {
+        if (AuctionUtility.getContractType(msg.sender) != Constants.ContractType.CONTRACT_FACTORY) {
             revert AuctionRegistry_RestrictedContractFactoryAccess();
         }
         _;
@@ -502,11 +500,7 @@ contract AuctionRegistry {
         // create interface of Auction.sol
         Auction auction = Auction(_auctionAddress);
         // call Auction.getEventState();
-        require(
-            auctionListings[_nftAddress][_tokenId] == address(0x0) ||
-                !auction.inClosedState(),
-            "Duplicate auction for the vehicle is active!"
-        );
+        require(auctionListings[_nftAddress][_tokenId] == address(0x0) || (!auction.inClosedState() && !auction.inRegisteredState()), "Duplicate auction for the vehicle is active!");
         _;
     }
 
@@ -555,6 +549,10 @@ contract AuctionKeeper is KeeperCompatibleInterface {
         _;
     }
 
+        function getContractType() public pure returns (Constants.ContractType) {
+        return Constants.ContractType.AUCTION_KEEPER;
+    }
+
     function setAuctionManagerAddress(address _auctionManagerAddress)
         public
         onlyOwner
@@ -574,7 +572,7 @@ contract AuctionKeeper is KeeperCompatibleInterface {
                 .getBiddingAuctions();
             upkeepNeeded = false;
             performData = checkData;
-            for (uint i = 0; i < biddingAuctions.length - 1; i++) {
+            for (uint i = 0; i < biddingAuctions.length; i++) {
                 if (Auction(biddingAuctions[i]).getBidTimeLeft() == 0) {
                     upkeepNeeded = true;
                 }
@@ -587,7 +585,7 @@ contract AuctionKeeper is KeeperCompatibleInterface {
                 .getVerifyWinnerAuctions();
             upkeepNeeded = false;
             performData = checkData;
-            for (uint i = 0; i < verifyWinnerAuctions.length - 1; i++) {
+            for (uint i = 0; i < verifyWinnerAuctions.length; i++) {
                 if (Auction(verifyWinnerAuctions[i]).getVerifyTimeLeft() == 0) {
                     upkeepNeeded = true;
                 }
@@ -600,7 +598,7 @@ contract AuctionKeeper is KeeperCompatibleInterface {
                 .getPendingPaymentAuctions();
             upkeepNeeded = false;
             performData = checkData;
-            for (uint i = 0; i < pendingPaymentAuctions.length - 1; i++) {
+            for (uint i = 0; i < pendingPaymentAuctions.length; i++) {
                 if (
                     Auction(pendingPaymentAuctions[i]).getPaymentTimeLeft() == 0
                 ) {
@@ -614,7 +612,7 @@ contract AuctionKeeper is KeeperCompatibleInterface {
     function performUpkeep(bytes calldata performData) external override {
         address[] memory biddingAuctions = auctionManager.getBiddingAuctions();
         if (keccak256(performData) == keccak256(hex"01")) {
-            for (uint i = 0; i < biddingAuctions.length - 1; i++) {
+            for (uint i = 0; i < biddingAuctions.length; i++) {
                 if (Auction(biddingAuctions[i]).getBidTimeLeft() == 0) {
                     Auction(biddingAuctions[i]).endBidding();
                 }
@@ -624,7 +622,7 @@ contract AuctionKeeper is KeeperCompatibleInterface {
         if (keccak256(performData) == keccak256(hex"02")) {
             address[] memory verifyWinnerAuctions = auctionManager
                 .getVerifyWinnerAuctions();
-            for (uint i = 0; i < verifyWinnerAuctions.length - 1; i++) {
+            for (uint i = 0; i < verifyWinnerAuctions.length; i++) {
                 if (Auction(verifyWinnerAuctions[i]).getVerifyTimeLeft() == 0) {
                     Auction(verifyWinnerAuctions[i]).verifyWinner(false);
                 }
@@ -634,7 +632,7 @@ contract AuctionKeeper is KeeperCompatibleInterface {
         if (keccak256(performData) == keccak256(hex"03")) {
             address[] memory pendingPaymentAuctions = auctionManager
                 .getPendingPaymentAuctions();
-            for (uint i = 0; i < pendingPaymentAuctions.length - 1; i++) {
+            for (uint i = 0; i < pendingPaymentAuctions.length; i++) {
                 if (
                     Auction(pendingPaymentAuctions[i]).getPaymentTimeLeft() == 0
                 ) {
@@ -692,6 +690,7 @@ contract AuctionManager {
             contractFactoryAddress
         );
         contractFactory.createAuction(
+            msg.sender,
             _nftAddress,
             _tokenId,
             eventEmitterAddress,
@@ -764,15 +763,11 @@ contract AuctionManager {
         int searchResult = searchVerifyWinnerAuction(_auctionAddress);
         if (searchResult >= 0) {
             auctionIndex = uint(searchResult);
-            for (
-                uint i = auctionIndex;
-                i < verifyWinnerAuctions.length - 1;
-                i++
-            ) {
+            for (uint i = auctionIndex; i < verifyWinnerAuctions.length - 1; i++) {
                 verifyWinnerAuctions[i] = verifyWinnerAuctions[i + 1];
             }
             verifyWinnerAuctions.pop();
-        }
+            }
     }
 
     function addPendingPaymentAuction(address _auctionAddress) public {
@@ -1028,8 +1023,8 @@ contract Auction {
 
     function startAuction(uint128 _durationSec, uint128 _startingBid) external {
         require(inRegisteredState(), "Auction not in Registered state!");
-        require(msg.sender == seller, "Start auction requires owner!");
-        require(_startingBid > 0, "Starting bid must be greater than 0 wei");
+        require(msg.sender == seller, "Requires owner!");
+        require(_startingBid > 0, "Start bid < 0!");
         bidStartTime = block.timestamp;
         bidEndTime = bidStartTime + _durationSec;
         durationSec = _durationSec;
@@ -1050,16 +1045,16 @@ contract Auction {
     }
 
     function endBidding() public {
-        require(inBiddingState(), "Auction not in StartedBidding state!");
+        require(inBiddingState(), "Illegal state!");
         require(
             block.timestamp >= bidEndTime,
-            "Auction has not reached end time yet!"
+            "Bid time > 0!"
         );
         if (highestBidder == address(0x0)) {
             closeAuction(Constants.AuctionEndState.NO_BIDDER);
         } else {
             currAuctionState = AuctionState.VERIFYING_WINNER;
-            verify_startTime = getBlockTime();
+            verify_startTime = block.timestamp;
             verify_expiryTime = verify_startTime + verify_duration;
             eventEmitter.emitAuctionVerifyingWinner(
                 address(this),
@@ -1071,20 +1066,20 @@ contract Auction {
                 verify_startTime,
                 verify_expiryTime
             );
+            auctionManager.addVerifyWinnerAuction(address(this));
         }
         auctionManager.removeBiddingAuction(address(this));
-        auctionManager.addVerifyWinnerAuction(address(this));
     }
 
     function verifyWinner(bool approveWinningBid) external onlySellerOrKeeper {
         // TODO: when timer's up, keepers call this function, verifyWinner(false)
-        require(inVerifyWinnerState(), "Auction not in VerifyingWinner state!");
+        require(inVerifyWinnerState(), "Illegal state!");
         require(
             getVerifyTimeLeft() > 0,
-            "Seller did not verify in given time!"
+            "Verify expired!"
         );
         if (approveWinningBid) {
-            payment_startTime = getBlockTime();
+            payment_startTime = block.timestamp;
             payment_expiryTime = payment_startTime + payment_duration;
             currAuctionState = AuctionState.PENDING_PAYMENT;
             eventEmitter.emitAuctionPendingPayment(
@@ -1107,13 +1102,28 @@ contract Auction {
 
     function closeAuction(Constants.AuctionEndState _endState) public {
         // can only be closed when the winner pays or the payment pending expired (chainlink keepers trigger)
-        require(
-            ((currAuctionState == AuctionState.PENDING_PAYMENT) &&
-                (msg.sender == highestBidder)) ||
-                (msg.sender == auctionManagerAddress) ||
-                (msg.sender == auctionKeeperAddress),
-            "Function not to be called manually!"
-        );
+        
+        if (_endState == Constants.AuctionEndState.NO_BIDDER) {
+            require(currAuctionState == AuctionState.BIDDING, "Illegal state transition!");
+            require(getBidTimeLeft() == 0, "auction still bidding!");
+            require(highestBidder == address(0x0), "closeAuction.NO_BIDDER must not have winner!");
+        } else if (_endState == Constants.AuctionEndState.REJECTED_BY_SELLER) {
+            require(currAuctionState == AuctionState.VERIFYING_WINNER, "illegal state transition!");
+            require(msg.sender == seller || AuctionUtility.getContractType(msg.sender) == Constants.ContractType.AUCTION_KEEPER, "closeAuction requires seller or keeper!");
+        } else if (_endState == Constants.AuctionEndState.PAYMENT_OVERDUE) {
+            require(currAuctionState == AuctionState.PENDING_PAYMENT, "illegal state transition!");
+            require(msg.sender == seller || AuctionUtility.getContractType(msg.sender) == Constants.ContractType.AUCTION_KEEPER, "closeAuction requires seller or keeper!");
+            require(winnerPaid == false, "winner already paid!");
+        } else if ((_endState == Constants.AuctionEndState.OWNERSHIP_TRANSFERRED) || (_endState == Constants.AuctionEndState.AUDIT_REJECTED)) {
+            require(currAuctionState == AuctionState.PENDING_AUDIT, "illegal state transition!");
+            require(msg.sender == nftAddress, "only Auditor");
+        } 
+        /*else if (_endState == Constants.AuctionEndState.CANCELED) {
+            require(currAuctionState == AuctionState.REGISTERED, "illegal state transition!");
+            require(msg.sender == seller, "only seller!");
+        }
+        */
+
         currAuctionState = AuctionState.AUCTION_CLOSED; // TODO: emit event
         auctionEndState = _endState;
         eventEmitter.emitAuctionClosed(
@@ -1121,7 +1131,7 @@ contract Auction {
             seller,
             nftAddress,
             tokenId,
-            getBlockTime(),
+            block.timestamp,
             highestBidder,
             highestBid,
             _endState
@@ -1132,14 +1142,14 @@ contract Auction {
     }
 
     function placeDeposit() external payable notForSeller {
-        require(inBiddingState(), "Auction not in StartedBidding state!");
+        require(inBiddingState(), "Illegal state!");
         require(
             (bidderToDeposits[msg.sender] == 0),
-            "You have already deposited!"
+            "Account deposited!"
         );
         require(
             (msg.value >= depositWei),
-            "Please pay the exact deposit amount!"
+            "Wrong deposit amount!"
         );
         bidderToDeposits[msg.sender] += uint128(msg.value);
         eventEmitter.emitAuctionDepositPlaced(
@@ -1148,19 +1158,20 @@ contract Auction {
             tokenId,
             msg.sender,
             msg.value,
-            getBlockTime()
+            block.timestamp
         );
     }
 
     function placeBid(uint256 _bidAmount) external notForSeller {
-        require(inBiddingState(), "Auction not in StartedBidding state!");
+        require(inBiddingState(), "Illegal state!");
+        require(getBidTimeLeft() > 0, "Bid ongoing!");
         require(
             (bidderToDeposits[msg.sender] >= depositWei),
-            "Please deposit before bidding!"
+            "Deposit required for bidding!"
         );
         require(
             _bidAmount > highestBid,
-            "Your bid is lower than the current highest bid!"
+            "Bid lower than highest bid!"
         );
 
         highestBid = _bidAmount;
@@ -1171,7 +1182,7 @@ contract Auction {
             tokenId,
             msg.sender,
             _bidAmount,
-            getBlockTime()
+            block.timestamp
         );
     }
 
@@ -1180,7 +1191,7 @@ contract Auction {
             ((msg.sender != highestBidder) ||
                 (msg.sender == highestBidder && winnerPaid == true) ||
                 (msg.sender == highestBidder && inClosedState())),
-            "You can only withdraw the deposit if you are not the highest bidder! or You won and paid for the full payment!"
+            "Cannot withdraw!"
         );
         // requires bidder to settle full payment for withdrawal (full payment only when the seller accepted the result)
         // requires bidder to not exceed the expiry date for full payment settlement
@@ -1195,14 +1206,14 @@ contract Auction {
             tokenId,
             msg.sender,
             depositBalance,
-            getBlockTime()
+            block.timestamp
         );
     }
 
     function payFullSettlement() external payable onlyWinnerPayment {
         require(
             (inPendingPaymentState()),
-            "Auction not in PendingPayment state!"
+            "Illegal state!"
         );
         require(
             (getPaymentTimeLeft() > 0),
@@ -1210,7 +1221,7 @@ contract Auction {
         );
         require(
             (msg.value == highestBid),
-            "Payment value must be equal to your winning bid!"
+            "Payment value != winning bid!"
         );
         require((!winnerPaid), "You have paid!");
         fullSettlement[seller] = msg.value;
@@ -1223,7 +1234,7 @@ contract Auction {
             msg.sender,
             seller,
             msg.value,
-            getBlockTime()
+            block.timestamp
         );
         currAuctionState = AuctionState.PENDING_AUDIT;
     }
@@ -1231,12 +1242,12 @@ contract Auction {
     function withdrawFullSettlement() external onlySeller {
         require(
             (currAuctionState != AuctionState.PENDING_AUDIT),
-            "Auction still pending for audit!"
+            "Pending for audit!"
         );
         require(
             (auctionEndState ==
                 Constants.AuctionEndState.OWNERSHIP_TRANSFERRED),
-            "Auction ownership not transferred!"
+            "Ownership not transferred!"
         );
         uint256 proceeds = fullSettlement[msg.sender];
         if (proceeds <= 0) {
@@ -1251,7 +1262,7 @@ contract Auction {
             tokenId,
             msg.sender,
             proceeds,
-            getBlockTime()
+            block.timestamp
         );
     }
 
@@ -1277,7 +1288,7 @@ contract Auction {
             tokenId,
             msg.sender,
             proceeds,
-            getBlockTime()
+            block.timestamp
         );
     }
 
@@ -1294,36 +1305,32 @@ contract Auction {
             tokenId,
             highestBidder,
             highestBid,
-            getBlockTime(),
+            block.timestamp,
             _valid
         );
     }
 
-    function getBlockTime() public view returns (uint256) {
-        return (block.timestamp);
-    }
-
     function getBidTimeLeft() public view returns (uint256) {
-        if (getBlockTime() > bidEndTime) {
+        if (block.timestamp > bidEndTime) {
             return 0;
         } else {
-            return (bidEndTime - getBlockTime());
+            return (bidEndTime - block.timestamp);
         }
     }
 
     function getVerifyTimeLeft() public view returns (uint256) {
-        if (getBlockTime() > verify_expiryTime) {
+        if (block.timestamp > verify_expiryTime) {
             return 0;
         } else {
-            return (verify_expiryTime - getBlockTime());
+            return (verify_expiryTime - block.timestamp);
         }
     }
 
     function getPaymentTimeLeft() public view returns (uint256) {
-        if (getBlockTime() > payment_expiryTime) {
+        if (block.timestamp > payment_expiryTime) {
             return 0;
         } else {
-            return (payment_expiryTime - getBlockTime());
+            return (payment_expiryTime - block.timestamp);
         }
     }
 }
