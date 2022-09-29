@@ -215,7 +215,7 @@ contract EventEmitter {
         uint256 retrievalTime
     );
 
-    event winnerPaymentRefunded(
+    event WinnerPaymentRefunded(
         address indexed auction,
         address nftAddress,
         uint256 tokenId,
@@ -230,6 +230,14 @@ contract EventEmitter {
         address indexed auction,
         Constants.PlatformEarnings earningType,
         uint256 time
+    );
+
+    event NftTransferred(
+        address indexed auction,
+        address indexed nftAddress,
+        uint256 indexed tokenId,
+        address from,
+        address to
     );
 
     function emitAuctionRegistered(
@@ -460,7 +468,7 @@ contract EventEmitter {
         uint256 _refundAmount,
         uint256 _retrievalTime
     ) public onlyAuction(msg.sender) {
-        emit winnerPaymentRefunded(
+        emit WinnerPaymentRefunded(
             _auction,
             _nftAddress,
             _tokenId,
@@ -484,6 +492,16 @@ contract EventEmitter {
             _earningType,
             _time
         );
+    }
+
+    function emitNftTransferred(
+        address _auction,
+        address _nftAddress,
+        uint256 _tokenId,
+        address _from,
+        address _to
+    ) public onlyAuction(msg.sender) {
+        emit NftTransferred(_auction, _nftAddress, _tokenId, _from, _to);
     }
 }
 
@@ -681,6 +699,7 @@ contract AuctionKeeper is KeeperCompatibleInterface {
 }
 
 contract AuctionManager {
+    address public immutable owner;
     address[] public biddingAuctions;
     address[] public verifyWinnerAuctions;
     address[] public pendingPaymentAuctions;
@@ -695,6 +714,7 @@ contract AuctionManager {
         address _auctionKeeperAddress,
         address _contractFactoryAddress
     ) {
+        owner = msg.sender;
         auctionRegistryAddress = _auctionRegistryAddress;
         eventEmitterAddress = _eventEmitterAddress;
         auctionKeeperAddress = _auctionKeeperAddress;
@@ -1385,6 +1405,13 @@ contract Auction {
             addressToProceeds[platformOwner] = 0;
             (bool sent, ) = payable(platformOwner).call{value: proceeds}("");
             require(sent, "ETH transfer failed");
+            eventEmitter.emitNftTransferred(
+                address(this),
+                nftAddress,
+                tokenId,
+                seller,
+                highestBidder
+            );
         } else {
             closeAuction(Constants.AuctionEndState.AUDIT_REJECTED);
         }

@@ -83,8 +83,31 @@ contract VehicleNft is ERC721, ERC721Burnable {
         external
         onlyAuthority
     {
-        (bool sent, ) = _auction.call(abi.encodeWithSignature("setAuditResult(bool)", _valid));
+        (bool sent, ) = _auction.call(
+            abi.encodeWithSignature("setAuditResult(bool)", _valid)
+        );
         require(sent, "unable to send audit result");
+        if (_valid) {
+            (bool success, bytes memory data) = _auction.call(
+                abi.encodeWithSignature("seller()")
+            );
+            require(success, "Unable to determine the contract type!");
+            address seller = abi.decode(data, (address));
+
+            (bool success_2, bytes memory data_2) = _auction.call(
+                abi.encodeWithSignature("highestBidder()")
+            );
+            require(success_2, "Unable to determine the contract type!");
+            address winner = abi.decode(data_2, (address));
+
+            (bool success_3, bytes memory data_3) = _auction.call(
+                abi.encodeWithSignature("tokenId()")
+            );
+            require(success_3, "Unable to determine the contract type!");
+            uint256 tokenId = abi.decode(data_3, (uint256));
+
+            transferFrom(seller, winner, tokenId);
+        }
     }
 
     function transferFrom(
