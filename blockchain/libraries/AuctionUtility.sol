@@ -51,6 +51,14 @@ library AuctionUtility {
         require(success, "Unable to determine the contract type!");
         return abi.decode(data, (Constants.ContractType));
     }
+
+    function getPlatformCharge(uint256 highestBid)
+        internal
+        pure
+        returns (uint256 platformCharge)
+    {
+        return (highestBid * Constants.platformChargeRate) / 100;
+    }
 }
 
 library Constants {
@@ -71,4 +79,12 @@ library Constants {
         AUDIT_REJECTED,
         OWNERSHIP_TRANSFERRED
     }
+
+    enum PlatformEarnings {
+        NO_EARNINGS, // when auction fail audit or no bidder or seller disagree to sell or cancelled
+        DEPOSIT, // when winner did not pay full settlement
+        FULL_SETTLEMENT // when auction passed audit
+    }
+
+    uint32 internal constant platformChargeRate = 5; // 5 percent
 }
