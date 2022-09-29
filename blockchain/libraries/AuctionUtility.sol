@@ -64,7 +64,7 @@ library Constants {
 
     enum AuctionEndState {
         NOT_ENDED,
-        //CANCELED,
+        CANCELED,
         NO_BIDDER,
         REJECTED_BY_SELLER,
         PAYMENT_OVERDUE,
