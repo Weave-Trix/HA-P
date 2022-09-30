@@ -21,7 +21,7 @@ module.exports = async function () {
     );
     if (chainId in currentAddresses["ContractFactory"]) {
       if (
-        !currentAddresses["ContractFactory"][chainId] == contractFactory.address
+        !currentAddresses["ContractFactory"][chainId].includes(contractFactory.address)
       ) {
         currentAddresses["ContractFactory"][chainId].push(
           contractFactory.address

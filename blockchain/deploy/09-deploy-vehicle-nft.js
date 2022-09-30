@@ -7,7 +7,7 @@ const { verify } = require("../utils/verify");
 
 module.exports = async function ({ getNamedAccounts, deployments }) {
   const { deploy, log } = deployments;
-  const { deployer } = await getNamedAccounts();
+  const { deployer, authority } = await getNamedAccounts();
   const chainId = network.config.chainId;
   const waitBlockConfirmations = developmentChains.includes(network.name)
     ? 1
@@ -15,7 +15,7 @@ module.exports = async function ({ getNamedAccounts, deployments }) {
 
   const args = ["VehicleNft", "VOC"];
   const vehicleNft = await deploy("VehicleNft", {
-    from: deployer,
+    from: authority,
     args: args,
     log: true,
     waitConfirmation: waitBlockConfirmations,

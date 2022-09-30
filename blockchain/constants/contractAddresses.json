@@ -1,7 +1,8 @@
 {
     "AuctionRegistry": {
         "5": [
-            "0x3CD4D8e20Fcf0A5923C13A2E3C3b585679b59dC5"
+            "0x3CD4D8e20Fcf0A5923C13A2E3C3b585679b59dC5",
+            "0x71Ad1f44244D3AF0eE3799EBa6479d003A084E44"
         ],
         "31337": [
             "0x5FbDB2315678afecb367f032d93F642f64180aa3"
@@ -9,7 +10,8 @@
     },
     "AuctionKeeper": {
         "5": [
-            "0x8Cb7C4d5F1E91508EFe5AE447dc798BF85Ff4757"
+            "0x8Cb7C4d5F1E91508EFe5AE447dc798BF85Ff4757",
+            "0x499a2e315C54F2304B190b54eDD78Cbf7d43BD27"
         ],
         "31337": [
             "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"
@@ -17,7 +19,8 @@
     },
     "ContractFactory": {
         "5": [
-            "0xE063856F2406C1572F6978acEf5e0aF1AFB0c18E"
+            "0xE063856F2406C1572F6978acEf5e0aF1AFB0c18E",
+            "0xb6e6D78992B16220269F7B7E3F9fc07839F90744"
         ],
         "31337": [
             "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0"
@@ -25,7 +28,8 @@
     },
     "EventEmitter": {
         "5": [
-            "0xD998fACeeD18821dB38aED49905a756c82CD1adD"
+            "0xD998fACeeD18821dB38aED49905a756c82CD1adD",
+            "0x002b34520317f55B1c7Dbe0ceFA519f9d7dDF90a"
         ],
         "31337": [
             "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9"
@@ -33,7 +37,8 @@
     },
     "VehicleNft": {
         "5": [
-            "0x8551675699b734490bf3a1B864E8C7CD27b5a42f"
+            "0x8551675699b734490bf3a1B864E8C7CD27b5a42f",
+            "0x2C6Be78737c19f0132dcE04C9D9874CF67EEb6aa"
         ],
         "31337": [
             "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9"
@@ -41,7 +46,8 @@
     },
     "AuctionManager": {
         "5": [
-            "0x421316F895be8535EFB314dD122c67676C825F4A"
+            "0x421316F895be8535EFB314dD122c67676C825F4A",
+            "0x4D72772b2DE280D3A60Fa87e39225Bde79a54A68"
         ],
         "31337": [
             "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707"

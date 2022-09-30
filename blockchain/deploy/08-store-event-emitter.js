@@ -21,7 +21,7 @@ module.exports = async function () {
     );
     if (chainId in currentAddresses["EventEmitter"]) {
       if (
-        !currentAddresses["EventEmitter"][chainId] == eventEmitter.address
+        !currentAddresses["EventEmitter"][chainId].includes(eventEmitter.address)
       ) {
         currentAddresses["EventEmitter"][chainId].push(
           eventEmitter.address

@@ -21,7 +21,7 @@ module.exports = async function () {
     );
     if (chainId in currentAddresses["AuctionManager"]) {
       if (
-        !currentAddresses["AuctionManager"][chainId] == auctionManager.address
+        !currentAddresses["AuctionManager"][chainId].includes(auctionManager.address)
       ) {
         currentAddresses["AuctionManager"][chainId].push(
           auctionManager.address

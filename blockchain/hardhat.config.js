@@ -13,6 +13,7 @@ require("dotenv").config();
 
 const GOERLI_RPC_URL = process.env.GOERLI_RPC_URL;
 const PRIVATE_KEY = process.env.PRIVATE_KEY;
+const PRIVATE_KEY_2 = process.env.PRIVATE_KEY_2;
 
 // Your API key for Etherscan, obtain one at https://etherscan.io/
 const ETHERSCAN_API_KEY =
@@ -32,7 +33,7 @@ module.exports = {
     goerli: {
       url: GOERLI_RPC_URL,
       blockConfirmations: 6,
-      accounts: PRIVATE_KEY !== undefined ? [PRIVATE_KEY] : [],
+      accounts: PRIVATE_KEY !== undefined ? [PRIVATE_KEY, PRIVATE_KEY_2] : [],
       saveDeployments: true,
       chainId: 5,
     },

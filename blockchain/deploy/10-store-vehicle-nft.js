@@ -21,7 +21,7 @@ module.exports = async function () {
     );
     if (chainId in currentAddresses["VehicleNft"]) {
       if (
-        !currentAddresses["VehicleNft"][chainId] == vehicleNft.address
+        !currentAddresses["VehicleNft"][chainId].includes(vehicleNft.address)
       ) {
         currentAddresses["VehicleNft"][chainId].push(
           vehicleNft.address
