@@ -428,7 +428,7 @@ contract EventEmitter {
         address _auction,
         address _nftAddress,
         uint256 _tokenId,
-        address _bidder,
+        address _retriever,
         uint256 _retrieveAmount,
         uint256 _retrievalTime
     ) public onlyAuction(msg.sender) {
@@ -436,7 +436,7 @@ contract EventEmitter {
             _auction,
             _nftAddress,
             _tokenId,
-            _bidder,
+            _retriever,
             _retrieveAmount,
             _retrievalTime
         );
@@ -720,10 +720,10 @@ contract AuctionManager {
     }
 
     function createAuction(address _nftAddress, uint256 _tokenId) external {
-        (bool sent, bytes memory data) = _nftAddress.call(  // require vehicleNft exists
+        (bool sent, bytes memory data) = _nftAddress.call( // require vehicleNft exists
             abi.encodeWithSignature("ownerOf(uint256)", _tokenId)
         );
-        require(sent, "Unable to determine nft holder!");   // require msg.sender == vehicleNft holder
+        require(sent, "Unable to determine nft holder!"); // require msg.sender == vehicleNft holder
         address nftOwner = abi.decode(data, (address));
         require(
             (msg.sender == nftOwner),
@@ -942,8 +942,9 @@ contract Auction {
     uint256 public highestBid;
     address public highestBidder;
     bool winnerPaid = false;
-    mapping(address => uint128) private bidderToDeposits;
-    mapping(address => uint256) private addressToProceeds;
+    mapping(address => uint128) public bidderToDeposits;
+    mapping(address => uint256) public addressToProceeds;
+    address[] public depositers;
 
     constructor(
         address _platformOwner,
@@ -1115,11 +1116,35 @@ contract Auction {
                 verify_expiryTime
             );
             auctionManager.addVerifyWinnerAuction(address(this));
+            for (uint i = 0; i < depositers.length; i++) {
+                // return deposit, except winner
+                address account = depositers[i];
+                if (account == highestBidder) {
+                    break;
+                }
+                uint128 depositBalance = bidderToDeposits[account];
+                if (depositBalance == 0) {
+                    break;
+                }
+                bidderToDeposits[account] = 0;
+                (bool sent, ) = payable(account).call{value: depositBalance}(
+                    ""
+                );
+                require(sent, "ETH transfer failed!");
+                eventEmitter.emitAuctionDepositRetrieved(
+                    address(this),
+                    nftAddress,
+                    tokenId,
+                    account,
+                    depositBalance,
+                    block.timestamp
+                );
+            }
         }
         auctionManager.removeBiddingAuction(address(this));
     }
 
-    function verifyWinner(bool approveWinningBid) external onlySellerOrKeeper { // TODO: approve transfer of NFT
+    function verifyWinner(bool approveWinningBid) external onlySellerOrKeeper {
         // when timer's up, keepers call this function, verifyWinner(false)
         require(inVerifyWinnerState(), "Illegal state!");
         require(getVerifyTimeLeft() > 0, "Verify expired!");
@@ -1142,6 +1167,7 @@ contract Auction {
         } else {
             closeAuction(Constants.AuctionEndState.REJECTED_BY_SELLER);
             auctionManager.removeVerifyWinnerAuction(address(this));
+            // refund deposit to winner
         }
     }
 
@@ -1183,7 +1209,7 @@ contract Auction {
                 Constants.PlatformEarnings.NO_EARNINGS,
                 block.timestamp
             );
-        } else if (_endState == Constants.AuctionEndState.PAYMENT_OVERDUE) { // TODO: change the earnings of deposit to seller (as compensation)
+        } else if (_endState == Constants.AuctionEndState.PAYMENT_OVERDUE) {
             require(
                 currAuctionState == AuctionState.PENDING_PAYMENT,
                 "illegal state transition!"
@@ -1195,16 +1221,16 @@ contract Auction {
                 "closeAuction requires seller or keeper!"
             );
             require(winnerPaid == false, "winner already paid!");
-            // transfer winner's deposit to platform_owner
             uint128 depositBalance = bidderToDeposits[highestBidder];
-            bidderToDeposits[msg.sender] = 0;
-            (bool sent, ) = payable(msg.sender).call{value: depositBalance}("");
+            bidderToDeposits[highestBidder] = 0;
+            (bool sent, ) = payable(seller).call{value: depositBalance}(""); // transfer winner's deposit to seller (as compensation)
             require(sent, "ETH transfer failed!");
-            eventEmitter.emitPlatformEarnings(
-                platformOwner,
-                highestBidder,
+            eventEmitter.emitAuctionDepositRetrieved(
                 address(this),
-                Constants.PlatformEarnings.DEPOSIT,
+                nftAddress,
+                tokenId,
+                seller,
+                depositBalance,
                 block.timestamp
             );
         } else if (
@@ -1280,6 +1306,7 @@ contract Auction {
             msg.value,
             block.timestamp
         );
+        depositers.push(msg.sender);
     }
 
     function placeBid(uint256 _bidAmount) external notForSeller {
@@ -1352,6 +1379,19 @@ contract Auction {
             block.timestamp
         );
         currAuctionState = AuctionState.PENDING_AUDIT;
+        // return deposit to winner
+        uint128 depositBalance = bidderToDeposits[highestBidder];
+        bidderToDeposits[highestBidder] = 0;
+        (bool sent, ) = payable(highestBidder).call{value: depositBalance}("");
+        require(sent, "ETH transfer failed!");
+        eventEmitter.emitAuctionDepositRetrieved(
+            address(this),
+            nftAddress,
+            tokenId,
+            highestBidder,
+            depositBalance,
+            block.timestamp
+        );
     }
 
     function withdrawSellerEarnings() external onlySeller {
