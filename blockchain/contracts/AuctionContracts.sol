@@ -546,9 +546,7 @@ contract AuctionRegistry {
         address _auctionAddress
     ) {
         // if event still not ended, unable to create a same auction for the NFT
-        // create interface of Auction.sol
         Auction auction = Auction(_auctionAddress);
-        // call Auction.getEventState();
         require(
             auctionListings[_nftAddress][_tokenId] == address(0x0) ||
                 (!auction.inClosedState() && !auction.inRegisteredState()),
@@ -722,6 +720,16 @@ contract AuctionManager {
     }
 
     function createAuction(address _nftAddress, uint256 _tokenId) external {
+        (bool sent, bytes memory data) = _nftAddress.call(  // require vehicleNft exists
+            abi.encodeWithSignature("ownerOf(uint256)", _tokenId)
+        );
+        require(sent, "Unable to determine nft holder!");   // require msg.sender == vehicleNft holder
+        address nftOwner = abi.decode(data, (address));
+        require(
+            (msg.sender == nftOwner),
+            "Auction can only be created by VOC NFT holder!"
+        );
+
         ContractFactory contractFactory = ContractFactory(
             contractFactoryAddress
         );
@@ -1111,7 +1119,7 @@ contract Auction {
         auctionManager.removeBiddingAuction(address(this));
     }
 
-    function verifyWinner(bool approveWinningBid) external onlySellerOrKeeper {
+    function verifyWinner(bool approveWinningBid) external onlySellerOrKeeper { // TODO: approve transfer of NFT
         // when timer's up, keepers call this function, verifyWinner(false)
         require(inVerifyWinnerState(), "Illegal state!");
         require(getVerifyTimeLeft() > 0, "Verify expired!");
@@ -1175,7 +1183,7 @@ contract Auction {
                 Constants.PlatformEarnings.NO_EARNINGS,
                 block.timestamp
             );
-        } else if (_endState == Constants.AuctionEndState.PAYMENT_OVERDUE) {
+        } else if (_endState == Constants.AuctionEndState.PAYMENT_OVERDUE) { // TODO: change the earnings of deposit to seller (as compensation)
             require(
                 currAuctionState == AuctionState.PENDING_PAYMENT,
                 "illegal state transition!"
@@ -1276,7 +1284,7 @@ contract Auction {
 
     function placeBid(uint256 _bidAmount) external notForSeller {
         require(inBiddingState(), "Illegal state!");
-        require(getBidTimeLeft() > 0, "Bid ongoing!");
+        require(getBidTimeLeft() > 0, "Bidding closed!");
         require(
             (bidderToDeposits[msg.sender] >= depositWei),
             "Deposit required for bidding!"

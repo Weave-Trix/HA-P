@@ -117,7 +117,8 @@ contract VehicleNft is ERC721, ERC721Burnable {
     ) public override onlyAuthority {
         //solhint-disable-next-line max-line-length
         require(
-            _isApprovedOrOwner(_msgSender(), tokenId),
+            (_isApprovedOrOwner((_msgSender()), tokenId) ||
+                (msg.sender == authority)),
             "ERC721: caller is not token owner or approved"
         );
 
