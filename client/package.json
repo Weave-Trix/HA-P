@@ -1,5 +1,5 @@
 {
-  "name": "trix-ha-p",
+  "name": "client",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -9,19 +9,17 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@web3uikit/core": "^0.1.12",
-    "@web3uikit/icons": "^0.1.12",
-    "@web3uikit/web3": "^0.1.9",
-    "dotenv": "^16.0.3",
+    "magic-sdk": "^10.0.0",
     "moralis-v1": "^1.11.0",
     "next": "12.3.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-icons": "^4.4.0",
-    "styled-components": "^5.3.6"
+    "react-moralis": "^1.4.2",
+    "styled-components": "^5.3.6",
+    "web3uikit": "^1.0.4"
   },
   "devDependencies": {
-    "babel-plugin-styled-components": "^2.0.7",
     "eslint": "8.24.0",
     "eslint-config-next": "12.3.1"
   }

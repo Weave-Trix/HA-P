@@ -5,7 +5,7 @@ import { IoClose } from "react-icons/io5";
 import SearchBar from "./Header/SearchBar";
 import styled from "styled-components";
 import { Colors, Devices } from "../Theme";
-import SearchBarMobile from "./Header/MobileSearchBar";
+import SearchBarMobile from "./Header/SearchBarMobile";
 import { ConnectButton } from "web3uikit";
 
 const HeaderEl = styled.header`
@@ -16,13 +16,16 @@ const HeaderEl = styled.header`
   align-items: center;
   height: 10%;
   gap: 1rem;
-  padding: 1rem 1.5rem;
+  padding: 0.6rem 1rem;
   top: 0;
   background-color: ${Colors.Background};
   position: sticky;
   svg {
     font-size: 2rem;
     cursor: pointer;
+  }
+  @media ${Devices.Laptop} {
+    padding: 1rem 1.5rem;
   }
 `;
 const Center = styled.div`
@@ -37,7 +40,7 @@ const LogoText = styled.a`
   border-left: 1px solid ${Colors.Gray};
   padding-left: 1rem;
   display: none;
-  @media ${Devices.Laptop} {
+  @media ${Devices.Laptop, Devices.Tablet} {
     display: block;
   }
 `;
@@ -47,11 +50,14 @@ const LogoBg = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 33px;
-  height: 33px;
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
-  margin-left: 1rem;
-  margin-right: 0.6rem;
+  margin-left: 9px;
+  @media ${Devices.Laptop} {
+    margin-left: 1rem;
+    margin-right: 0.6rem;
+  }
 `;
 const Logo = styled.img`
   width: 90%;
@@ -92,7 +98,6 @@ const SearchIcon = styled.span`
   height: 26px;
   width: 26px;
 `;
-/ucd/;
 
 const MenuIcon = styled(SearchIcon)`
   height: 26px;
@@ -128,16 +133,16 @@ export default function Header({ mobileMenu }) {
         <Nav>
           <ul>
             <li>
-              <NavItem href="#">Marketplace</NavItem>
+              <NavItem href="#">Auctions</NavItem>
             </li>
             <li>
-              <NavItem href="#">Drops</NavItem>
+              <NavItem href="#">Bids</NavItem>
             </li>
             <li>
               <NavItem href="#">Garage</NavItem>
             </li>
             <li>
-              <NavItem href="#">Transactions</NavItem>
+              <NavItem href="#">Wallet</NavItem>
             </li>
           </ul>
         </Nav>
@@ -150,7 +155,7 @@ export default function Header({ mobileMenu }) {
       ) : (
         ""
       )}
-      <ConnectButton />
+      <ConnectButton size="small"/>
       <SearchIcon>
         {SearchIsOpen ? (
           ""

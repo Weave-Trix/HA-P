@@ -3,10 +3,9 @@ import Image from "next/image";
 import styled from "styled-components";
 
 const IndexEl = styled.div`
-
 `;
 
-export default function Home() {
+export default function Index() {
   return (
     <IndexEl>
       <Head>

@@ -1,14 +1,16 @@
 import styled, { createGlobalStyle } from "styled-components";
-import { Colors } from "../src/Theme";
+import { Colors } from "../next/Theme";
 import { useState } from "react";
-import Header from "../src/components/Header";
+import Header from "../next/components/Header";
+import { MoralisProvider } from "react-moralis";
+import Page from "../next/components/styled/Page.styled";
 
 const GlobalStyle = createGlobalStyle`
  
   html,
   body {
     background-color: ${Colors.Background};
-    font-family: "Poppins", sans-serif;
+    font-family: 'Montserrat', sans-serif;
   }
   p,a,h1,h2,h3,h5,h6,div,span{
     /* color:${Colors.White}; */
@@ -23,7 +25,7 @@ const GlobalStyle = createGlobalStyle`
     padding: 0;
     margin: 0;
     transition:all .3s;
-    font-family: 'Urbanist', sans-serif;
+    font-family: 'Montserrat', sans-serif;
   }
   /* width */
   body::-webkit-scrollbar {
@@ -50,22 +52,64 @@ const Main = styled.div`
   width: 100%;
   min-height: 100vh;
 `;
-const MobileMenu = styled.div``;
-const NavItem = styled.a``;
+const MobileMenu = styled.div`
+  background-color: ${Colors.Background};
+  color: ${Colors.White};
+  z-index: ${(p) => (p.open ? "9" : "-1")};
+  position: absolute;
+  padding: 2rem 1rem 1rem 1.2rem;
+  left: 0;
+  display: flex;
+  width: ${(p) => (p.open ? "100%" : "0")};
+  height: 100%;
+  ul {
+    opacity: ${(p) => (p.open ? "1" : "0")};
+    transition: all 0.1s ease-out;
+    text-decoration: none;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    width: 100%;
+  }
+`;
+
+const NavItem = styled.a`
+  font-size: 1.2rem;
+  font-weight: 400;
+`;
 
 function MyApp({ Component, pageProps }) {
   const [MobileMenuIsOpen, setMobileMenuIsOpen] = useState(false);
   return (
-    <>
+    <MoralisProvider initializeOnMount={false}>
       <GlobalStyle />
       <Main>
         <Header mobileMenu={{ MobileMenuIsOpen, setMobileMenuIsOpen }} />
-        {/* header */}
-        {/* page */}
+        <Page>
+          <MobileMenu open={MobileMenuIsOpen}>
+            <ul>
+              <li>
+                <NavItem href="#">Auctions</NavItem>
+              </li>
+              <li>
+                <NavItem href="#">Bids</NavItem>
+              </li>
+              <hr color={Colors.Primary} size="1" />
+              <li>
+                <NavItem href="#">Garage</NavItem>
+              </li>
+              <li>
+                <NavItem href="#">Wallet</NavItem>
+              </li>
+            </ul>
+          </MobileMenu>
+          <Component {...pageProps} />
+        </Page>
         {/* footer */}
         <Component {...pageProps} />
       </Main>
-    </>
+    </MoralisProvider>
   );
 }
 

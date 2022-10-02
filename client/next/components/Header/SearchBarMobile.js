@@ -1,11 +1,10 @@
-
 import styled from "styled-components";
 import { CgSearch } from "react-icons/cg";
 import { Colors, Devices } from "../../Theme";
 
 const SearchBarEl = styled.article`
   background-color: ${Colors.Background};
-  padding: 0.5rem 1rem;
+  padding: 1rem 2rem;
   gap: 0.5rem;
   height: 100%;
   width: 100%;
@@ -44,8 +43,9 @@ const SearchInput = styled.input`
 `;
 
 const HideSearchBar = styled.span`
-  cursor: pointer;
-  color: ${Colors.White};
+    margin-left: 1rem;
+    cursor: pointer;
+    color: ${Colors.White};
 `;
 
 export default function SearchBarMobile({ setSearchIsOpen }) {
