@@ -126,9 +126,9 @@ contract EventEmitter {
     event AuctionVerifyingWinner(
         address indexed auction,
         address seller,
-        address nftAddress,
+        address indexed nftAddress,
         uint256 indexed tokenId,
-        address indexed winner,
+        address winner,
         uint256 winningBid,
         uint256 platformCharge,
         uint256 startTime,
@@ -138,9 +138,9 @@ contract EventEmitter {
     event AuctionPendingPayment(
         address indexed auction,
         address seller,
-        address nftAddress,
+        address indexed nftAddress,
         uint256 indexed tokenId,
-        address indexed winner,
+        address winner,
         uint256 winningBid,
         uint256 startTime,
         uint256 endTime
@@ -149,9 +149,9 @@ contract EventEmitter {
     event AuctionAuditResult(
         address indexed auction,
         address seller,
-        address nftAddress,
+        address indexed nftAddress,
         uint256 indexed tokenId,
-        address indexed winner,
+        address winner,
         uint256 winningBid,
         uint256 time,
         bool pass
@@ -161,12 +161,12 @@ contract EventEmitter {
     event AuctionClosed(
         address indexed auction,
         address seller,
-        address nftAddress,
+        address indexed nftAddress,
         uint256 indexed tokenId,
         uint256 closeTime,
         address winner,
         uint256 winningBid,
-        Constants.AuctionEndState indexed endState
+        Constants.AuctionEndState endState
     );
 
     event AuctionDepositPlaced(
@@ -198,37 +198,37 @@ contract EventEmitter {
 
     event AuctionFullSettlementPaid(
         address indexed auction,
-        address nftAddress,
-        uint256 tokenId,
-        address indexed winner,
+        address indexed nftAddress,
+        uint256 indexed tokenId,
+        address winner,
         address seller,
-        uint256 indexed paidAmount,
+        uint256 paidAmount,
         uint256 paidTime
     );
 
     event SellerEarningsRetrieved(
         address indexed auction,
-        address nftAddress,
-        uint256 tokenId,
-        address indexed seller,
-        uint256 indexed retrieveAmount,
+        address indexed nftAddress,
+        uint256 indexed tokenId,
+        address seller,
+        uint256 retrieveAmount,
         uint256 retrievalTime
     );
 
     event WinnerPaymentRefunded(
         address indexed auction,
-        address nftAddress,
-        uint256 tokenId,
+        address indexed nftAddress,
+        uint256 indexed tokenId,
         address winner,
-        uint256 indexed refundAmount,
+        uint256 refundAmount,
         uint256 retrievalTime
     );
 
     event PlatformEarnings(
-        address indexed platformOwner,
-        address payer,
+        address platformOwner,
+        address indexed payer,
         address indexed auction,
-        Constants.PlatformEarnings earningType,
+        Constants.PlatformEarnings indexed earningType,
         uint256 time
     );
 

@@ -4,7 +4,6 @@ import { useState } from "react";
 import Header from "../next/components/Header";
 import { MoralisProvider } from "react-moralis";
 import Page from "../next/components/styled/Page.styled";
-
 const GlobalStyle = createGlobalStyle`
  
   html,
@@ -79,36 +78,41 @@ const NavItem = styled.a`
   font-weight: 400;
 `;
 
+const APP_ID = process.env.NEXT_PUBLIC_APPLICATION_ID;
+const SERVER_URL = process.env.NEXT_PUBLIC_SERVER_URL;
+
 function MyApp({ Component, pageProps }) {
   const [MobileMenuIsOpen, setMobileMenuIsOpen] = useState(false);
   return (
-    <MoralisProvider initializeOnMount={false}>
+    <>
       <GlobalStyle />
       <Main>
-        <Header mobileMenu={{ MobileMenuIsOpen, setMobileMenuIsOpen }} />
-        <Page>
-          <MobileMenu open={MobileMenuIsOpen}>
-            <ul>
-              <li>
-                <NavItem href="auctions">Auctions</NavItem>
-              </li>
-              <li>
-                <NavItem href="#">Bids</NavItem>
-              </li>
-              <hr color={Colors.Primary} size="1" />
-              <li>
-                <NavItem href="#">Garage</NavItem>
-              </li>
-              <li>
-                <NavItem href="#">Wallet</NavItem>
-              </li>
-            </ul>
-          </MobileMenu>
-          <Component {...pageProps} />
-        </Page>
-        {/* footer */}
+        <MoralisProvider appId={APP_ID} serverUrl={SERVER_URL}>
+          <Header mobileMenu={{ MobileMenuIsOpen, setMobileMenuIsOpen }} />
+          <Page>
+            <MobileMenu open={MobileMenuIsOpen}>
+              <ul>
+                <li>
+                  <NavItem href="auctions">Auctions</NavItem>
+                </li>
+                <li>
+                  <NavItem href="#">Bids</NavItem>
+                </li>
+                <hr color={Colors.Primary} size="1" />
+                <li>
+                  <NavItem href="#">Garage</NavItem>
+                </li>
+                <li>
+                  <NavItem href="#">Wallet</NavItem>
+                </li>
+              </ul>
+            </MobileMenu>
+            <Component {...pageProps} />
+          </Page>
+          {/* footer */}
+        </MoralisProvider>
       </Main>
-    </MoralisProvider>
+    </>
   );
 }
 
