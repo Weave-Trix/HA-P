@@ -17,6 +17,11 @@ contract VehicleNft is ERC721, ERC721Burnable {
         _;
     }
 
+    modifier onlyAuthorityApprovedBurn(uint256 _tokenId) {
+        require(tokenIdToBurnBool[_tokenId] == true, "NFT burn not approved!");
+        _;
+    }
+
     modifier onlyVehicleNotRegistered(string memory _chassisNum) {
         require(
             chassisNumToBool[_chassisNum] != true,
@@ -44,6 +49,7 @@ contract VehicleNft is ERC721, ERC721Burnable {
     Counters.Counter private _tokenIds;
     mapping(uint256 => string) private tokenIdToTokenUri;
     mapping(string => bool) private chassisNumToBool;
+    mapping(uint256 => bool) public tokenIdToBurnBool;
 
     function registerVehicle(
         address _owner,
@@ -59,7 +65,7 @@ contract VehicleNft is ERC721, ERC721Burnable {
 
         uint256 curr_tokenId = _tokenIds.current();
         tokenIdToTokenUri[curr_tokenId] = _tokenURI;
-        _mint(_owner, curr_tokenId);
+        super._mint(_owner, curr_tokenId);
         chassisNumToBool[_chassisNum] = true;
         emit NftMinted(_owner, _tokenURI, curr_tokenId);
 
@@ -122,14 +128,21 @@ contract VehicleNft is ERC721, ERC721Burnable {
             "ERC721: caller is not token owner or approved"
         );
 
-        _transfer(from, to, tokenId);
+        super._transfer(from, to, tokenId);
         emit NftTransferred(from, to, tokenId);
     }
 
-    function burn(uint256 tokenId) public virtual override onlyAuthority {
+    function approveBurn(uint256 _tokenId) public onlyAuthority {
+        require(ownerOf(_tokenId) != address(0x0), "Invalid token Id!");
+        tokenIdToBurnBool[_tokenId] = true;
+    }
+
+    function burn(uint256 _tokenId) public override onlyAuthorityApprovedBurn(_tokenId) {
+        require(msg.sender == (ownerOf(_tokenId)) || msg.sender == authority, "Burn can only be called by owner or authority");
         //solhint-disable-next-line max-line-length
-        _burn(tokenId);
-        emit NftBurned(ownerOf(tokenId), tokenId);
+        address owner = ERC721.ownerOf(_tokenId);
+        _burn(_tokenId);
+        emit NftBurned(owner, _tokenId);
     }
 
     function getAuthorityAddress() public view returns (address) {
