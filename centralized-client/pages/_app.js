@@ -4,6 +4,8 @@ import { useState } from "react";
 import Header from "../next/components/Header";
 import { MoralisProvider } from "react-moralis";
 import Page from "../next/components/styled/Page.styled";
+
+
 const GlobalStyle = createGlobalStyle`
  
   html,
@@ -93,7 +95,7 @@ function MyApp({ Component, pageProps }) {
             <MobileMenu open={MobileMenuIsOpen}>
               <ul>
                 <li>
-                  <NavItem href="auctions">Auctions</NavItem>
+                  <NavItem href="/auctions">Auctions</NavItem>
                 </li>
                 <li>
                   <NavItem href="#">Bids</NavItem>

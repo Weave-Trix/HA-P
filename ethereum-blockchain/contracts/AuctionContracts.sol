@@ -206,6 +206,16 @@ contract EventEmitter {
         uint256 paidTime
     );
 
+    event AuctionPendingAudit(
+        address indexed auction,
+        address indexed nftAddress,
+        uint256 indexed tokenId,
+        address winner,
+        address seller,
+        uint256 paidAmount,
+        uint256 paidTime
+    );
+
     event SellerEarningsRetrieved(
         address indexed auction,
         address indexed nftAddress,
@@ -213,6 +223,14 @@ contract EventEmitter {
         address seller,
         uint256 retrieveAmount,
         uint256 retrievalTime
+    );
+
+    event PendingSellerEarningsRetrieval(
+        address indexed auction,
+        address indexed nftAddress,
+        uint256 indexed tokenId,
+        address seller,
+        uint256 highestBid
     );
 
     event WinnerPaymentRefunded(
@@ -224,20 +242,20 @@ contract EventEmitter {
         uint256 retrievalTime
     );
 
+    event PendingWinnerPaymentRefund(
+        address indexed auction,
+        address indexed nftAddress,
+        uint256 indexed tokenId,
+        address winner,
+        uint256 fullSettlement
+    );
+
     event PlatformEarnings(
         address platformOwner,
         address indexed payer,
         address indexed auction,
         Constants.PlatformEarnings indexed earningType,
         uint256 time
-    );
-
-    event NftTransferred(
-        address indexed auction,
-        address indexed nftAddress,
-        uint256 indexed tokenId,
-        address from,
-        address to
     );
 
     function emitAuctionRegistered(
@@ -424,6 +442,26 @@ contract EventEmitter {
         );
     }
 
+    function emitAuctionPendingAudit(
+        address _auction,
+        address _nftAddress,
+        uint256 _tokenId,
+        address _winner,
+        address _seller,
+        uint256 _paidAmount,
+        uint256 _paidTime
+    ) public onlyAuction(msg.sender) {
+        emit AuctionPendingAudit(
+            _auction,
+            _nftAddress,
+            _tokenId,
+            _winner,
+            _seller,
+            _paidAmount,
+            _paidTime
+        );
+    }
+
     function emitAuctionDepositRetrieved(
         address _auction,
         address _nftAddress,
@@ -442,6 +480,22 @@ contract EventEmitter {
         );
     }
 
+    function emitPendingSellerEarningsRetrieval(
+        address _auction,
+        address _nftAddress,
+        uint256 _tokenId,
+        address _seller,
+        uint256 _highestBid
+    ) public onlyAuction(msg.sender) {
+        emit PendingSellerEarningsRetrieval(
+            _auction,
+            _nftAddress,
+            _tokenId,
+            _seller,
+            _highestBid
+        );
+    }
+
     function emitSellerEarningsRetrieved(
         address _auction,
         address _nftAddress,
@@ -457,6 +511,22 @@ contract EventEmitter {
             _seller,
             _retrieveAmount,
             _retrievalTime
+        );
+    }
+
+    function emitPendingWinnerPaymentRefund(
+        address _auction,
+        address _nftAddress,
+        uint256 _tokenId,
+        address _winner,
+        uint256 _fullSettlement
+    ) public onlyAuction(msg.sender) {
+        emit PendingWinnerPaymentRefund(
+            _auction,
+            _nftAddress,
+            _tokenId,
+            _winner,
+            _fullSettlement
         );
     }
 
@@ -492,16 +562,6 @@ contract EventEmitter {
             _earningType,
             _time
         );
-    }
-
-    function emitNftTransferred(
-        address _auction,
-        address _nftAddress,
-        uint256 _tokenId,
-        address _from,
-        address _to
-    ) public onlyAuction(msg.sender) {
-        emit NftTransferred(_auction, _nftAddress, _tokenId, _from, _to);
     }
 }
 
@@ -988,13 +1048,6 @@ contract Auction {
         _;
     }
 
-    modifier onlyWinnerPayment() {
-        if (msg.sender != highestBidder && !(inPendingPaymentState())) {
-            revert Auction_RestrictedWinnerPaymentAccess();
-        }
-        _;
-    }
-
     modifier notForSeller() {
         if (msg.sender == seller) {
             revert Auction_SelfBiddingIsNotAllowed();
@@ -1251,7 +1304,7 @@ contract Auction {
                     block.timestamp
                 );
             }
-            if (_endState == Constants.AuctionEndState.AUDIT_REJECTED) {
+            if (_endState == Constants.AuctionEndState.OWNERSHIP_TRANSFERRED) {
                 eventEmitter.emitPlatformEarnings(
                     platformOwner,
                     highestBidder,
@@ -1354,7 +1407,8 @@ contract Auction {
         );
     }
 
-    function payFullSettlement() external payable onlyWinnerPayment {
+    function payFullSettlement() external payable {
+        require(msg.sender == highestBidder, "Only winner pay!");
         require((inPendingPaymentState()), "Illegal state!");
         require(
             (getPaymentTimeLeft() > 0),
@@ -1373,7 +1427,16 @@ contract Auction {
             address(this),
             nftAddress,
             tokenId,
-            msg.sender,
+            highestBidder,
+            seller,
+            msg.value,
+            block.timestamp
+        );
+        eventEmitter.emitAuctionPendingAudit(
+            address(this),
+            nftAddress,
+            tokenId,
+            highestBidder,
             seller,
             msg.value,
             block.timestamp
@@ -1453,15 +1516,22 @@ contract Auction {
             addressToProceeds[platformOwner] = 0;
             (bool sent, ) = payable(platformOwner).call{value: proceeds}("");
             require(sent, "ETH transfer failed");
-            eventEmitter.emitNftTransferred(
+            eventEmitter.emitPendingSellerEarningsRetrieval(
                 address(this),
                 nftAddress,
                 tokenId,
                 seller,
-                highestBidder
+                highestBid
             );
         } else {
             closeAuction(Constants.AuctionEndState.AUDIT_REJECTED);
+            eventEmitter.emitPendingWinnerPaymentRefund(
+                address(this),
+                nftAddress,
+                tokenId,
+                highestBidder,
+                platformCharge + highestBid
+            );
         }
         eventEmitter.emitAuctionAuditResult(
             address(this),

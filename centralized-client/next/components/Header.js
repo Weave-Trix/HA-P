@@ -131,6 +131,7 @@ export default function Header({ mobileMenu }) {
                 <Logo src="/trix-logo.png" />
             </LogoBg>
         </a>
+        <SearchBar/>
         <LogoText href="/">Weave-Trix</LogoText>
         <Nav>
           <ul>
@@ -138,7 +139,7 @@ export default function Header({ mobileMenu }) {
               <NavItem href="/auctions">Auctions</NavItem>
             </li>
             <li>
-              <NavItem href="#">Bids</NavItem>
+              <NavItem href="/bids">Bids</NavItem>
             </li>
             <li>
               <NavItem href="#">Garage</NavItem>

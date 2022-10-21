@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "moralis:cloud": "moralis-admin-cli watch-cloud-folder --moralisSubdomain ml66nz5fxpql.usemoralis.com --autoSave 1 --moralisCloudfolder ./moralis/cloudFunctions"
   },
   "keywords": [],
   "author": "",
