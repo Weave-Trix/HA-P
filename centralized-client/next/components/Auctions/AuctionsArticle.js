@@ -4,7 +4,6 @@ import styled from "styled-components";
 import { Colors, Devices } from "../../Theme";
 import Grid from "../styled/Grid.styled";
 import AuctionCard from "../styled/AuctionCard.styled";
-
 import {
   useMoralis,
   useMoralisQuery,

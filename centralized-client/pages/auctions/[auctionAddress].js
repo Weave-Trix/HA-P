@@ -210,7 +210,7 @@ const auctionAddress = () => {
 
     /* 
     Start Section
-    WebSocket
+      WebSocket
     */
     // fetch logBidPlaced from blockchain event listener (initialize only)
     const { data: labp_bidPlaced, isLoading: isFetchingBidPlaced } =

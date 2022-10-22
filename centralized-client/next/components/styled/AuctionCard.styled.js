@@ -399,7 +399,7 @@ export default function AuctionCard({ props }) {
               </LikesEl>
             </Icons>
           </BottomSection>
-          <CountdownTimer targetDate={bidTimeLeft}/>
+          <CountdownTimer targetDate={bidTimeLeft} />
         </InfoSection>
       </Card>
       <Bar1 />
