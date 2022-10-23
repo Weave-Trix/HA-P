@@ -1200,7 +1200,6 @@ contract Auction {
     function verifyWinner(bool approveWinningBid) external onlySellerOrKeeper {
         // when timer's up, keepers call this function, verifyWinner(false)
         require(inVerifyWinnerState(), "Illegal state!");
-        require(getVerifyTimeLeft() > 0, "Verify expired!");
         if (approveWinningBid) {
             payment_startTime = block.timestamp;
             payment_expiryTime = payment_startTime + payment_duration;
