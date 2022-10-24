@@ -8,7 +8,7 @@ const masterKey = process.env.masterKey;
 const queryBidAucs = async () => {
     await Moralis.start({ serverUrl, appId, masterKey});
     const query = new Moralis.Query("StateAuctionStartedBidding");
-    const lar_bidAucs = await query.find()
+    const lar_bidAucs = await query.find();
     return lar_bidAucs;
 }
 

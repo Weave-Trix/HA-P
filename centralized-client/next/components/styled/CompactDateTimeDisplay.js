@@ -11,14 +11,16 @@ const DateEl = styled.div`
 const DateValue = styled.h3`
     font-size: 1.2rem;
     font-weight: 500px;
+    color: white;
 `
 
 const DateSymbol = styled.h4`
     font-size: 0.8rem;
     font-weight: 400px;
+    color: white;
 `
 
-const DateTimeDisplay = ({ value, type, isDanger }) => {
+const CompactDateTimeDisplay = ({ value, type, isDanger }) => {
   return (
     <DateEl>
       <DateValue>{value}</DateValue>
@@ -27,4 +29,4 @@ const DateTimeDisplay = ({ value, type, isDanger }) => {
   );
 };
 
-export default DateTimeDisplay;
+export default CompactDateTimeDisplay;

@@ -7,6 +7,7 @@ import Divider from '@mui/joy/Divider';
 import Typography from '@mui/joy/Typography';
 
 export default function RowCard({props}) {
+    console.log(`rendering NFT card, tokenID : ${props.tokenId} status: ${props.status}`)
     const truncateStr = (fullStr, strLen) => {
         if (fullStr.length <= strLen) return fullStr;
         const separator = "...";
@@ -20,21 +21,25 @@ export default function RowCard({props}) {
         );
       };
     
-    // set state name
+    // set state color
     let color;
 
     switch(props.status) {
         case 1: // BIDDING
-            color = "lightblue";
+            color = "plum";
             break;
         case 2: // VERIFYING_WINNER
-            color = "lavender";
+            color = "pink";
             break;
         case 3: // PENDING_PAYMENT
-            color = "lightpink";
+            color = "lightblue";
             break;
         case 4: // PENDING_AUDIT
             color = "lightgreen"
+            break;
+        case 5: // CLOSED_AUCTION
+            color = "lightslategrey"
+            break;
     }
 
   return (

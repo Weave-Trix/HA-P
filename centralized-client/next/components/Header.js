@@ -6,6 +6,7 @@ import SearchBar from "./Header/SearchBar";
 import styled from "styled-components";
 import { Colors, Devices } from "../Theme";
 import SearchBarMobile from "./Header/SearchBarMobile";
+import MenuList from "./Header/MenuList";
 import { ConnectButton } from "web3uikit";
 
 const HeaderEl = styled.header`
@@ -15,7 +16,7 @@ const HeaderEl = styled.header`
   width: 100%;
   align-items: center;
   height: 10%;
-  gap: 1rem;
+  gap: 1.4rem;
   padding: 0.6rem 1rem;
   top: 0;
   background-color: ${Colors.Background};
@@ -70,7 +71,7 @@ const Logo = styled.img`
 const Nav = styled.nav`
   margin-left: auto;
   border-right: 1px solid ${Colors.Gray};
-  padding-right: 1rem;
+  padding-right: 2rem;
   display: none;
   ul {
     display: flex;
@@ -86,6 +87,10 @@ const Nav = styled.nav`
 const NavItem = styled.a`
   font-size: 1rem;
   font-weight: 400;
+  &:hover {
+    color: ${Colors.Primary};
+    cursor: pointer;
+  }
 `;
 
 const SearchIcon = styled.span`
@@ -131,7 +136,6 @@ export default function Header({ mobileMenu }) {
                 <Logo src="/trix-logo.png" />
             </LogoBg>
         </a>
-        <SearchBar/>
         <LogoText href="/">Weave-Trix</LogoText>
         <Nav>
           <ul>
@@ -139,7 +143,7 @@ export default function Header({ mobileMenu }) {
               <NavItem href="/auctions">Auctions</NavItem>
             </li>
             <li>
-              <NavItem href="/bids">Bids</NavItem>
+              <NavItem><MenuList/></NavItem>
             </li>
             <li>
               <NavItem href="#">Garage</NavItem>

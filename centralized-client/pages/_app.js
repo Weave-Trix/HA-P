@@ -3,6 +3,7 @@ import { Colors } from "../next/Theme";
 import { useState } from "react";
 import Header from "../next/components/Header";
 import { MoralisProvider } from "react-moralis";
+import { NotificationProvider } from "web3uikit"
 import Page from "../next/components/styled/Page.styled";
 
 
@@ -90,6 +91,7 @@ function MyApp({ Component, pageProps }) {
       <GlobalStyle />
       <Main>
         <MoralisProvider appId={APP_ID} serverUrl={SERVER_URL}>
+        <NotificationProvider>
           <Header mobileMenu={{ MobileMenuIsOpen, setMobileMenuIsOpen }} />
           <Page>
             <MobileMenu open={MobileMenuIsOpen}>
@@ -112,6 +114,7 @@ function MyApp({ Component, pageProps }) {
             <Component {...pageProps} />
           </Page>
           {/* footer */}
+        </NotificationProvider>
         </MoralisProvider>
       </Main>
     </>
