@@ -1,17 +1,23 @@
 import React, { useState, useEffect } from 'react';
+import Web3 from "web3";
+import { ethers } from "ethers";
 import styled from 'styled-components';
 import Image from "next/image";
-import { Modal, Input } from "web3uikit";
+import { Modal, Input, useNotification, Loading } from "web3uikit";
+import Slider from '@mui/material/Slider';
+import { Reload } from '@web3uikit/icons'
 import Popup from "reactjs-popup"
 import { Colors } from "../../Theme";
 import Button from "../styled/Button.styled";
 import auctionManagerAbi from "../../../../ethereum-blockchain/artifacts/contracts/AuctionContracts.sol/AuctionManager.json";
+import auctionRegistryAbi from "../../../../ethereum-blockchain/artifacts/contracts/AuctionContracts.sol/AuctionRegistry.json";
 import auctionAbi from "../../../../ethereum-blockchain/artifacts/contracts/AuctionContracts.sol/Auction.json";
 import {
     useMoralis,
     useMoralisQuery,
     useMoralisSubscription,
-    useWeb3ExecuteFunction
+    useWeb3ExecuteFunction,
+    MoralisProvider
   } from "react-moralis";
 
 const ListEl = styled.div`
@@ -109,7 +115,7 @@ const RegisteredButton = styled(Button)`
     background: linear-gradient(
         to right,
         ${Colors.PrimaryDisable},
-        #d640f7
+        #f782ff
     );
 `;
 
@@ -127,6 +133,16 @@ const ModalContent = styled.div`
   margin-bottom: 10px;
 `
 
+const SliderContainer = styled.div`
+    margin-top: 40px;
+`
+
+const SliderTitle = styled.div`
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #317fb0;
+`
+
 const ModalText = styled.h4`
   font-weight: 600;
   margin-right: '1em';
@@ -135,9 +151,16 @@ const ModalText = styled.h4`
 `
 
 const GarageList = ({props}) => {
+    const dispatch = useNotification();
+
+    // blockchain connection details
+    const web3 = new Web3(MoralisProvider)
     const chainId = process.env.NEXT_PUBLIC_CHAIN_ID
     const addressStorage = require("../../../../ethereum-blockchain/constants/contractAddresses.json")
     const auctionManagerAddress = addressStorage["AuctionManager"][chainId][addressStorage["AuctionManager"][chainId].length-1];
+    const auctionRegistryAddress = addressStorage["AuctionRegistry"][chainId][addressStorage["AuctionRegistry"][chainId].length-1];
+
+    const { Moralis } = useMoralis();
     const [tokenURI, setTokenURI] = useState("NULL")
     const [tokenId, setTokenId] = useState(0);
     const [nftAddress, setNftAddress] = useState("");
@@ -149,7 +172,11 @@ const GarageList = ({props}) => {
     const [isOpen, setIsOpen] = useState(false);
     const [auctionOngoing, setAuctionOngoing] = useState(false);
     const [auctionRegistered, setAuctionRegistered] = useState(false);
-    const { Moralis } = useMoralis();
+    const [creatingAuction, setCreatingAuction] = useState(false);
+    const [startingBid, setStartingBid] = useState(1);
+    const [auctionDuration, setAuctionDuration] = useState(1);
+    const [auctionAddress, setAuctionAddress] = useState("");
+    const [startingAuction, setStartingAuction] = useState(false);
     
 
     useEffect(() => {
@@ -203,8 +230,77 @@ const GarageList = ({props}) => {
           _nftAddress: nftAddress,
           _tokenId: tokenId
         }
-      })
+    })
 
+    async function handleCreateAuctionSuccess(tx) {
+        // creating
+        setCreatingAuction(true);
+        dispatch({
+            type: "info",
+            icon: <Reload fontSize='50px'/>,
+            message: "Please wait while your transaction is being mined on Ethereum blockchain",
+            title: "Pending transaction...",
+            position: "topR",
+          })
+        await tx.wait(1);
+        // created
+        dispatch({
+            type: "success",
+            message: `Vehicle is now registered for auction`,
+            title: "Auction Registered",
+            position: "topR",
+        })
+        setCreatingAuction(false);
+        setAuctionRegistered(true);
+    }
+
+    // get auction address from auction registry
+    // create new auction object
+    // start auction
+    async function startAuction() {
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const auctionRegistryContract = new ethers.Contract(auctionRegistryAddress, auctionRegistryAbi.abi, provider);
+        const ResAuctionAddress = await auctionRegistryContract.auctionListings(nftAddress, tokenId);
+        var auctionAddress = ResAuctionAddress;
+        startAuctionFetch({
+            onSuccess: (tx) => handleStartAuctionSuccess(tx),
+            onError: (error) => console.log(error)
+        });
+        setIsOpen(false);
+    }
+
+    const { data : startAuctionData, error : startAuctionError, fetch : startAuctionFetch, isFetching: startAuctionFetching, isLoading : startAuctionLoading } = useWeb3ExecuteFunction({
+        abi: auctionAbi.abi,
+        contractAddress: auctionAddress,
+        functionName: "startAuction",
+        params: {
+          _durationSec: auctionDuration,
+          _startingBid: startingBid
+        }
+    })
+
+    async function handleStartAuctionSuccess(tx) {
+        // creating
+        setStartingAuction(true);
+        dispatch({
+            type: "info",
+            icon: <Reload fontSize='50px'/>,
+            message: "Please wait while your transaction is being mined on Ethereum blockchain",
+            title: "Pending transaction...",
+            position: "topR",
+          })
+        await tx.wait(1);
+        // created
+        dispatch({
+            type: "success",
+            message: `Auction has been listed in auction marketplace`,
+            title: "Auction Started",
+            position: "topR",
+        })
+        setStartingAuction(false);
+        setAuctionRegistered(false);
+        setAuctionOngoing(true);
+    }
 
     return (
         <ListEl>
@@ -236,9 +332,35 @@ const GarageList = ({props}) => {
                     </ItemDetails>
                 </div>
                 <ButtonContainer>
-                    {auctionOngoing && <OngoingButton>Auction Ongoing</OngoingButton>}
-                    {auctionRegistered && <RegisteredButton>Start Auction</RegisteredButton>}
-                    {!auctionRegistered && !auctionOngoing && <SellButton onClick={() => createAuction()}>Sell</SellButton>}
+                    {auctionOngoing && <OngoingButton>In Marketplace</OngoingButton>}
+                    {auctionRegistered &&
+                        <RegisteredButton 
+                            disabled={startingAuction || startAuctionFetching}
+                            onClick={() => setIsOpen(true)}>
+                            {(startingAuction || startAuctionFetching) ? 
+                                <Loading
+                                    size={12}
+                                    spinnerColor="#ffffff"
+                                    spinnerType="wave"
+                                />
+                                :
+                                "Start Bidding Session"}
+                        </RegisteredButton>}
+                    {!auctionRegistered && !auctionOngoing && 
+                        <SellButton 
+                            disabled={creatingAuction || createAuctionFetching}
+                            onClick={() => createAuction({
+                                onSuccess: (tx) => handleCreateAuctionSuccess(tx),
+                                onError: (error) => console.log(error)
+                            })}>
+                                {(creatingAuction || createAuctionFetching) ? <Loading
+                                    size={12}
+                                    spinnerColor="#ffffff"
+                                    spinnerType="wave"
+                                /> 
+                                : 
+                                "Create Auction"}
+                        </SellButton>}
                 </ButtonContainer>
                 <Popup open={isOpen} closeOnDocumentClick onClose={closeModal} position="right center">
                 <Overlay
@@ -255,22 +377,38 @@ const GarageList = ({props}) => {
                         okText="Yes! I am 100% sure!"
                         onCancel={() => closeModal()}
                         onCloseButtonPressed={() => closeModal()}
-                        onOk={() => bidFetch()}
-                        title="Place Bid"
+                        onOk={() => startAuction()}
+                        title="Start Auction"
                     >
                     <ModalContent>
                         <Input
-                            id="bidLabel"
-                            label="Your bid in WEI"
+                            id="startingBidInput"
+                            label="Starting bid in WEI"
                             name="Test number Input"
                             width="100%"
                             type="number"
                             validation={{
                             numberMin: 1
-                            }}        
-                            onChange={() => test()}
+                            }}
+                            onChange={() => setStartingBid(document.getElementById("startingBidInput").value)}
                             value={1}
                         />
+                        <SliderContainer>
+                            <SliderTitle>Auction duration in minutes</SliderTitle>
+                        <Slider 
+                            id="auctionDurationSlider"
+                            defaultValue={50}
+                            aria-label="Default"
+                            valueLabelDisplay="auto"
+                            min={1}
+                            max={1440}
+                            onChange={
+                                (event, value) => {
+                                    setAuctionDuration(value * 60); // minute to sec
+                                }
+                            }
+                        />
+                        </SliderContainer>
                         <ModalText>
                         HA-P charges 5% royalty for winner's full settlement
                         </ModalText>

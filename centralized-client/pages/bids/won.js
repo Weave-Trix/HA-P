@@ -163,26 +163,25 @@ const won = () => {
             const web3 = new Web3(MoralisProvider)
             setCurrAccount(web3.utils.toChecksumAddress(account));
         }
-    }, [account])
-
-    useEffect(() => {
         // start skeleton
         setIsLoadingVerWinnerAucsTable(true);
         setIsLoadingPendPayAucsTable(true);
         setIsLoadingPendAuditAucsTable(true);
         setIsLoadingClosedAucsTable(true);
+    }, [account])
+
+    useEffect(() => {
         // 2. for each bid placed, query the current auction status (from smart contract)
-        updateAucStatus();
+        if (labp_auctions.length > 0) {
+            updateAucStatus();
+        }
     }, [labp_auctions])
 
     useEffect(() => {
         // 3. for each status, query relevant details (from smart contract)
-        updateAucDetails();
-        // stop skeleton
-        setIsLoadingVerWinnerAucsTable(false);
-        setIsLoadingPendPayAucsTable(false);
-        setIsLoadingPendAuditAucsTable(false);
-        setIsLoadingClosedAucsTable(false);
+        if (aucStatus.length > 0) {
+            updateAucDetails();
+        }
     }, [aucStatus])
 
     /* update UI and table for each state */
@@ -317,6 +316,7 @@ const won = () => {
             pageSize={5}
             isLoading={isLoadingPendPayAucsTable}
         />
+
         setPendPayAucsTable(table);
     }, [pendPayAucsUI])
 
@@ -629,6 +629,12 @@ const won = () => {
         setPendPayAucs(temp_pendPayAucs);
         setPendAuditAucs(temp_pendAuditAucs);
         setClosedAucs(temp_closedAucs);
+
+        // stop skeleton
+        setIsLoadingVerWinnerAucsTable(false);
+        setIsLoadingPendPayAucsTable(false);
+        setIsLoadingPendAuditAucsTable(false);
+        setIsLoadingClosedAucsTable(false);
     }
     
     return (
