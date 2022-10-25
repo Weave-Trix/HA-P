@@ -605,7 +605,7 @@ contract AuctionRegistry {
         uint256 _tokenId,
         address _auctionAddress
     ) {
-        // if event still not ended, unable to create a same auction for the NFT
+        // if event not in auction keepers or (event not in closed state and in registered state), unable to create a same auction for the NFT
         Auction auction = Auction(_auctionAddress);
         require(
             auctionListings[_nftAddress][_tokenId] == address(0x0) ||
