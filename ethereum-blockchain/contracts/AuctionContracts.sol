@@ -609,7 +609,7 @@ contract AuctionRegistry {
         Auction auction = Auction(_auctionAddress);
         require(
             auctionListings[_nftAddress][_tokenId] == address(0x0) ||
-                (!auction.inClosedState() && !auction.inRegisteredState()),
+                (auction.inClosedState() && !auction.inRegisteredState()),
             "Duplicate auction for the vehicle is active!"
         );
         _;

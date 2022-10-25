@@ -146,7 +146,7 @@ export default function Header({ mobileMenu }) {
               <NavItem><MenuList/></NavItem>
             </li>
             <li>
-              <NavItem href="#">Garage</NavItem>
+              <NavItem href="/garage">Garage</NavItem>
             </li>
             <li>
               <NavItem href="#">Wallet</NavItem>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react';
 import Web3 from "web3";
 import Link from "next/link";
 import { ethers } from "ethers";
@@ -163,25 +163,26 @@ const won = () => {
             const web3 = new Web3(MoralisProvider)
             setCurrAccount(web3.utils.toChecksumAddress(account));
         }
+    }, [account])
+
+    useEffect(() => {
         // start skeleton
         setIsLoadingVerWinnerAucsTable(true);
         setIsLoadingPendPayAucsTable(true);
         setIsLoadingPendAuditAucsTable(true);
         setIsLoadingClosedAucsTable(true);
-    }, [account])
-
-    useEffect(() => {
         // 2. for each bid placed, query the current auction status (from smart contract)
-        if (labp_auctions.length > 0) {
-            updateAucStatus();
-        }
+        updateAucStatus();
     }, [labp_auctions])
 
     useEffect(() => {
         // 3. for each status, query relevant details (from smart contract)
-        if (aucStatus.length > 0) {
-            updateAucDetails();
-        }
+        updateAucDetails();
+        // stop skeleton
+        setIsLoadingVerWinnerAucsTable(false);
+        setIsLoadingPendPayAucsTable(false);
+        setIsLoadingPendAuditAucsTable(false);
+        setIsLoadingClosedAucsTable(false);
     }, [aucStatus])
 
     /* update UI and table for each state */
@@ -316,7 +317,6 @@ const won = () => {
             pageSize={5}
             isLoading={isLoadingPendPayAucsTable}
         />
-
         setPendPayAucsTable(table);
     }, [pendPayAucsUI])
 
@@ -629,12 +629,6 @@ const won = () => {
         setPendPayAucs(temp_pendPayAucs);
         setPendAuditAucs(temp_pendAuditAucs);
         setClosedAucs(temp_closedAucs);
-
-        // stop skeleton
-        setIsLoadingVerWinnerAucsTable(false);
-        setIsLoadingPendPayAucsTable(false);
-        setIsLoadingPendAuditAucsTable(false);
-        setIsLoadingClosedAucsTable(false);
     }
     
     return (

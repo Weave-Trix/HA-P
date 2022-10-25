@@ -64,7 +64,7 @@ const Card = styled.div`
   position: relative;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 4px 40px rgb(0 0 0/10%);
+  box-shadow: 0 4px 40px ${Colors.Primary};
 `;
 
 const BadgeEl = styled.span`
@@ -84,6 +84,7 @@ const BadgeEl = styled.span`
 `;
 
 const ItemImage = styled.div``;
+
 const InfoSection = styled.div`
   display: flex;
   flex-direction: column;
@@ -91,10 +92,12 @@ const InfoSection = styled.div`
   flex: 1;
   gap: 0.5rem;
 `;
+
 const TSection = styled.div`
   display: flex;
   justify-content: space-between;
 `;
+
 const EditionEl = styled.span`
   font-weight: 500;
 `;

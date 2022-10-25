@@ -174,7 +174,7 @@ export default function BidSticky({ auction }) {
         <Popup open={isOpen} closeOnDocumentClick onClose={closeModal} position="right center">
           <Overlay
             style={{
-              height: '90vh',
+              height: '100vh',
               transform: 'scale(1)',
             }}>
             <div>

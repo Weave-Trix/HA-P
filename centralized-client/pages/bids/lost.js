@@ -159,6 +159,8 @@ const lost = () => {
         // 2. for each bid placed, query the current auction status (from smart contract)
         if (labp_auctions.length > 0) {
             updateAucStatus();
+        } else {
+            setIsLoadingClosedAucsTable(false);
         }
     }, [labp_auctions])
 

@@ -148,6 +148,8 @@ const bidding = () => {
         // 2. for each bid placed, query the current auction status (from smart contract)
         if (labp_auctions.length > 0) {
             updateAucStatus();
+        } else {
+            setIsLoadingBidAucsTable(false);
         }
     }, [labp_auctions])
 
