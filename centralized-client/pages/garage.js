@@ -25,7 +25,7 @@ const Title = styled.h1`
     font-weight: 500;
     color: ${Colors.Primary};
     text-align: center;
-    margin-bottom: 2.5rem;
+    margin-bottom: 5rem;
 `;
 
 const Bottom = styled.div`

@@ -1,16 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useReducer } from 'react';
 import Web3 from "web3";
 import Link from "next/link";
 import { ethers } from "ethers";
 import styled from "styled-components";
-import { Colors, Devices } from "../../next/Theme";
+import { Colors, Devices } from "../../../next/Theme";
 import { Eth, Reload } from '@web3uikit/icons';
-import { ENSAvatar, Tab, TabList, Table, EmptyRowsForSkeletonTable, Button, Loading, useNotification } from "web3uikit";
+import { ENSAvatar, Tab, TabList, Table, EmptyRowsForSkeletonTable, Button, Loading, useNotification, Modal, Metamask } from "web3uikit";
+import Popup from "reactjs-popup"
 import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
-import RowCard from "../../next/components/Bids/RowCard.js"
-import CloseStateTag from "../../next/components/Bids/CloseStateTag.js"
-import CompactCountdownTimer from "../../next/components/Timer/CompactCountdownTimer"
+import RowCard from "../../../next/components/Bids/RowCard.js"
+import CloseStateTag from "../../../next/components/Bids/CloseStateTag.js"
+import CompactCountdownTimer from "../../../next/components/Timer/CompactCountdownTimer"
 import {
     useMoralis,
     useMoralisQuery,
@@ -18,13 +19,14 @@ import {
     MoralisProvider,
     useWeb3ExecuteFunction
   } from "react-moralis";
-import auctionAbi from "../../../ethereum-blockchain/artifacts/contracts/AuctionContracts.sol/Auction.json";
-import nftAbi from "../../../ethereum-blockchain/artifacts/contracts/VehicleNft.sol/VehicleNft.json";
+  import auctionRegistryAbi from "../../../../ethereum-blockchain/artifacts/contracts/AuctionContracts.sol/AuctionRegistry.json";
+import auctionAbi from "../../../../ethereum-blockchain/artifacts/contracts/AuctionContracts.sol/Auction.json";
+import nftAbi from "../../../../ethereum-blockchain/artifacts/contracts/VehicleNft.sol/VehicleNft.json";
 
 const Article = styled.article`
     margin-bottom: 2rem;
-    margin-left: 3%;
-    margin-right: 3%;
+    margin-top: 1.5rem;
+    width: 100%;
 `;
 
 const Title = styled.h1`
@@ -70,8 +72,47 @@ const TimerSection = styled.div`
     align-self: center;
 `
 
+const truncateStr = (fullStr, strLen) => {
+    if (fullStr.length <= strLen) return fullStr;
+    const separator = "...";
+    const charsToShow = strLen - separator.length;
+    const frontChars = Math.ceil(charsToShow / 2);
+    const backChars = Math.floor(charsToShow / 2);
+    return (
+      fullStr.substring(0, frontChars) +
+      separator +
+      fullStr.substring(fullStr.length - backChars)
+    );
+};
+
+const Overlay = styled.div`
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0,0,0,0.7);
+`
+
+const ModalContent = styled.div`
+  margin-top: 70px;
+  margin-bottom: 10px;
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+`
+
+const ModalText = styled.h4`
+  font-weight: 600;
+  margin-right: '1em';
+  text-align: center;
+  margin-top: 70px;
+  width: 60%;
+`
+
 /* AuctionStates (group 1 / group 2)
-    REGISTERED, (0)
+    REGISTERED, -> 0
     BIDDING, -> 1 (1)
     VERIFYING_WINNER, -> 1 (2)
     PENDING_PAYMENT, -> 1 (3)
@@ -87,79 +128,73 @@ const TimerSection = styled.div`
     OWNERSHIP_TRANSFERRED -> 2 (6)
 */
 
-// display bid details separated by 2 groups
-//  => first group active auctions (bidding, pendingSellerApproval, pendingFullSettlement, pendingAudit)
-//  => second group history auctions (closed(closeState))
+// display all auctions created by this account (equalTo("seller", thisAccount))
+//  => groups according to state (registered, bidding, verifying_winner, pendingFullSettlement, pendingAudit, closed)
 
 /*
-    1. fetch bid placed, query equalTo account (from moralis database)
-    2. for each bid placed, query the current auction status (from smart contract)
-    3. if auction_closed, fetch end state
+    1. fetch auction listings, query equalTo account (from moralis database)
+    2. fetch nftDetails (from smart contract) if auction_closed, fetch end state
 */
 
-const truncateStr = (fullStr, strLen) => {
-    if (fullStr.length <= strLen) return fullStr;
-    const separator = "...";
-    const charsToShow = strLen - separator.length;
-    const frontChars = Math.ceil(charsToShow / 2);
-    const backChars = Math.floor(charsToShow / 2);
-    return (
-      fullStr.substring(0, frontChars) +
-      separator +
-      fullStr.substring(fullStr.length - backChars)
-    );
-  };
-
-const won = () => {
+const AuctionsManager = () => {
     // blockchain connection details
     const web3 = new Web3(MoralisProvider)
     const chainId = process.env.NEXT_PUBLIC_CHAIN_ID
-    const addressStorage = require("../../../ethereum-blockchain/constants/contractAddresses.json")
+    const addressStorage = require("../../../../ethereum-blockchain/constants/contractAddresses.json")
+    const auctionRegistryAddress = addressStorage["AuctionRegistry"][chainId][addressStorage["AuctionRegistry"][chainId].length-1];
     const dispatch = useNotification()
+
+    // force rerender when account changes
+    const [ignored, forceUpdate] = useReducer((x) => x + 1, 0);
 
     /* useState */
     const [ currAccount, setCurrAccount ] = useState("");
     const [ aucStatus, setAucStatus ] = useState([]);
+    const [ biddingAucs, setBiddingAucs ] = useState([]);
     const [ verWinnerAucs, setVerWinnerAucs ] = useState([]);
     const [ pendPayAucs, setPendPayAucs ] = useState([]);
     const [ pendAuditAucs, setPendAuditAucs ] = useState([]);
     const [ closedAucs, setClosedAucs ] = useState([]);
+    const [ biddingAucsUI, setBiddingAucsUI ] = useState([]);
     const [ verWinnerAucsUI, setVerWinnerAucsUI ] = useState([]);
     const [ pendPayAucsUI, setPendPayAucsUI ] = useState([]);
     const [ pendAuditAucsUI, setPendAuditAucsUI ] = useState([]);
     const [ closedAucsUI, setClosedAucsUI ] = useState([]);
+    const [ biddingAucsTable, setBiddingAucsTable ] = useState();
     const [ verWinnerAucsTable, setVerWinnerAucsTable ] = useState();
     const [ pendPayAucsTable, setPendPayAucsTable ] = useState();
     const [ pendAuditAucsTable, setPendAuditAucsTable ] = useState();
     const [ closedAucsTable, setClosedAucsTable ] = useState();
+    const [ isLoadingBiddingAucsTable, setIsLoadingBiddingAucsTable ] = useState(true);
     const [ isLoadingVerWinnerAucsTable, setIsLoadingVerWinnerAucsTable ] = useState(true);
     const [ isLoadingPendPayAucsTable, setIsLoadingPendPayAucsTable ] = useState(true);
     const [ isLoadingPendAuditAucsTable, setIsLoadingPendAuditAucsTable ] = useState(true);
     const [ isLoadingClosedAucsTable, setIsLoadingClosedAucsTable ] = useState(true);
-    const [ makingPayment, setMakingPayment ] = useState(false);
-
-    console.log(makingPayment)
-
-    // global value
-    let payAmount;
-    let payAuction;
+    const [ verifying, setVerifying ] = useState(false);
+    const [isOpen, setIsOpen] = useState(false);
+    const [ tempAuctionAddress, setTempAuctionAddress ] = useState("");
 
     // 1. fetch bid placed, query equalTo account (from moralis database)
     const { Moralis, isInitialized, isWeb3Enabled, account, ...rest } = useMoralis();
-    const { data: labp_auctions, isLoading, isFetching } = useMoralisQuery(
-        "LogAuctionBidPlaced",
-        (query) => query.equalTo("bidder", account).descending("createdAt"),
+    const { data: lar_auctions, isLoading, isFetching } = useMoralisQuery(
+        "ListAuctionRecords",
+        (query) => query.equalTo("seller", account).descending("createdAt"),
         [account],
         { live: true }
     );
 
     /* useEffect */
+    const closeModal = () => {
+        setIsOpen(false);
+    };
+
     useEffect(() => {
         if (isWeb3Enabled) {
             const web3 = new Web3(MoralisProvider)
             setCurrAccount(web3.utils.toChecksumAddress(account));
         }
         // start skeleton
+        setIsLoadingBiddingAucsTable(true);
         setIsLoadingVerWinnerAucsTable(true);
         setIsLoadingPendPayAucsTable(true);
         setIsLoadingPendAuditAucsTable(true);
@@ -167,20 +202,61 @@ const won = () => {
     }, [account])
 
     useEffect(() => {
-        // 2. for each bid placed, query the current auction status (from smart contract)
-        if (labp_auctions.length > 0) {
-            updateAucStatus();
-        }
-    }, [labp_auctions])
+        updateAucDetails();
+    }, [lar_auctions])
+
+    // biddingAucs
+    useEffect(() => {
+        setBiddingAucsUI([]);
+        biddingAucs.map((aucs) => {
+            setBiddingAucsUI((prev_aucs) => [...prev_aucs, [
+                <RowCard props={aucs}/>,
+                <UserContainer>
+                    <ENSAvatar address={aucs.auctionContractAddress} size={30} />
+                    <UserAddress>{truncateStr(aucs.auctionContractAddress, 15)}</UserAddress>
+                </UserContainer>,
+                <UserContainer>
+                    <ENSAvatar address={aucs.highestBidder} size={30} />
+                    <UserAddress>{(aucs.highestBidder === "0x0000000000000000000000000000000000000000") ? "No Bidder" : truncateStr(aucs.highestBidder, 15)}</UserAddress>
+                </UserContainer>,
+                <UserContainer>
+                <Eth fontSize='30px' style={{marginRight: "5px"}}/>
+                    {(aucs.highestBidder === "0x0000000000000000000000000000000000000000") ? "No Bidder" : aucs.highestBid}
+                </UserContainer>,
+                <TimerSection>
+                    <CompactCountdownTimer targetDate={aucs.bidEndTime * 1000} />
+                </TimerSection>
+            ]])
+        })
+    }, [biddingAucs])
 
     useEffect(() => {
-        // 3. for each status, query relevant details (from smart contract)
-        if (aucStatus.length > 0) {
-            updateAucDetails();
-        }
-    }, [aucStatus])
+        const table = <Table
+            columnsConfig="2fr 1fr 1fr 1fr 1.5fr"
+            customLoadingContent={<div style={{padding: '2rem', display: 'flex', justifyContent: 'space-between', flexDirection: 'column', height: '40vh', width: '80vw'}}>
+                <Skeleton />
+                <Skeleton />
+                <Skeleton />
+                <Skeleton />
+                <Skeleton />
+                <Skeleton />
+            </div>}
+            data={biddingAucsUI}
+            header={[
+                <span>NFT</span>,
+                <span>auction</span>,
+                <span>leader</span>,
+                <span>highest-bid</span>,
+                <span>time-left</span>
+            ]}
+            maxPages={5}
+            pageSize={5}
+            isLoading={isLoadingBiddingAucsTable}
+        />
 
-    /* update UI and table for each state */
+        setBiddingAucsTable(table);
+    }, [biddingAucsUI])
+
 
     // verWinnerAucs
     useEffect(() => {
@@ -201,16 +277,39 @@ const won = () => {
                 <Eth fontSize='30px' style={{marginRight: "5px"}}/>
                     {aucs.highestBid}
                 </UserContainer>,
+                <UserContainer>
+                    <Button
+                        onClick={() => {
+                            setTempAuctionAddress(aucs.auctionContractAddress);
+                            setVerifying(true);
+                            setIsOpen(true);
+                        }}
+                        disabled={verifying}
+                        icon={
+                            verifying &&
+                            <Loading
+                              size={12}
+                              spinnerColor="#ffffff"
+                              spinnerType="wave"
+                            />
+                          }
+                        text={verifying ? "" : "pay"}
+                        theme="secondary"
+                        color="green"
+                        type="submit"
+                        size="large"
+                    />
+                </UserContainer>,
                 <TimerSection>
                     <CompactCountdownTimer targetDate={aucs.sellerVerifyTime * 1000} />
-                </TimerSection>
+                </TimerSection>,
             ]])
         })
     }, [verWinnerAucs])
 
-    useEffect (() => {
+    useEffect(() => {
         const table = <Table
-            columnsConfig="2fr 1fr 1fr 1fr 1.5fr"
+            columnsConfig="2fr 1fr 1fr 0.8fr 0.8fr 1.5fr"
             customLoadingContent={<div style={{padding: '2rem', display: 'flex', justifyContent: 'space-between', flexDirection: 'column', height: '40vh', width: '80vw'}}>
                 <Skeleton />
                 <Skeleton />
@@ -225,6 +324,7 @@ const won = () => {
                 <span>auction</span>,
                 <span>winner</span>,
                 <span>winning-bid</span>,
+                <span>verify</span>,
                 <span>time-left</span>
             ]}
             maxPages={5}
@@ -233,7 +333,7 @@ const won = () => {
         />
 
         setVerWinnerAucsTable(table);
-    }, [verWinnerAucsUI])
+    }, [biddingAucsUI])
 
     // pendPayAucs
     useEffect(() => {
@@ -252,35 +352,12 @@ const won = () => {
                     <UserAddress>{truncateStr(aucs.aucsContractAddress, 15)}</UserAddress>
                 </UserContainer>,
                 <UserContainer>
-                <Eth fontSize='30px' style={{marginRight: "5px"}}/>
-                    {aucs.platformCharge + aucs.highestBid}
+                    <ENSAvatar address={aucs.highestBidder} size={30} />
+                    <UserAddress>{(currAccount === aucs.highestBidder) ? "You" : truncateStr(aucs.highestBidder, 15)}</UserAddress>
                 </UserContainer>,
                 <UserContainer>
-                    <Button
-                        onClick={() => {
-                            setMakingPayment(true);
-                            payAmount = aucs.platformCharge + aucs.highestBid;
-                            payAuction = aucs.auctionContractAddress;
-                            console.log(aucs);
-                            console.log(`paying : ${payAmount}`);
-                            console.log(`paying to: ${payAuction}`)
-                            payFullSettlement();
-                        }}
-                        disabled={makingPayment}
-                        icon={
-                            makingPayment &&
-                            <Loading
-                              size={12}
-                              spinnerColor="#ffffff"
-                              spinnerType="wave"
-                            />
-                          }
-                        text={makingPayment ? "" : "pay"}
-                        theme="secondary"
-                        color="green"
-                        type="submit"
-                        size="large"
-                    />
+                <Eth fontSize='30px' style={{marginRight: "5px"}}/>
+                    {aucs.platformCharge + aucs.highestBid}
                 </UserContainer>,
                 <TimerSection>
                     <CompactCountdownTimer targetDate={aucs.paymentExpiryTime * 1000} />
@@ -304,8 +381,8 @@ const won = () => {
             header={[
                 <span>NFT</span>,
                 <span>auction</span>,
+                <span>winner</span>,
                 <span>amount</span>,
-                <span>pay</span>,
                 <span>payment expires in</span>
             ]}
             maxPages={5}
@@ -332,7 +409,7 @@ const won = () => {
                 </UserContainer>,
                 <UserContainer>
                     <ENSAvatar address={aucs.seller} size={30} />
-                    <UserAddress>{(currAccount === aucs.seller) ? "You" : truncateStr(aucs.seller, 15)}</UserAddress>
+                    <UserAddress>{(account === aucs.seller) ? "You" : truncateStr(aucs.seller, 15)}</UserAddress>
                 </UserContainer>,
                 <UserContainer>
                     <ENSAvatar address={aucs.highestBidder} size={30} />
@@ -422,97 +499,21 @@ const won = () => {
     }, [closedAucsUI])
 
 
-    /* smart contract interaction */
-    const { data: dataPay, error: errorPay, fetch: fetchPay, isLoading: isLoadingPay, isFetching: isFetchingPay, } = useWeb3ExecuteFunction({
-        abi: auctionAbi.abi,
-        contractAddress: payAuction,
-        functionName: "payFullSettlement",
-        msgValue: payAmount,
-    })
-
-    const test = () => {
-        console.log("paying");
-        console.log(auctionAbi.abi);
-        console.log(payAuction);
-        console.log(payAmount);
-        fetchPay();
-    }
-
-    const payFullSettlement = async (e) => {
-        setMakingPayment(true);
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-        if (provider) {
-            let signer = provider.getSigner(0);
-            const auction = new ethers.Contract(payAuction, auctionAbi.abi, provider);
-            let contractAsSigner = auction.connect(signer);
-            console.log(provider)
-            try {
-                // retrieving
-                dispatch({
-                    type: "info",
-                    icon: <Reload fontSize='50px'/>,
-                    message: "Please wait while your transaction is being mined on Ethereum blockchain",
-                    title: "Pending transaction...",
-                    position: "topR",
-                  })
-                const payFullSettlementRes = await contractAsSigner.payFullSettlement({value: payAmount});
-                const txReceipt = await payFullSettlementRes.wait(1);
-                console.log(txReceipt);
-
-                // retrieved
-                dispatch({
-                    type: "success",
-                    message: `Payment succesful, paid ${payAmount} as full settlement for auction ${payAuction}`,
-                    title: "Earnings Retrieved",
-                    position: "topR",
-                })
-                setMakingPayment(false);
-            } catch (err) {
-                console.log("error making payment");
-                console.log(err.errorName);
-                setMakingPayment(false);
-            }
-            payAmount = 0;
-            payAuction = 0;
-        }
-    }
-
     /* async functions */
-    const updateAucStatus = async (e) => {
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-        let temp_aucStatus = [];
-        for (let i = 0; i < labp_auctions.length; i++) {
-            const auctionContract = new ethers.Contract(labp_auctions[i].attributes.auction, auctionAbi.abi, provider);
-            const resAucStatus = await (auctionContract.currAuctionState());
-            const aucStatusObj = {...labp_auctions[i].attributes, "status": resAucStatus};
-            if (! (temp_aucStatus.find(arr => arr.auction === aucStatusObj.auction))) { // remove duplicate
-                temp_aucStatus.push(aucStatusObj);                
-            }
-
-        }
-        setAucStatus(temp_aucStatus);
-    }
-
     const updateAucDetails = async (e) => {
         const provider = new ethers.providers.Web3Provider(window.ethereum);
-        /*
-            BIDDING, -> 1 (1)
-            VERIFYING_WINNER, -> 1 (2)
-            PENDING_PAYMENT, -> 1 (3)
-            PENDING_AUDIT, -> 1 (4)
-            AUCTION_CLOSED, -> 1 (5)
-        */
+        let temp_biddingAucs = [];
         let temp_verWinnerAucs = [];
         let temp_pendPayAucs = [];
         let temp_pendAuditAucs = [];
         let temp_closedAucs = [];
 
-        for (let i = 0; i < aucStatus.length; i++) {
-            const auctionContractAddress = aucStatus[i].auction;
-            const nftContractAddress = aucStatus[i].nftAddress;
+        for (let i = 0; i < lar_auctions.length; i++) {
+            const auctionObj = lar_auctions[i].attributes;
+            const auctionContractAddress = web3.utils.toChecksumAddress(auctionObj.auctionAddress);
+            const nftContractAddress = web3.utils.toChecksumAddress(auctionObj.nftAddress);
             const auctionContract = new ethers.Contract(auctionContractAddress, auctionAbi.abi, provider);
             const nftContract = new ethers.Contract(nftContractAddress, nftAbi.abi, provider);
-            let status = aucStatus[i].status;
             let nftName;
             let nftDescription;
             let nftImage;
@@ -521,9 +522,10 @@ const won = () => {
             let highestBid;
             let highestBidder;
             let endState;
-            const tokenId = (await auctionContract.tokenId()).toNumber();
-            const seller = await auctionContract.seller();
-            const tokenSymbol = (await nftContract.symbol());
+            const status = auctionObj.currState;
+            const tokenId = auctionObj.tokenId;
+            const seller = auctionObj.seller;
+            const tokenSymbol = await nftContract.symbol();
 
             // query generals
             const ipfsLink = await nftContract.tokenURI(tokenId);
@@ -540,12 +542,6 @@ const won = () => {
             highestBid = (await auctionContract.highestBid()).toNumber();
             endState = await auctionContract.auctionEndState();
             highestBidder = await auctionContract.highestBidder();
-
-            if (currAccount !== highestBidder) { // skip if you lost
-                continue;
-            }
-
-            console.log(`End State: ${endState}`)
 
             const generalDetails = {
                 "auctionContractAddress": auctionContractAddress,
@@ -564,113 +560,168 @@ const won = () => {
                 "endState": endState
             }
 
-            // query specifics
-            switch(status) {
-                case 2: // VERIFYING_WINNER
+            // query general
+            switch (auctionObj.currState) {
+                case 1:
+                    console.log("case 1 reached");
+                    temp_biddingAucs.push(generalDetails);
+                    break;
+                case 2:
                     console.log("case 2 reached");
                     // query details
                     const sellerVerifyTime = await auctionContract.verify_expiryTime();
-
-                    if (currAccount === highestBidder) {
-                        temp_verWinnerAucs.push({
-                            ...generalDetails,
-                            "sellerVerifyTime": sellerVerifyTime
-                        })
-                    }
+                    temp_verWinnerAucs.push({...generalDetails, "sellerVerifyTime": sellerVerifyTime});
                     break;
-                case 3: // PENDING PAYMENT
+                case 3:
                     console.log("case 3 reached");
                     // query details
-                    const platformCharge = await auctionContract.platformCharge();
-                    console.log(`Setting platformCharge: ${Number(platformCharge)}`)
                     const paymentExpiryTime = await auctionContract.payment_expiryTime();
-
-                    if (currAccount === highestBidder) {
-                        temp_pendPayAucs.push({
-                            ...generalDetails,
-                            "platformCharge": Number(platformCharge),
-                            "paymentExpiryTime": paymentExpiryTime,
-                        })
-                    }
+                    temp_pendPayAucs.push({...generalDetails, "paymentExpiryTime": paymentExpiryTime});
                     break;
-                case 4: // PENDING_AUDIT
+                case 4:
                     console.log("case 4 reached");
                     //query details
                     const authority = await nftContract.getAuthorityAddress();
-
-                    if (currAccount === highestBidder) {
-                        temp_pendAuditAucs.push({
-                            ...generalDetails,
-                            "authority": authority
-                        })
-                    }
+                    temp_pendAuditAucs.push({...generalDetails, "authority": authority});
                     break;
-                case 5: // AUCTION_CLOSED
+                case 5:
                     console.log("case 5 reached");
                     // query details
                     const currOwner = await nftContract.ownerOf(tokenId);
-                    if (currAccount === highestBidder) {
-                        temp_closedAucs.push({
-                            ...generalDetails,
-                            "currOwner": currOwner
-                        })
-                    }
+                    temp_closedAucs.push({...generalDetails, "currOwner": currOwner})
                     break;
                 default:
-                    console.log("Bad ruka");
+                    console.log("bad ruka");
             }
+
             // stop skeleton
-            if (i === (labp_auctions.length - 1)) {
+            if (i === (lar_auctions.length - 1)) {
+                setIsLoadingBiddingAucsTable(false);
                 setIsLoadingVerWinnerAucsTable(false);
                 setIsLoadingPendPayAucsTable(false);
                 setIsLoadingPendAuditAucsTable(false);
                 setIsLoadingClosedAucsTable(false);
             }
         } // end of for loop
-
+        setBiddingAucs(temp_biddingAucs);
         setVerWinnerAucs(temp_verWinnerAucs);
         setPendPayAucs(temp_pendPayAucs);
         setPendAuditAucs(temp_pendAuditAucs);
         setClosedAucs(temp_closedAucs);
     }
-    
+
+    const { data : verifyResultData, error : verifyResultError, fetch : verifyResultFetch, isFetching: verifyResultFetching, isLoading : verifyResultLoading } = useWeb3ExecuteFunction()
+
+    async function verifyResult(_result) {
+        console.log(`Verifying result: ${_result}`)
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        console.log(tempAuctionAddress);
+        const options = {
+            abi: auctionAbi.abi,
+            contractAddress: tempAuctionAddress,
+            functionName: "verifyWinner",
+            params: {
+              approveWinningBid: _result
+            }
+        }
+        verifyResultFetch({
+            params: options,
+            onSuccess: (tx) => handleVerifyResultSuccess(tx),
+            onError: (error) => console.log(error)
+        })
+        closeModal();
+    }
+
+    async function handleVerifyResultSuccess(tx) {
+        // creating
+        setVerifying(true);
+        dispatch({
+            type: "info",
+            icon: <Reload fontSize='50px'/>,
+            message: "Please wait while your transaction is being mined on Ethereum blockchain",
+            title: "Pending transaction...",
+            position: "topR",
+          })
+        await tx.wait(1);
+        // created
+        dispatch({
+            type: "success",
+            message: `Verify Auction Result's transaction has been processed`,
+            title: "Auction Started",
+            position: "topR",
+        })
+        setVerifying(false);
+    }
+
     return (
         <Article>
-            <Title>Won Bids</Title>
             <TabList
-                defaultActiveKey={1}
-                onChange={function noRefCheck(){}}
-                tabStyle="bulbUnion"
-                isWidthAuto
-                >
+            defaultActiveKey={1}
+            onChange={function noRefCheck(){}}
+            tabStyle="bulbUnion"
+            isWidthAuto
+            >
                 <Tab
                     tabKey={1}
-                    tabName="Waiting for Verification"
+                    tabName="Bidding"
+                >
+                    {biddingAucsTable}
+                </Tab>
+                <Tab
+                    tabKey={2}
+                    tabName="Pending Verification"
                 >
                     {verWinnerAucsTable}
                 </Tab>
                 <Tab
-                    tabKey={2}
-                    tabName="Pending Payment (action required)"
+                    tabKey={3}
+                    tabName="Awaiting Winner's Payment"
                 >
                     {pendPayAucsTable}
                 </Tab>
                 <Tab
-                    tabKey={3}
+                    tabKey={4}
                     tabName="Awaiting Ownership Transfer"
                 >
                     {pendAuditAucsTable}
                 </Tab>
                 <Tab
-                    tabKey={4}
+                    tabKey={5}
                     tabName="Completed"
                 >
                     {closedAucsTable}
                 </Tab>
             </TabList>
-            <Filler />
+            <Popup open={isOpen} closeOnDocumentClick onClose={closeModal} position="right center">
+                <Overlay
+                    style={{
+                    height: '100vh',
+                    transform: 'scale(1)',
+                    }}>
+                    <div>
+                    <Modal
+                        className="close"
+                        cancelText="Reject Auction's Result"
+                        id="v-center"
+                        isCentered
+                        okText="Accept Auction's Result"
+                        onCancel={() => verifyResult(false)}
+                        onCloseButtonPressed={() => closeModal()}
+                        onOk={() => verifyResult(true)}
+                        title="Start Auction"
+                    >
+                    <ModalContent>
+                        <Metamask fontSize='150px'/>
+                        <ModalText>
+                        In the case of rejecting auctoin's result, seller's payment will be fully refunded along with the deposit, and no penalty will be incurred to any party.
+                        </ModalText>
+                    </ModalContent>
+                    </Modal>
+                    </div>
+                </Overlay>
+            </Popup>
         </Article>
     )
 }
 
-export default won
+export default AuctionsManager

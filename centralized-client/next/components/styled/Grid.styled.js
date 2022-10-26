@@ -3,7 +3,6 @@ import { Devices } from "../../Theme";
 
 const Grid = styled.div`
   display: grid;
-  margin-top: 1rem;
   grid-template-columns: 1fr;
   gap: 3rem;
   @media ${Devices.Tablet} {

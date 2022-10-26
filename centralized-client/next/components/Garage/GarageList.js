@@ -82,8 +82,15 @@ const ChassisValue = styled.div`
     font-size: 0.85rem;
 `
 
+const ButtonSection = styled.div`
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+`
+
 const ButtonContainer = styled.div`
     margin-top: 2rem;
+    flex: 1;
 `
 
 const SellButton = styled(Button)`
@@ -91,10 +98,10 @@ const SellButton = styled(Button)`
   width: 100%;
   font-size: 1.07rem;
   background: linear-gradient(
-    to right,
-    ${Colors.PrimaryDisable},
-    #45f5c6
-  );
+        to right,
+        ${Colors.PrimaryDisable},
+        #45f5c6
+    );
 `;
 
 const OngoingButton = styled(Button)`
@@ -115,7 +122,18 @@ const RegisteredButton = styled(Button)`
     background: linear-gradient(
         to right,
         ${Colors.PrimaryDisable},
-        #f782ff
+        #ca6fe3
+    );
+`;
+
+const CancelButton = styled(Button)`
+    flex: 1;
+    width: 100%;
+    font-size: 1.07rem;
+    background: linear-gradient(
+        to right,
+        #050d2e,
+        ${Colors.PrimaryDisable}
     );
 `;
 
@@ -175,7 +193,6 @@ const GarageList = ({props}) => {
     const [creatingAuction, setCreatingAuction] = useState(false);
     const [startingBid, setStartingBid] = useState(1);
     const [auctionDuration, setAuctionDuration] = useState(1);
-    const [auctionAddress, setAuctionAddress] = useState("");
     const [startingAuction, setStartingAuction] = useState(false);
     
 
@@ -257,27 +274,31 @@ const GarageList = ({props}) => {
     // get auction address from auction registry
     // create new auction object
     // start auction
+    const { data : startAuctionData, error : startAuctionError, fetch : startAuctionFetch, isFetching: startAuctionFetching, isLoading : startAuctionLoading } = useWeb3ExecuteFunction()
+    
     async function startAuction() {
+        console.log("starting auction")
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         const auctionRegistryContract = new ethers.Contract(auctionRegistryAddress, auctionRegistryAbi.abi, provider);
-        const ResAuctionAddress = await auctionRegistryContract.auctionListings(nftAddress, tokenId);
-        var auctionAddress = ResAuctionAddress;
+        const auctionAddress = await auctionRegistryContract.auctionListings(nftAddress, tokenId);
+        console.log(auctionAddress);
+        const options = {
+            abi: auctionAbi.abi,
+            contractAddress: auctionAddress,
+            functionName: "startAuction",
+            params: {
+              _durationSec: auctionDuration,
+              _startingBid: startingBid
+            }
+        }
         startAuctionFetch({
+            params: options,
             onSuccess: (tx) => handleStartAuctionSuccess(tx),
             onError: (error) => console.log(error)
         });
-        setIsOpen(false);
+        closeModal();
     }
 
-    const { data : startAuctionData, error : startAuctionError, fetch : startAuctionFetch, isFetching: startAuctionFetching, isLoading : startAuctionLoading } = useWeb3ExecuteFunction({
-        abi: auctionAbi.abi,
-        contractAddress: auctionAddress,
-        functionName: "startAuction",
-        params: {
-          _durationSec: auctionDuration,
-          _startingBid: startingBid
-        }
-    })
 
     async function handleStartAuctionSuccess(tx) {
         // creating
@@ -331,37 +352,44 @@ const GarageList = ({props}) => {
                         </InfoSection>
                     </ItemDetails>
                 </div>
-                <ButtonContainer>
-                    {auctionOngoing && <OngoingButton>In Marketplace</OngoingButton>}
+                <ButtonSection>
                     {auctionRegistered &&
-                        <RegisteredButton 
-                            disabled={startingAuction || startAuctionFetching}
-                            onClick={() => setIsOpen(true)}>
-                            {(startingAuction || startAuctionFetching) ? 
-                                <Loading
-                                    size={12}
-                                    spinnerColor="#ffffff"
-                                    spinnerType="wave"
-                                />
-                                :
-                                "Start Bidding Session"}
-                        </RegisteredButton>}
-                    {!auctionRegistered && !auctionOngoing && 
-                        <SellButton 
-                            disabled={creatingAuction || createAuctionFetching}
-                            onClick={() => createAuction({
-                                onSuccess: (tx) => handleCreateAuctionSuccess(tx),
-                                onError: (error) => console.log(error)
-                            })}>
-                                {(creatingAuction || createAuctionFetching) ? <Loading
-                                    size={12}
-                                    spinnerColor="#ffffff"
-                                    spinnerType="wave"
-                                /> 
-                                : 
-                                "Create Auction"}
-                        </SellButton>}
-                </ButtonContainer>
+                        <ButtonContainer style={{marginRight: "2rem"}}>
+                            <CancelButton>Cancel Auction</CancelButton>
+                        </ButtonContainer>
+                    }
+                    <ButtonContainer>
+                        {auctionOngoing && <OngoingButton>In Marketplace</OngoingButton>}
+                        {auctionRegistered &&
+                            <RegisteredButton 
+                                disabled={startingAuction || startAuctionFetching}
+                                onClick={() => setIsOpen(true)}>
+                                {(startingAuction || startAuctionFetching || isOpen) ? 
+                                    <Loading
+                                        size={12}
+                                        spinnerColor="#ffffff"
+                                        spinnerType="wave"
+                                    />
+                                    :
+                                    "Start Bidding Session"}
+                            </RegisteredButton>}
+                        {!auctionRegistered && !auctionOngoing && 
+                            <SellButton 
+                                disabled={creatingAuction || createAuctionFetching}
+                                onClick={() => createAuction({
+                                    onSuccess: (tx) => handleCreateAuctionSuccess(tx),
+                                    onError: (error) => console.log(error)
+                                })}>
+                                    {(creatingAuction || createAuctionFetching) ? <Loading
+                                        size={12}
+                                        spinnerColor="#ffffff"
+                                        spinnerType="wave"
+                                    /> 
+                                    : 
+                                    "Create Auction"}
+                            </SellButton>}
+                    </ButtonContainer>
+                </ButtonSection>
                 <Popup open={isOpen} closeOnDocumentClick onClose={closeModal} position="right center">
                 <Overlay
                     style={{

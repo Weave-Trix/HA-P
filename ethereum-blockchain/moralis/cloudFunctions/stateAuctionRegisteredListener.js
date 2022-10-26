@@ -15,6 +15,7 @@ Moralis.Cloud.afterSave("StateAuctionRegistered", async (request) => {
     listAuctionRecords.set("tokenId", request.object.get("tokenId"));
     listAuctionRecords.set("currState", 0);
     listAuctionRecords.set("depositPlaced", []);
+    listAuctionRecords.set("seller", request.object.get("seller"));
     logger.info(
       `------Added ${request.object.get("auction")} listAuctionRecords------`
     );

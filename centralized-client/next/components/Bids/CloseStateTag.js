@@ -21,7 +21,7 @@ export default function CloseStateTag({props}) {
     switch(props) {
         case 0: // NOT_ENDED
             name = "processing";
-            color = "plum";
+            color = "lightblue";
             break;
         case 1: // CANCELED
             name = "canceled by seller";
@@ -29,11 +29,11 @@ export default function CloseStateTag({props}) {
             break;
         case 2: // NO_BIDDER
             name = "no bidder";
-            color = "pink"
+            color = "lightslategrey"
             break;
         case 3: // REJECTED_BY_SELLER
             name = "rejected by seller";
-            color = "lightslategrey";
+            color = "red";
             break;
         case 4: // PAYMENT_OVERDUE
             name = "payment overdue";

@@ -149,7 +149,7 @@ export default function Header({ mobileMenu }) {
               <NavItem href="/garage">Garage</NavItem>
             </li>
             <li>
-              <NavItem href="#">Wallet</NavItem>
+              <NavItem href="/wallet">Wallet</NavItem>
             </li>
           </ul>
         </Nav>
