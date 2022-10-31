@@ -264,7 +264,7 @@ const bidding = () => {
             let endState;
             const tokenId = (await auctionContract.tokenId()).toNumber();
             const seller = await auctionContract.seller();
-            const tokenSymbol = (await nftContract.symbol());
+            const tokenSymbol = await nftContract.symbol();
 
             // query generals
             const ipfsLink = await nftContract.tokenURI(tokenId);

@@ -98,7 +98,11 @@ const TimerSection = styled.div`
 */
 
 const truncateStr = (fullStr, strLen) => {
-    if (fullStr.length <= strLen) return fullStr;
+    if (!fullStr) {
+        return ("None");
+    }
+    console.log(`truncating string: ${fullStr}`);
+    if (fullStr && fullStr.length <= strLen) return fullStr;
     const separator = "...";
     const charsToShow = strLen - separator.length;
     const frontChars = Math.ceil(charsToShow / 2);
@@ -108,7 +112,7 @@ const truncateStr = (fullStr, strLen) => {
       separator +
       fullStr.substring(fullStr.length - backChars)
     );
-  };
+};
 
 const won = () => {
     // blockchain connection details
@@ -138,7 +142,6 @@ const won = () => {
     const [ isLoadingClosedAucsTable, setIsLoadingClosedAucsTable ] = useState(true);
     const [ makingPayment, setMakingPayment ] = useState(false);
 
-    console.log(makingPayment)
 
     // global value
     let payAmount;
@@ -248,8 +251,8 @@ const won = () => {
             setPendPayAucsUI((prev_aucs) => [...prev_aucs, [
                 <RowCard props={aucs}/>,
                 <UserContainer>
-                    <ENSAvatar address={aucs.aucsContractAddress} size={30} />
-                    <UserAddress>{truncateStr(aucs.aucsContractAddress, 15)}</UserAddress>
+                    <ENSAvatar address={aucs.auctionContractAddress} size={30} />
+                    <UserAddress>{truncateStr(aucs.auctionContractAddress, 15)}</UserAddress>
                 </UserContainer>,
                 <UserContainer>
                 <Eth fontSize='30px' style={{marginRight: "5px"}}/>
@@ -266,16 +269,8 @@ const won = () => {
                             console.log(`paying to: ${payAuction}`)
                             payFullSettlement();
                         }}
-                        disabled={makingPayment}
-                        icon={
-                            makingPayment &&
-                            <Loading
-                              size={12}
-                              spinnerColor="#ffffff"
-                              spinnerType="wave"
-                            />
-                          }
-                        text={makingPayment ? "" : "pay"}
+                        disabled={makingPayment || isFetchingPay}
+                        text={(makingPayment || isFetchingPay) ? "Mining Transaction" : "Pay Full Settlement"}
                         theme="secondary"
                         color="green"
                         type="submit"
@@ -287,7 +282,7 @@ const won = () => {
                 </TimerSection>
             ]])
         })
-    }, [pendPayAucs])
+    }, [pendPayAucs, makingPayment])
 
     useEffect (() => {
         const table = <Table
@@ -320,6 +315,7 @@ const won = () => {
     useEffect(() => {
         setPendAuditAucsUI([]);
         pendAuditAucs.map((aucs) => {
+            console.log(`Pending Audit Aucs => ${aucs.auctionContractAddress}`)
             setPendAuditAucsUI((prev_aucs) => [...prev_aucs, [
                 <RowCard props={aucs}/>,
                 <UserContainer>
@@ -457,6 +453,7 @@ const won = () => {
                   })
                 const payFullSettlementRes = await contractAsSigner.payFullSettlement({value: payAmount});
                 const txReceipt = await payFullSettlementRes.wait(1);
+                updateAucStatus()
                 console.log(txReceipt);
 
                 // retrieved
@@ -484,6 +481,9 @@ const won = () => {
         for (let i = 0; i < labp_auctions.length; i++) {
             const auctionContract = new ethers.Contract(labp_auctions[i].attributes.auction, auctionAbi.abi, provider);
             const resAucStatus = await (auctionContract.currAuctionState());
+            if (resAucStatus === 3) {
+                console.log(`Catched pendPayAucs from labp, ${labp_auctions[i].attributes.auction}`);
+            }
             const aucStatusObj = {...labp_auctions[i].attributes, "status": resAucStatus};
             if (! (temp_aucStatus.find(arr => arr.auction === aucStatusObj.auction))) { // remove duplicate
                 temp_aucStatus.push(aucStatusObj);                
@@ -592,6 +592,8 @@ const won = () => {
                             "paymentExpiryTime": paymentExpiryTime,
                         })
                     }
+                    console.log("=> Setting pendPayAucs")
+                    console.log(generalDetails);
                     break;
                 case 4: // PENDING_AUDIT
                     console.log("case 4 reached");
@@ -619,19 +621,18 @@ const won = () => {
                 default:
                     console.log("Bad ruka");
             }
-            // stop skeleton
-            if (i === (labp_auctions.length - 1)) {
-                setIsLoadingVerWinnerAucsTable(false);
-                setIsLoadingPendPayAucsTable(false);
-                setIsLoadingPendAuditAucsTable(false);
-                setIsLoadingClosedAucsTable(false);
-            }
         } // end of for loop
 
         setVerWinnerAucs(temp_verWinnerAucs);
         setPendPayAucs(temp_pendPayAucs);
         setPendAuditAucs(temp_pendAuditAucs);
         setClosedAucs(temp_closedAucs);
+
+        // stop skeleton
+        setIsLoadingVerWinnerAucsTable(false);
+        setIsLoadingPendPayAucsTable(false);
+        setIsLoadingPendAuditAucsTable(false);
+        setIsLoadingClosedAucsTable(false);
     }
     
     return (

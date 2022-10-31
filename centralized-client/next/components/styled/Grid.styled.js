@@ -11,6 +11,10 @@ const Grid = styled.div`
   @media ${Devices.Laptop} {
     grid-template-columns: repeat(2, 1fr);
   }
+
+  @media ${Devices.LaptopL} {
+    grid-template-columns: repeat(3, 1fr);
+  }
 `;
 
 export default Grid;

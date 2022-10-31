@@ -7,7 +7,7 @@ import {
 import { Grid, User } from '@web3uikit/icons'
 import { Colors, Devices } from "../../next/Theme";
 import React, { useReducer, useState } from "react";
-import { ENSAvatar, Tab, TabList, Table, EmptyRowsForSkeletonTable, Button, Loading, useNotification } from "web3uikit";
+import { ENSAvatar, Tab, TabList, Dropdown, Table, EmptyRowsForSkeletonTable, Button, Loading, useNotification } from "web3uikit";
 import AuctionsArticle from "../../next/components/Auctions/AuctionsArticle.js"
 import AuctionsManager from "../../next/components/Auctions/AuctionsManager";
 
@@ -76,14 +76,11 @@ export default function Auctions() {
     [],
     { live: true }
   );
-
   // populate address to bidAucsAddress
   lar_bidAucs.map((auctions) => {
     bidAucsAddress.push(auctions.attributes.auctionAddress);
   });
-
   console.log(`bidAucsAddress: ${bidAucsAddress}`);
-
   // get details of bidAucs from sasb_bidAucs
   const { data: sasb_bidAucs, isLoading: isFetchingDetails } = useMoralisQuery(
     "StateAuctionStartedBidding",
@@ -94,13 +91,11 @@ export default function Auctions() {
       live: true,
     }
   );
-
   // populate details to biddingAuction
   sasb_bidAucs.map((auctions) => {
     bidAucs.push(auctions.attributes.auction);
   });
   console.log(`bidAucs: ${bidAucs}`);
-
   // get details of bidHistory from LogAuctionBidPlaced
   const { data: labp_bidHistory, isLoading: isFetchingHistory } =
     useMoralisQuery(
@@ -114,7 +109,6 @@ export default function Auctions() {
         live: true,
       }
     );
-
   // populate details to bidHistory
   labp_bidHistory.map((bids) => {
     bidHistory.push(bids.attributes.bidAmount);
@@ -122,42 +116,45 @@ export default function Auctions() {
   console.log(`bidHistory: ${bidHistory}`);
   console.log(sasb_bidAucs);
   console.log(labp_bidHistory);
-
   // listen for bidPlaced events
   useMoralisSubscription("LogAuctionBidPlaced", (query) => query, [], {
     onUpdate: forceUpdate,
   });
-
   // listen for depositPlaced events
   */
   const [ tab, setTab ] = useState(1);
- 
+  const [ viewArticle, setViewArticle ] = useState(true);
+  const [ viewManager, setViewManager ] = useState(false);
 
   return (
     <Article>
-      <Title>{tab===1 ? "Auctions" : "My Auctions"}</Title>
+      <Title>{tab===1 ? "Auctions" : "Manage My-Auctions"}</Title>
         <TopSection>
-          <TabList
-          onChange={(event) => {
-            setTab(event);
-          }}
-          tabStyle="bulbSeperate"
-          >
-          <Tab
-            tabKey={1}
-            tabName={<Grid fontSize='20px'/>}
-            lineHeight={0}
-          >
-            <AuctionsArticle />
-          </Tab>
-          <Tab
-            tabKey={2}
-            tabName={<User fontSize='20px'/>}
-            lineHeight={0}
-          >
-              <AuctionsManager />
-          </Tab>
-          </TabList>
+          <Dropdown
+            icon={<Grid fontSize='20px' style={{marginRight: "5px"}}/>}
+            label="Viewing : "
+            defaultOptionIndex={0}
+            onChange={(e) => {
+              setTab(e.id)
+              console.log(e.id)
+            }}
+            onComplete={function noRefCheck(){}}
+            options={[
+              {
+                id: 1,
+                label: 'Active Auctions'
+              },
+              {
+                id: 2,
+                label: 'Manage My-Auctions'
+              }
+            ]}
+        />
+        {(tab === 2) ? 
+          <AuctionsManager />
+          :
+          <AuctionsArticle />
+        }
         </TopSection>
     </Article>
   );

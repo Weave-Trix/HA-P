@@ -19,6 +19,7 @@ error Auction_UnauthorizedAccess();
 
 error ContractFactory__RestrictedManagerAccess();
 error ContractFactory_RestrictedOwnerAccess();
+error ContractFactory_AuctionOngoing();
 
 /*
 1. Seller can register a new vehicle by minting a vehicle NFT
@@ -34,6 +35,8 @@ contract ContractFactory {
     address public auctionRegistryAddress;
     AuctionManager private auctionManager;
     AuctionRegistry private auctionRegistry;
+    bool public emptyAucInRegistry;
+    address public aucFoundInRegistry;
 
     constructor(address _auctionRegistryAddress) {
         owner = msg.sender;
@@ -74,6 +77,23 @@ contract ContractFactory {
         address _eventEmitterAddress,
         address _auctionKeeperAddress
     ) public onlyAuctionManager {
+        // TODO: check if existing auction is registered in AuctionRegistry, 
+            // if yes, check if auction state !== closed
+                // if yes, revert
+        address currAuction = auctionRegistry.auctionListings(_nftAddress, _tokenId);
+        aucFoundInRegistry = currAuction;
+
+        if (currAuction != address(0x0)) {
+            emptyAucInRegistry = false;
+            Auction tempAuction = Auction(currAuction);
+            Auction.AuctionState currState = tempAuction.currAuctionState();
+            // if event not in auction keepers or (event not in closed state and in registered state), unable to create a same auction for the NFT
+            if (currState != Auction.AuctionState.AUCTION_CLOSED) {
+                revert ContractFactory_AuctionOngoing();
+            }
+        }
+        emptyAucInRegistry = true;
+        
         // call AuctionRegistry, register auction
         // create Auction contract
         Auction newAuctionInstance = new Auction(
@@ -600,21 +620,6 @@ contract AuctionRegistry {
         _;
     }
 
-    modifier onlyAuctionInactive(
-        address _nftAddress,
-        uint256 _tokenId,
-        address _auctionAddress
-    ) {
-        // if event not in auction keepers or (event not in closed state and in registered state), unable to create a same auction for the NFT
-        Auction auction = Auction(_auctionAddress);
-        require(
-            auctionListings[_nftAddress][_tokenId] == address(0x0) ||
-                (auction.inClosedState() && !auction.inRegisteredState()),
-            "Duplicate auction for the vehicle is active!"
-        );
-        _;
-    }
-
     function getContractType() public pure returns (Constants.ContractType) {
         return Constants.ContractType.AUCTION_REGISTRY;
     }
@@ -634,7 +639,6 @@ contract AuctionRegistry {
     )
         public
         onlyContractFactory
-        onlyAuctionInactive(_nftAddress, _tokenId, _auctionAddress)
     {
         // if NFT id not in map, store the NFT -> address mapping
         // else if NFT id already exist, update the mapping

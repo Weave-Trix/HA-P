@@ -118,41 +118,41 @@ async function main() {
     sync_historical: true,
     topic: "AuctionRegistered(address,address,address,uint256,uint256)",
     abi: {
-      anonymous: false,
-      inputs: [
+      "anonymous": false,
+      "inputs": [
         {
-          indexed: true,
-          internalType: "address",
-          name: "auction",
-          type: "address",
+          "indexed": true,
+          "internalType": "address",
+          "name": "auction",
+          "type": "address"
         },
         {
-          indexed: false,
-          internalType: "address",
-          name: "seller",
-          type: "address",
+          "indexed": false,
+          "internalType": "address",
+          "name": "seller",
+          "type": "address"
         },
         {
-          indexed: true,
-          internalType: "address",
-          name: "nftAddress",
-          type: "address",
+          "indexed": true,
+          "internalType": "address",
+          "name": "nftAddress",
+          "type": "address"
         },
         {
-          indexed: true,
-          internalType: "uint256",
-          name: "tokenId",
-          type: "uint256",
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "tokenId",
+          "type": "uint256"
         },
         {
-          indexed: false,
-          internalType: "uint256",
-          name: "registerTime",
-          type: "uint256",
-        },
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "registerTime",
+          "type": "uint256"
+        }
       ],
-      name: "AuctionRegistered",
-      type: "event",
+      "name": "AuctionRegistered",
+      "type": "event"
     },
     tableName: "StateAuctionRegistered",
   };
@@ -1108,6 +1108,18 @@ async function main() {
     pendingWinnerPaymentRefundOpt,
     { useMasterKey: true }
   );
+
+  if (auctionRegisteredRes.success) {
+    console.log("Auction Registered deployed succesfully")
+  } else {
+    console.log("Auction Registered cannot deploy")
+  }
+
+  if (auctionStartedBiddingRes.success) {
+    console.log("Auction Started Bidding deployed succesfully")
+  } else {
+    console.log("Auction Started Bidding cannot deploy")
+  }
 
   if (
     nftMintedRes.success &&

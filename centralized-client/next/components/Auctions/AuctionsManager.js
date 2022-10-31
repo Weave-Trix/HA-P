@@ -5,7 +5,7 @@ import { ethers } from "ethers";
 import styled from "styled-components";
 import { Colors, Devices } from "../../../next/Theme";
 import { Eth, Reload } from '@web3uikit/icons';
-import { ENSAvatar, Tab, TabList, Table, EmptyRowsForSkeletonTable, Button, Loading, useNotification, Modal, Metamask } from "web3uikit";
+import { ENSAvatar, Tab, TabList, Table, Button, Loading, useNotification, Modal, Metamask } from "web3uikit";
 import Popup from "reactjs-popup"
 import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
@@ -15,7 +15,6 @@ import CompactCountdownTimer from "../../../next/components/Timer/CompactCountdo
 import {
     useMoralis,
     useMoralisQuery,
-    useMoralisSubscription, 
     MoralisProvider,
     useWeb3ExecuteFunction
   } from "react-moralis";
@@ -73,7 +72,11 @@ const TimerSection = styled.div`
 `
 
 const truncateStr = (fullStr, strLen) => {
-    if (fullStr.length <= strLen) return fullStr;
+    if (!fullStr) {
+        return ("None");
+    }
+    console.log(`truncating string: ${fullStr}`);
+    if (fullStr && fullStr.length <= strLen) return fullStr;
     const separator = "...";
     const charsToShow = strLen - separator.length;
     const frontChars = Math.ceil(charsToShow / 2);
@@ -209,6 +212,7 @@ const AuctionsManager = () => {
     useEffect(() => {
         setBiddingAucsUI([]);
         biddingAucs.map((aucs) => {
+            console.log(`Setting UI for bidding aucs ${aucs}`);
             setBiddingAucsUI((prev_aucs) => [...prev_aucs, [
                 <RowCard props={aucs}/>,
                 <UserContainer>
@@ -255,14 +259,14 @@ const AuctionsManager = () => {
         />
 
         setBiddingAucsTable(table);
-    }, [biddingAucsUI])
+    }, [biddingAucsUI, isLoadingVerWinnerAucsTable])
 
 
     // verWinnerAucs
     useEffect(() => {
         setVerWinnerAucsUI([]);
         verWinnerAucs.map((aucs) => {
-            console.log(`This auction needs to be verified: ${aucs.auctionContractAddress}`)
+            console.log(`Setting UI for verWinner aucs ${aucs}`);
             setVerWinnerAucsUI((prev_aucs) => [...prev_aucs, [
                 <RowCard props={aucs}/>,
                 <UserContainer>
@@ -284,16 +288,7 @@ const AuctionsManager = () => {
                             setVerifying(true);
                             setIsOpen(true);
                         }}
-                        disabled={verifying}
-                        icon={
-                            verifying &&
-                            <Loading
-                              size={12}
-                              spinnerColor="#ffffff"
-                              spinnerType="wave"
-                            />
-                          }
-                        text={verifying ? "" : "pay"}
+                        text="verify"
                         theme="secondary"
                         color="green"
                         type="submit"
@@ -345,11 +340,12 @@ const AuctionsManager = () => {
         // payment button
 
         pendPayAucs.map((aucs) => {
+            console.log(`Setting UI for pendPay aucs ${aucs.aucsContractAddress}, highestBidder ${aucs.highestBidder}`);
             setPendPayAucsUI((prev_aucs) => [...prev_aucs, [
                 <RowCard props={aucs}/>,
                 <UserContainer>
-                    <ENSAvatar address={aucs.aucsContractAddress} size={30} />
-                    <UserAddress>{truncateStr(aucs.aucsContractAddress, 15)}</UserAddress>
+                    <ENSAvatar address={aucs.auctionContractAddress} size={30} />
+                    <UserAddress>{truncateStr(aucs.auctionContractAddress, 15)}</UserAddress>
                 </UserContainer>,
                 <UserContainer>
                     <ENSAvatar address={aucs.highestBidder} size={30} />
@@ -391,12 +387,13 @@ const AuctionsManager = () => {
         />
 
         setPendPayAucsTable(table);
-    }, [pendPayAucsUI])
+    }, [pendPayAucsUI, isLoadingPendPayAucsTable])
 
     // pendAuditAucs
     useEffect(() => {
         setPendAuditAucsUI([]);
         pendAuditAucs.map((aucs) => {
+            console.log(`Setting UI for pendAudit aucs ${aucs}`);
             setPendAuditAucsUI((prev_aucs) => [...prev_aucs, [
                 <RowCard props={aucs}/>,
                 <UserContainer>
@@ -444,12 +441,13 @@ const AuctionsManager = () => {
         />
 
         setPendAuditAucsTable(table);
-    }, [pendAuditAucsUI])
+    }, [pendAuditAucsUI, isLoadingPendAuditAucsTable])
 
     // closedAucs
     useEffect(() => {
         setClosedAucsUI([]);
         closedAucs.map((aucs) => {
+            console.log(`Setting UI for closed aucs ${aucs}`);
             setClosedAucsUI((prev_aucs) => [...prev_aucs, [
                 <RowCard props={aucs}/>,
                 <UserContainer>
@@ -496,7 +494,7 @@ const AuctionsManager = () => {
         />
 
         setClosedAucsTable(table);
-    }, [closedAucsUI])
+    }, [closedAucsUI, isLoadingClosedAucsTable])
 
 
     /* async functions */

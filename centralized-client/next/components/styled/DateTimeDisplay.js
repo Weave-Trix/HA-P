@@ -9,12 +9,12 @@ const DateEl = styled.div`
 `
 
 const DateValue = styled.h3`
-    font-size: 1.2rem;
+    font-size: 1.2em;
     font-weight: 500px;
 `
 
 const DateSymbol = styled.h4`
-    font-size: 0.8rem;
+    font-size: 0.8em;
     font-weight: 400px;
 `
 

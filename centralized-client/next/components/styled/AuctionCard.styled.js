@@ -194,7 +194,7 @@ const Bar1 = styled.span`
   height: 0.7rem;
   background-color: ${Colors.White};
   border-radius: 0 0 50px 50px;
-  box-shadow: inset 0 4px 5px rgb(0 0 0 /10%);
+  box-shadow: 0 4px 40px #05e2e6;
   z-index: 1;
   /* filter: brightness(0.7); */
   transform: translateY(-30%);
@@ -202,6 +202,7 @@ const Bar1 = styled.span`
 const Bar2 = styled(Bar1)`
   width: 88%;
   transform: translateY(-60%);
+  box-shadow: 0 4px 40px #82f4fa;
   /* filter: brightness(0.5); */
   z-index: 0;
 `;
