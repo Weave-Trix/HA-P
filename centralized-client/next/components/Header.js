@@ -7,7 +7,7 @@ import styled from "styled-components";
 import { Colors, Devices } from "../Theme";
 import SearchBarMobile from "./Header/SearchBarMobile";
 import MenuList from "./Header/MenuList";
-import { ConnectButton } from "web3uikit";
+import { ConnectButton } from "./Header/ConnectButton"
 
 const HeaderEl = styled.header`
   z-index: 10;

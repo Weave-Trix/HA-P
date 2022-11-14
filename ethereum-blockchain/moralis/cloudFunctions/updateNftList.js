@@ -1,10 +1,10 @@
-Moralis.Cloud.afterSave("LogNftMinted", async (request) => {
+Parse.Cloud.afterSave("LogNftMinted", async (request) => {
   const confirmed = request.object.get("confirmed");
-  const logger = Moralis.Cloud.getLogger();
+  const logger = Parse.Cloud.getLogger();
   logger.info("Looking for confirmed LogNftMinted transaction...");
   if (!confirmed) {
     logger.info("Item fetched!");
-    const ListNftRecords = Moralis.Object.extend("ListNftRecords");
+    const ListNftRecords = Parse.Object.extend("ListNftRecords");
 
     const listNftRecords = new ListNftRecords();
     listNftRecords.set("nftAddress", request.object.get("address"));
@@ -23,14 +23,14 @@ Moralis.Cloud.afterSave("LogNftMinted", async (request) => {
   }
 });
 
-Moralis.Cloud.afterSave("LogNftBurned", async (request) => {
+Parse.Cloud.afterSave("LogNftBurned", async (request) => {
   const confirmed = request.object.get("confirmed");
-  const logger = Moralis.Cloud.getLogger();
+  const logger = Parse.Cloud.getLogger();
   logger.info("Looking for confirmed LogNftBurned transaction...");
   if (!confirmed) {
     logger.info("Item fetched!");
-    const ListNftRecords = Moralis.Object.extend("ListNftRecords");
-    const query = new Moralis.Query(ListNftRecords);
+    const ListNftRecords = Parse.Object.extend("ListNftRecords");
+    const query = new Parse.Query(ListNftRecords);
     query.equalTo("tokenId", request.object.get("tokenId"));
     query.equalTo("owner", request.object.get("owner"));
     const burnedNft = await query.first();
@@ -47,14 +47,14 @@ Moralis.Cloud.afterSave("LogNftBurned", async (request) => {
   }
 });
 
-Moralis.Cloud.afterSave("LogNftTransferred", async (request) => {
+Parse.Cloud.afterSave("LogNftTransferred", async (request) => {
     const confirmed = request.object.get("confirmed");
-    const logger = Moralis.Cloud.getLogger();
+    const logger = Parse.Cloud.getLogger();
     logger.info("Looking for confirmed LogNftTransferred transaction...");
     if (!confirmed) {
       logger.info("Item fetched!");
-      const ListNftRecords = Moralis.Object.extend("ListNftRecords");
-      const query = new Moralis.Query(ListNftRecords);
+      const ListNftRecords = Parse.Object.extend("ListNftRecords");
+      const query = new Parse.Query(ListNftRecords);
       query.equalTo("tokenId", request.object.get("tokenId"));
       query.equalTo("owner", request.object.get("prev_Owner"));
       const transferredNft = await query.first();

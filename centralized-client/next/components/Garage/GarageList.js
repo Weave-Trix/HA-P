@@ -9,6 +9,7 @@ import { Reload } from '@web3uikit/icons'
 import Popup from "reactjs-popup"
 import { Colors } from "../../Theme";
 import Button from "../styled/Button.styled";
+import Report from "../NFT/Report";
 import auctionManagerAbi from "../../../../ethereum-blockchain/artifacts/contracts/AuctionContracts.sol/AuctionManager.json";
 import auctionRegistryAbi from "../../../../ethereum-blockchain/artifacts/contracts/AuctionContracts.sol/AuctionRegistry.json";
 import auctionAbi from "../../../../ethereum-blockchain/artifacts/contracts/AuctionContracts.sol/Auction.json";
@@ -332,7 +333,10 @@ const GarageList = ({props}) => {
             </LeftSection>
             <RightSection>
                 <div>
-                    <ItemTitle>{vehicleName} ({mnfcYear})</ItemTitle>
+                    <div style={{display: "flex", justifyContent: "space-between"}}>
+                        <ItemTitle>{vehicleName} ({mnfcYear})</ItemTitle>
+                        <Report nft={{tokenId: tokenId}}/>
+                    </div>
                     <ItemDetails>
                         <InfoSection>
                             <ChassisTitle>Chassis Number</ChassisTitle>
@@ -440,7 +444,7 @@ const GarageList = ({props}) => {
                         />
                         </SliderContainer>
                         <ModalText>
-                        HA-P charges 5% royalty for winner's full settlement
+                        HA-P charges 0% royalty for winner's full settlement
                         </ModalText>
                     </ModalContent>
                     </Modal>

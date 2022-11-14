@@ -307,7 +307,22 @@ export default function AuctionCard({ props }) {
 
   // parse NFT data from TokenURI
   async function updateTokenDetails() {
-    const ipfsLink = await getTokenURI()
+    /* changed due to moralis migrate */
+    // fetch tokenURI from parse server
+    console.log("testing testing ruka ruka")
+    const centServerUrl = process.env.NEXT_PUBLIC_CENT_SERVER_URL;
+    const ipfsLink = await fetch(`${centServerUrl}/nftTokenUri/${tokenId}`,{
+      method: 'GET',
+    })
+    .then((res) => {
+      return res.json();
+    })
+    .then((data) => {
+      console.log(`tokenURI fetched from mongoDb => ${data.msg}`);
+      return(data.msg);
+    })
+    /* end change */
+
     if(ipfsLink) {
       const requestURL = ipfsLink.replace("ipfs://", "https://ipfs.io/ipfs/")
       const tokenURIResponse = await (await fetch(requestURL)).json()
@@ -322,7 +337,7 @@ export default function AuctionCard({ props }) {
 
   // fetch logBidPlaced from blockchain event listener (initialize only)
   const { data: labp_bidPlaced, isLoading: isFetchingBidPlaced } = useMoralisQuery(
-    "LogAuctionBidPlaced",
+    "LogauctionbidplacedLogs",
     (query) => query.equalTo("auction", props).descending("createdAt"),
     [],
     { live: true }
@@ -389,7 +404,7 @@ export default function AuctionCard({ props }) {
           <BottomSection>
             <AvatarEl>
               <ENSAvatar
-                address={seller}
+                address={seller.toLowerCase()}
                 size={40}
               />
             </AvatarEl>

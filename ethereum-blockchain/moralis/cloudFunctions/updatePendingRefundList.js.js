@@ -1,11 +1,11 @@
-Moralis.Cloud.afterSave("LogWinnerPaymentRefunded", async (request) => {
+Parse.Cloud.afterSave("LogWinnerPaymentRefunded", async (request) => {
     const confirmed = request.object.get("confirmed");
-    const logger = Moralis.Cloud.getLogger();
+    const logger = Parse.Cloud.getLogger();
     logger.info("Looking for confirmed LogWinnerPaymentRefunded transaction...");
     if (!confirmed) {
       logger.info("Item fetched!");
-      const ListPendingWinnerPaymentRefund = Moralis.Object.extend("ListPendingWinnerPaymentRefund");
-      const query = new Moralis.Query(ListPendingWinnerPaymentRefund);
+      const ListPendingWinnerPaymentRefund = Parse.Object.extend("ListPendingWinnerPaymentRefund");
+      const query = new Parse.Query(ListPendingWinnerPaymentRefund);
       query.equalTo("tokenId", request.object.get("tokenId"));
       query.equalTo("auction", request.object.get("auction"));
       const refundedWinnerAucs = await query.first();

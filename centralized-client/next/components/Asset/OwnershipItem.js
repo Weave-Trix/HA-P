@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import { MdOutlineContentCopy } from "react-icons/md";
 import Image from "next/image";
+import { ENSAvatar } from "web3uikit";
 import { Colors } from "../../Theme";
 
 const OwnershipItemEl = styled.article`
@@ -15,6 +16,7 @@ const AvatarEl = styled.span`
   overflow: hidden;
 `;
 const Info = styled.div`
+  margin-left: 5px;
   display: flex;
   flex: 1;
   gap: 0.25rem;
@@ -34,20 +36,17 @@ const AddressEl = styled.div`
   gap: 0.5rem;
 `;
 
-export default function OwnershipItem() {
+export default function OwnershipItem({ nft }) {
   return (
     <OwnershipItemEl>
-      <AvatarEl>
-        <Image src="/images/avatar/deathrow.jpg" width="45px" height="45px" />
-      </AvatarEl>
+      <ENSAvatar
+        address={nft.seller.toLowerCase()}
+        size={45}
+      />
       <Info>
         <OwnerEl>Owner</OwnerEl>
-        <UsernameEl>DeathRow</UsernameEl>
+        <UsernameEl>{nft.seller}</UsernameEl>
       </Info>
-      <AddressEl>
-        cro1kgagcas60u...
-        <MdOutlineContentCopy />
-      </AddressEl>
     </OwnershipItemEl>
   );
 }

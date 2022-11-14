@@ -6,6 +6,8 @@ import Popup from "reactjs-popup"
 import { Modal, Input } from "web3uikit";
 import { useMoralis, useWeb3ExecuteFunction } from "react-moralis";
 import { useRouter } from "next/router";
+import { Eth, Reload } from '@web3uikit/icons';
+import { ENSAvatar } from "web3uikit";
 import contractAbi from "../../../../ethereum-blockchain/artifacts/contracts/AuctionContracts.sol/Auction.json";
 import { useState, useEffect } from 'react';
 
@@ -13,13 +15,15 @@ import { useState, useEffect } from 'react';
 const BidStickyEl = styled.article`
   box-shadow: 0 4px 40px rgb(0 0 0 /10%);
   border: 1px solid ${Colors.Border};
-  padding: 0.8rem 1rem;
+  padding: 0.8rem 3rem;
   border-radius: 5px;
+  width: 74%;
   display: flex;
-  position: sticky;
+  position: fixed;
   background-color: ${Colors.White};
   bottom: 1rem;
 `;
+
 const LeftSection = styled.div`
   display: none;
   flex: 1;
@@ -28,6 +32,7 @@ const LeftSection = styled.div`
     display: flex;
   }
 `;
+
 const ThumbEl = styled.span`
   width: 80px;
   height: 80px;
@@ -60,13 +65,19 @@ const Info = styled.div`
   flex-direction: column;
   justify-content: center;
 `;
+
 const EditionEl = styled.span`
   font-weight: 500;
+  font-size: 0.9rem;
 `;
-const Title = styled.span`
+
+const Title = styled.div`
   font-weight: 600;
   font-size: 1.8rem;
+  display: flex;
+  margin-bottom: 15px;
 `;
+
 const RightSection = styled.div`
   display: flex;
   flex-direction: column;
@@ -106,6 +117,7 @@ const ModalText = styled.h4`
 
 export default function BidSticky({ auction }) {
   // props: aucDeposit, userDeposit, highestBid
+  console.log(auction.highestBid);
   const router = useRouter();
   const { auctionAddress } = router.query;
   const [isOpen, setisOpen] = useState(false);
@@ -154,12 +166,18 @@ export default function BidSticky({ auction }) {
   return (
     <BidStickyEl>
       <LeftSection>
-        <ThumbEl>
-          <Image src="/images/nft/bking.png" width="80px" height="80px" />
-        </ThumbEl>
         <Info>
-          <EditionEl>Edition 17 of 371</EditionEl>
-          <Title>KING BITCOIN</Title>
+          {
+            (auction.highestBid > 0) ?
+              <div>
+                <Title>Highest Bid <Eth fontSize='30px' style={{marginLeft: "40px", marginRight: "5px", alignSelf: "center"}}/>{auction.highestBid}</Title>
+                <EditionEl>From <span style={{marginLeft: "30px", fontWeight: 100, fontSize: "0.9rem"}}>{auction.highestBidder}</span></EditionEl>
+              </div>
+              :
+              <div>
+                <Title>No Bidder <Eth fontSize='30px' style={{marginLeft: "20px", marginRight: "20px", alignSelf: "center"}}/><div style={{fontWeight: "200"}}>Be the first to Bid?</div></Title>
+              </div>
+          }
         </Info>
       </LeftSection>
       <RightSection>
@@ -203,7 +221,7 @@ export default function BidSticky({ auction }) {
                     value={minimumBid}
                   />
                 <ModalText>
-                  HA-P charges 5% royalty for winner's full settlement
+                  HA-P charges 0% royalty for winner's full settlement
                 </ModalText>
               </ModalContent>
               </Modal>

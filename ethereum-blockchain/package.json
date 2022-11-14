@@ -30,6 +30,7 @@
     "hardhat-contract-sizer": "^2.6.1",
     "hardhat-gas-reporter": "^1.0.9",
     "mocha": "^10.0.0",
+    "moralis": "^2.7.2",
     "moralis-v1": "^1.11.0",
     "solidity-coverage": "^0.8.2"
   }

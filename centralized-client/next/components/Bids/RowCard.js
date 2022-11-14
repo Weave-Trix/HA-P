@@ -8,6 +8,7 @@ import Typography from '@mui/joy/Typography';
 
 export default function RowCard({props}) {
     console.log(`rendering NFT card, tokenID : ${props.tokenId} status: ${props.status}`)
+    console.log(props);
     const truncateStr = (fullStr, strLen) => {
         if (fullStr.length <= strLen) return fullStr;
         const separator = "...";

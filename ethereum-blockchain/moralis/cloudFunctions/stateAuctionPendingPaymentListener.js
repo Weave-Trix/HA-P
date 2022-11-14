@@ -1,15 +1,15 @@
 // when auction pending payment, update auction state to 3
-Moralis.Cloud.afterSave("StateAuctionPendingPayment", async (request) => {
+Parse.Cloud.afterSave("StateAuctionPendingPayment", async (request) => {
     const confirmed = request.object.get("confirmed");
-    const logger = Moralis.Cloud.getLogger();
+    const logger = Parse.Cloud.getLogger();
     logger.info(
       "Looking for confirmed StateAuctionPendingPayment transaction..."
     );
     if (!confirmed) {
       logger.info("Item fetched!");
       // query ListAuctionRecords, set currState to 1
-      const ListAuctionRecords = Moralis.Object.extend("ListAuctionRecords");
-      const query = new Moralis.Query(ListAuctionRecords);
+      const ListAuctionRecords = Parse.Object.extend("ListAuctionRecords");
+      const query = new Parse.Query(ListAuctionRecords);
       query.equalTo("auctionAddress", request.object.get("auction"));
       query.equalTo("nftAddress", request.object.get("nftAddress"));
       query.equalTo("tokenId", request.object.get("tokenId"));

@@ -1,13 +1,21 @@
+import React, { useState, useEffect } from 'react'
 import styled from "styled-components";
 import { BsChevronUp, BsChevronDown, BsChevronRight } from "react-icons/bs";
+import {useMoralis} from "react-moralis";
 import { Colors } from "../../Theme";
+import {
+  useMoralisQuery
+} from "react-moralis";
 
 const EditionSelectorEl = styled.article`
   display: flex;
   border: 1px solid ${Colors.Border};
   align-items: center;
   gap: 1rem;
+  height: 4.2rem;
+  padding-left: 1rem;
   padding-right: 1rem;
+  border-radius: 8px;
 `;
 const BtnContainer = styled.div`
   display: flex;
@@ -34,6 +42,7 @@ const EdInfo = styled.div`
 `;
 const EditionLabel = styled.span`
   font-weight: 500;
+  margin-bottom: 6px;
 `;
 
 const MintDate = styled.span`
@@ -48,23 +57,24 @@ const SelectEdition = styled.a`
   align-items: center;
 `;
 
-export default function EditionSelector() {
+export default function EditionSelector({ nft }) {
+  const { Moralis, isInitialized, isWeb3Enabled, account, ...rest } = useMoralis();
+
+  const { data: nftData, isLoading, isFetching } = useMoralisQuery(
+    "LognftmintedLogs",
+    (query) => query.equalTo("tokenId", String(nft.tokenId)).descending("createdAt"),
+    [nft],
+    { live: true }
+);
+
   return (
     <EditionSelectorEl>
-      <BtnContainer>
-        <TopBtn>
-          <BsChevronUp />
-        </TopBtn>
-        <BottomBtn>
-          <BsChevronDown />
-        </BottomBtn>
-      </BtnContainer>
       <EdInfo>
-        <EditionLabel>Edition #53</EditionLabel>
-        <MintDate>(Minted on 29 Jan, 2022)</MintDate>
+        <EditionLabel>Vehicle NFT #{nft.tokenId}</EditionLabel>
+        <MintDate>Date minted : {(nftData.length > 0) && nftData[0].attributes.createdAt.toLocaleString()}</MintDate>
       </EdInfo>
       <SelectEdition href="#">
-        Select Edition <BsChevronRight />
+        view on Etherscan <BsChevronRight />
       </SelectEdition>
     </EditionSelectorEl>
   );

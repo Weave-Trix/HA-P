@@ -1,0 +1,299 @@
+{"level":"error","message":"Can not find subscription with clientId 50b0163b-0a8b-4f33-9a47-ca5ef8bfe0ee subscriptionId 12","timestamp":"2022-11-13T16:21:32.941Z"}
+{"level":"error","message":"Can not find subscription with clientId 70cc9cd6-c179-4b82-a02d-b6d9d19c6bdd subscriptionId 17","timestamp":"2022-11-13T16:21:33.024Z"}
+{"level":"error","message":"Can not find subscription with clientId 70cc9cd6-c179-4b82-a02d-b6d9d19c6bdd subscriptionId 20","timestamp":"2022-11-13T16:21:33.115Z"}
+{"level":"error","message":"Can not find subscription with clientId 367f7441-2726-4f23-859b-2733427b0f16 subscriptionId 25","timestamp":"2022-11-13T16:21:35.688Z"}
+{"level":"error","message":"Can not find subscription with clientId 185c578b-90d3-4cb7-a666-02e4ad4ca02b subscriptionId 30","timestamp":"2022-11-13T16:21:37.458Z"}
+{"level":"error","message":"Can not find subscription with clientId 53ea121e-8902-4b3d-a4cd-8addfd9866a4 subscriptionId 36","timestamp":"2022-11-13T16:21:38.842Z"}
+{"level":"error","message":"Can not find subscription with clientId e47c213e-050c-4191-adc9-7e8093251490 subscriptionId 5","timestamp":"2022-11-13T16:22:43.975Z"}
+{"level":"error","message":"Can not find subscription with clientId 5f81329e-1115-4cf9-8f4b-4e223b16ba29 subscriptionId 7","timestamp":"2022-11-13T16:22:44.312Z"}
+{"level":"error","message":"Can not find subscription with clientId 5f81329e-1115-4cf9-8f4b-4e223b16ba29 subscriptionId 7","timestamp":"2022-11-13T16:22:44.344Z"}
+{"level":"error","message":"Can not find subscription with clientId 42c2beb8-0c75-40ff-9234-f1ddab6eca1e subscriptionId 11","timestamp":"2022-11-13T16:22:44.898Z"}
+{"level":"error","message":"Can not find subscription with clientId 42c2beb8-0c75-40ff-9234-f1ddab6eca1e subscriptionId 13","timestamp":"2022-11-13T16:22:45.094Z"}
+{"level":"error","message":"Can not find subscription with clientId 42c2beb8-0c75-40ff-9234-f1ddab6eca1e subscriptionId 16","timestamp":"2022-11-13T16:22:45.553Z"}
+{"level":"error","message":"Can not find subscription with clientId 96bd1c80-b119-4ebb-bdb4-59ef8c49ec89 subscriptionId 18","timestamp":"2022-11-13T16:22:45.722Z"}
+{"level":"error","message":"Can not find subscription with clientId e624ebdc-c17f-42dc-aeff-f7a8e55212c0 subscriptionId 22","timestamp":"2022-11-13T16:23:14.279Z"}
+{"level":"error","message":"Can not find subscription with clientId 3d589ba9-48cb-4aa8-8bc1-e6f7badae1b8 subscriptionId 28","timestamp":"2022-11-13T16:23:15.634Z"}
+{"level":"error","message":"Can not find subscription with clientId 3d589ba9-48cb-4aa8-8bc1-e6f7badae1b8 subscriptionId 30","timestamp":"2022-11-13T16:23:15.661Z"}
+{"level":"error","message":"Can not find subscription with clientId c28c5e19-da21-4040-8868-eeccc382fcd4 subscriptionId 32","timestamp":"2022-11-13T16:26:31.743Z"}
+{"level":"error","message":"Can not find subscription with clientId 221ba4e3-6f77-45aa-b9e2-6ec4d0edf6b3 subscriptionId 41","timestamp":"2022-11-13T16:26:34.188Z"}
+{"level":"error","message":"Can not find subscription with clientId 01ece9d8-adf3-45b5-b087-8b2094240c05 subscriptionId 43","timestamp":"2022-11-13T16:28:11.819Z"}
+{"level":"error","message":"Can not find subscription with clientId c6b41ec4-0b1b-4f4c-889c-edcc767db83e subscriptionId 50","timestamp":"2022-11-13T16:28:14.317Z"}
+{"level":"error","message":"Can not find subscription with clientId 651767af-8673-4e19-8bdb-26062d4f319e subscriptionId 55","timestamp":"2022-11-13T16:28:38.056Z"}
+{"level":"error","message":"Can not find subscription with clientId 68804b82-c78a-497a-855b-fb17ab590162 subscriptionId 60","timestamp":"2022-11-13T16:28:40.521Z"}
+{"level":"error","message":"Can not find subscription with clientId dde6b2ff-99ac-45f2-a813-b67341422a68 subscriptionId 4","timestamp":"2022-11-13T16:29:47.306Z"}
+{"level":"error","message":"Can not find subscription with clientId dde6b2ff-99ac-45f2-a813-b67341422a68 subscriptionId 4","timestamp":"2022-11-13T16:29:47.333Z"}
+{"level":"error","message":"Can not find subscription with clientId 18b61322-d6da-4725-9c30-a4c6d7b4fbe1 subscriptionId 13","timestamp":"2022-11-13T16:29:49.729Z"}
+{"level":"error","message":"Can not find subscription with clientId 18b61322-d6da-4725-9c30-a4c6d7b4fbe1 subscriptionId 15","timestamp":"2022-11-13T16:29:49.743Z"}
+{"level":"error","message":"Can not find subscription with clientId 1dd3b403-681d-4c91-bb34-904bba492161 subscriptionId 18","timestamp":"2022-11-13T16:30:30.711Z"}
+{"level":"error","message":"Can not find subscription with clientId 9f8b7d63-9331-40ff-990e-6d15549b6721 subscriptionId 25","timestamp":"2022-11-13T16:30:33.242Z"}
+{"level":"error","message":"Can not find subscription with clientId 9f8b7d63-9331-40ff-990e-6d15549b6721 subscriptionId 27","timestamp":"2022-11-13T16:30:33.256Z"}
+{"level":"error","message":"Can not find subscription with clientId 083a4647-98c6-4a22-b92e-787931482d8d subscriptionId 1","timestamp":"2022-11-13T16:30:40.516Z"}
+{"level":"error","message":"Can not find subscription with clientId 083a4647-98c6-4a22-b92e-787931482d8d subscriptionId 1","timestamp":"2022-11-13T16:30:40.516Z"}
+{"level":"error","message":"Can not find subscription with clientId 083a4647-98c6-4a22-b92e-787931482d8d subscriptionId 7","timestamp":"2022-11-13T16:30:40.618Z"}
+{"level":"error","message":"Can not find subscription with clientId de6e8913-fcc3-43bf-a5f2-32d435bb5fe7 subscriptionId 12","timestamp":"2022-11-13T16:30:41.132Z"}
+{"level":"error","message":"Can not find subscription with clientId 1d6b61af-f9a6-4ef1-adfc-d92e14f4d149 subscriptionId 1","timestamp":"2022-11-13T16:30:46.078Z"}
+{"level":"error","message":"Can not find subscription with clientId 1d6b61af-f9a6-4ef1-adfc-d92e14f4d149 subscriptionId 1","timestamp":"2022-11-13T16:30:46.078Z"}
+{"level":"error","message":"Can not find subscription with clientId 335e11d3-6e26-4567-a6d3-f363f0be444b subscriptionId 29","timestamp":"2022-11-13T16:30:52.775Z"}
+{"level":"error","message":"Can not find subscription with clientId 335e11d3-6e26-4567-a6d3-f363f0be444b subscriptionId 38","timestamp":"2022-11-13T16:30:53.163Z"}
+{"level":"error","message":"Can not find subscription with clientId 335e11d3-6e26-4567-a6d3-f363f0be444b subscriptionId 42","timestamp":"2022-11-13T16:30:53.186Z"}
+{"level":"error","message":"Can not find subscription with clientId 335e11d3-6e26-4567-a6d3-f363f0be444b subscriptionId 44","timestamp":"2022-11-13T16:30:53.242Z"}
+{"level":"error","message":"Can not find subscription with clientId 335e11d3-6e26-4567-a6d3-f363f0be444b subscriptionId 44","timestamp":"2022-11-13T16:30:53.247Z"}
+{"level":"error","message":"Can not find subscription with clientId 335e11d3-6e26-4567-a6d3-f363f0be444b subscriptionId 44","timestamp":"2022-11-13T16:30:53.247Z"}
+{"level":"error","message":"Can not find subscription with clientId 335e11d3-6e26-4567-a6d3-f363f0be444b subscriptionId 48","timestamp":"2022-11-13T16:30:53.258Z"}
+{"level":"error","message":"Can not find subscription with clientId 335e11d3-6e26-4567-a6d3-f363f0be444b subscriptionId 50","timestamp":"2022-11-13T16:30:53.283Z"}
+{"level":"error","message":"Can not find subscription with clientId 335e11d3-6e26-4567-a6d3-f363f0be444b subscriptionId 50","timestamp":"2022-11-13T16:30:53.283Z"}
+{"level":"error","message":"Can not find subscription with clientId 335e11d3-6e26-4567-a6d3-f363f0be444b subscriptionId 50","timestamp":"2022-11-13T16:30:53.286Z"}
+{"level":"error","message":"Can not find subscription with clientId 335e11d3-6e26-4567-a6d3-f363f0be444b subscriptionId 54","timestamp":"2022-11-13T16:30:53.305Z"}
+{"level":"error","message":"Can not find subscription with clientId 335e11d3-6e26-4567-a6d3-f363f0be444b subscriptionId 56","timestamp":"2022-11-13T16:30:53.331Z"}
+{"level":"error","message":"Can not find subscription with clientId 335e11d3-6e26-4567-a6d3-f363f0be444b subscriptionId 59","timestamp":"2022-11-13T16:30:53.360Z"}
+{"level":"error","message":"Can not find subscription with clientId 86950122-6e3b-4289-b1a3-b8f894caf764 subscriptionId 75","timestamp":"2022-11-13T16:31:04.297Z"}
+{"level":"error","message":"Can not find subscription with clientId b1acbd72-9b3c-4648-b0b3-e22351158e29 subscriptionId 81","timestamp":"2022-11-13T16:31:04.778Z"}
+{"level":"error","message":"Can not find subscription with clientId b1acbd72-9b3c-4648-b0b3-e22351158e29 subscriptionId 81","timestamp":"2022-11-13T16:31:04.778Z"}
+{"level":"error","message":"Can not find subscription with clientId b1acbd72-9b3c-4648-b0b3-e22351158e29 subscriptionId 81","timestamp":"2022-11-13T16:31:04.788Z"}
+{"level":"error","message":"Can not find subscription with clientId b1acbd72-9b3c-4648-b0b3-e22351158e29 subscriptionId 81","timestamp":"2022-11-13T16:31:04.793Z"}
+{"level":"error","message":"Can not find subscription with clientId b1acbd72-9b3c-4648-b0b3-e22351158e29 subscriptionId 81","timestamp":"2022-11-13T16:31:04.793Z"}
+{"level":"error","message":"Can not find subscription with clientId b1acbd72-9b3c-4648-b0b3-e22351158e29 subscriptionId 89","timestamp":"2022-11-13T16:31:04.897Z"}
+{"level":"error","message":"Can not find subscription with clientId b1acbd72-9b3c-4648-b0b3-e22351158e29 subscriptionId 94","timestamp":"2022-11-13T16:31:05.236Z"}
+{"level":"error","message":"Can not find subscription with clientId b1acbd72-9b3c-4648-b0b3-e22351158e29 subscriptionId 94","timestamp":"2022-11-13T16:31:05.236Z"}
+{"level":"error","message":"Can not find subscription with clientId b1acbd72-9b3c-4648-b0b3-e22351158e29 subscriptionId 98","timestamp":"2022-11-13T16:31:05.254Z"}
+{"level":"error","message":"Can not find subscription with clientId 99446363-b071-4c25-bd7d-ef7e958ef3f5 subscriptionId 102","timestamp":"2022-11-13T16:31:32.206Z"}
+{"level":"error","message":"Can not find subscription with clientId d6dd3aa4-3b0b-4005-8b4c-ec2348c33cfb subscriptionId 108","timestamp":"2022-11-13T16:31:36.156Z"}
+{"level":"error","message":"Can not find subscription with clientId 9fcd60e4-857e-4a73-97d2-26efca062ab0 subscriptionId 1","timestamp":"2022-11-13T16:31:44.327Z"}
+{"level":"error","message":"Can not find subscription with clientId 9fcd60e4-857e-4a73-97d2-26efca062ab0 subscriptionId 1","timestamp":"2022-11-13T16:31:44.333Z"}
+{"level":"error","message":"Can not find subscription with clientId 9fcd60e4-857e-4a73-97d2-26efca062ab0 subscriptionId 7","timestamp":"2022-11-13T16:31:44.355Z"}
+{"level":"error","message":"Can not find subscription with clientId 9fcd60e4-857e-4a73-97d2-26efca062ab0 subscriptionId 11","timestamp":"2022-11-13T16:31:44.404Z"}
+{"level":"error","message":"Can not find subscription with clientId 9fcd60e4-857e-4a73-97d2-26efca062ab0 subscriptionId 15","timestamp":"2022-11-13T16:31:44.745Z"}
+{"level":"error","message":"Can not find subscription with clientId 9fcd60e4-857e-4a73-97d2-26efca062ab0 subscriptionId 19","timestamp":"2022-11-13T16:31:45.093Z"}
+{"level":"error","message":"Can not find subscription with clientId 9fcd60e4-857e-4a73-97d2-26efca062ab0 subscriptionId 19","timestamp":"2022-11-13T16:31:45.095Z"}
+{"level":"error","message":"Can not find subscription with clientId 9fcd60e4-857e-4a73-97d2-26efca062ab0 subscriptionId 25","timestamp":"2022-11-13T16:31:45.132Z"}
+{"level":"error","message":"Can not find subscription with clientId 9fcd60e4-857e-4a73-97d2-26efca062ab0 subscriptionId 27","timestamp":"2022-11-13T16:31:45.142Z"}
+{"code":209,"level":"error","message":"Invalid session token","stack":"Error: Invalid session token\n    at Object.getAuthForSessionToken (/Users/shixuen/Development/Web3 Development/HA-P/parse-server/node_modules/parse-server/src/Auth.js:100:11)\n    at runMicrotasks (<anonymous>)\n    at processTicksAndRejections (node:internal/process/task_queues:96:5)","timestamp":"2022-11-13T16:31:45.753Z"}
+{"code":209,"level":"error","message":"Invalid session token","stack":"Error: Invalid session token\n    at Object.getAuthForSessionToken (/Users/shixuen/Development/Web3 Development/HA-P/parse-server/node_modules/parse-server/src/Auth.js:100:11)\n    at runMicrotasks (<anonymous>)\n    at processTicksAndRejections (node:internal/process/task_queues:96:5)","timestamp":"2022-11-13T16:31:45.853Z"}
+{"code":209,"level":"error","message":"Invalid session token","stack":"Error: Invalid session token\n    at Object.getAuthForSessionToken (/Users/shixuen/Development/Web3 Development/HA-P/parse-server/node_modules/parse-server/src/Auth.js:100:11)\n    at runMicrotasks (<anonymous>)\n    at processTicksAndRejections (node:internal/process/task_queues:96:5)","timestamp":"2022-11-13T16:31:45.865Z"}
+{"code":209,"level":"error","message":"Invalid session token","stack":"Error: Invalid session token\n    at Object.getAuthForSessionToken (/Users/shixuen/Development/Web3 Development/HA-P/parse-server/node_modules/parse-server/src/Auth.js:100:11)\n    at runMicrotasks (<anonymous>)\n    at processTicksAndRejections (node:internal/process/task_queues:96:5)","timestamp":"2022-11-13T16:31:46.119Z"}
+{"code":209,"level":"error","message":"Invalid session token","stack":"Error: Invalid session token\n    at Object.getAuthForSessionToken (/Users/shixuen/Development/Web3 Development/HA-P/parse-server/node_modules/parse-server/src/Auth.js:100:11)\n    at runMicrotasks (<anonymous>)\n    at processTicksAndRejections (node:internal/process/task_queues:96:5)","timestamp":"2022-11-13T16:31:46.135Z"}
+{"code":209,"level":"error","message":"Invalid session token","stack":"Error: Invalid session token\n    at Object.getAuthForSessionToken (/Users/shixuen/Development/Web3 Development/HA-P/parse-server/node_modules/parse-server/src/Auth.js:100:11)\n    at runMicrotasks (<anonymous>)\n    at processTicksAndRejections (node:internal/process/task_queues:96:5)","timestamp":"2022-11-13T16:31:46.148Z"}
+{"code":209,"level":"error","message":"Invalid session token","stack":"Error: Invalid session token\n    at Object.getAuthForSessionToken (/Users/shixuen/Development/Web3 Development/HA-P/parse-server/node_modules/parse-server/src/Auth.js:100:11)\n    at runMicrotasks (<anonymous>)\n    at processTicksAndRejections (node:internal/process/task_queues:96:5)","timestamp":"2022-11-13T16:31:46.155Z"}
+{"code":209,"level":"error","message":"Invalid session token","stack":"Error: Invalid session token\n    at Object.getAuthForSessionToken (/Users/shixuen/Development/Web3 Development/HA-P/parse-server/node_modules/parse-server/src/Auth.js:100:11)\n    at runMicrotasks (<anonymous>)\n    at processTicksAndRejections (node:internal/process/task_queues:96:5)","timestamp":"2022-11-13T16:31:46.171Z"}
+{"code":209,"level":"error","message":"Invalid session token","stack":"Error: Invalid session token\n    at Object.getAuthForSessionToken (/Users/shixuen/Development/Web3 Development/HA-P/parse-server/node_modules/parse-server/src/Auth.js:100:11)\n    at runMicrotasks (<anonymous>)\n    at processTicksAndRejections (node:internal/process/task_queues:96:5)","timestamp":"2022-11-13T16:31:46.173Z"}
+{"level":"error","message":"Can not find subscription with clientId e7cde1ef-e975-471b-98ca-2971c7d5381c subscriptionId 19","timestamp":"2022-11-13T16:31:46.196Z"}
+{"level":"error","message":"Can not find subscription with clientId e7cde1ef-e975-471b-98ca-2971c7d5381c subscriptionId 19","timestamp":"2022-11-13T16:31:46.196Z"}
+{"level":"error","message":"Can not find subscription with clientId e7cde1ef-e975-471b-98ca-2971c7d5381c subscriptionId 19","timestamp":"2022-11-13T16:31:46.201Z"}
+{"code":209,"level":"error","message":"Invalid session token","stack":"Error: Invalid session token\n    at Object.getAuthForSessionToken (/Users/shixuen/Development/Web3 Development/HA-P/parse-server/node_modules/parse-server/src/Auth.js:100:11)\n    at runMicrotasks (<anonymous>)\n    at processTicksAndRejections (node:internal/process/task_queues:96:5)","timestamp":"2022-11-13T16:31:46.260Z"}
+{"level":"error","message":"Can not find subscription with clientId e7cde1ef-e975-471b-98ca-2971c7d5381c subscriptionId 19","timestamp":"2022-11-13T16:31:46.267Z"}
+{"level":"error","message":"Can not find subscription with clientId e7cde1ef-e975-471b-98ca-2971c7d5381c subscriptionId 19","timestamp":"2022-11-13T16:31:46.267Z"}
+{"code":209,"level":"error","message":"Invalid session token","stack":"Error: Invalid session token\n    at Object.getAuthForSessionToken (/Users/shixuen/Development/Web3 Development/HA-P/parse-server/node_modules/parse-server/src/Auth.js:100:11)\n    at runMicrotasks (<anonymous>)\n    at processTicksAndRejections (node:internal/process/task_queues:96:5)","timestamp":"2022-11-13T16:31:46.278Z"}
+{"code":209,"level":"error","message":"Invalid session token","stack":"Error: Invalid session token\n    at Object.getAuthForSessionToken (/Users/shixuen/Development/Web3 Development/HA-P/parse-server/node_modules/parse-server/src/Auth.js:100:11)\n    at runMicrotasks (<anonymous>)\n    at processTicksAndRejections (node:internal/process/task_queues:96:5)","timestamp":"2022-11-13T16:31:46.298Z"}
+{"code":209,"level":"error","message":"Invalid session token","stack":"Error: Invalid session token\n    at Object.getAuthForSessionToken (/Users/shixuen/Development/Web3 Development/HA-P/parse-server/node_modules/parse-server/src/Auth.js:100:11)\n    at runMicrotasks (<anonymous>)\n    at processTicksAndRejections (node:internal/process/task_queues:96:5)","timestamp":"2022-11-13T16:31:46.301Z"}
+{"code":209,"level":"error","message":"Invalid session token","stack":"Error: Invalid session token\n    at Object.getAuthForSessionToken (/Users/shixuen/Development/Web3 Development/HA-P/parse-server/node_modules/parse-server/src/Auth.js:100:11)\n    at runMicrotasks (<anonymous>)\n    at processTicksAndRejections (node:internal/process/task_queues:96:5)","timestamp":"2022-11-13T16:31:46.331Z"}
+{"code":209,"level":"error","message":"Invalid session token","stack":"Error: Invalid session token\n    at Object.getAuthForSessionToken (/Users/shixuen/Development/Web3 Development/HA-P/parse-server/node_modules/parse-server/src/Auth.js:100:11)\n    at runMicrotasks (<anonymous>)\n    at processTicksAndRejections (node:internal/process/task_queues:96:5)","timestamp":"2022-11-13T16:31:46.332Z"}
+{"code":209,"level":"error","message":"Invalid session token","stack":"Error: Invalid session token\n    at Object.getAuthForSessionToken (/Users/shixuen/Development/Web3 Development/HA-P/parse-server/node_modules/parse-server/src/Auth.js:100:11)\n    at runMicrotasks (<anonymous>)\n    at processTicksAndRejections (node:internal/process/task_queues:96:5)","timestamp":"2022-11-13T16:31:46.334Z"}
+{"code":209,"level":"error","message":"Invalid session token","stack":"Error: Invalid session token\n    at Object.getAuthForSessionToken (/Users/shixuen/Development/Web3 Development/HA-P/parse-server/node_modules/parse-server/src/Auth.js:100:11)\n    at runMicrotasks (<anonymous>)\n    at processTicksAndRejections (node:internal/process/task_queues:96:5)","timestamp":"2022-11-13T16:31:46.335Z"}
+{"code":209,"level":"error","message":"Invalid session token","stack":"Error: Invalid session token\n    at Object.getAuthForSessionToken (/Users/shixuen/Development/Web3 Development/HA-P/parse-server/node_modules/parse-server/src/Auth.js:100:11)\n    at runMicrotasks (<anonymous>)\n    at processTicksAndRejections (node:internal/process/task_queues:96:5)","timestamp":"2022-11-13T16:31:46.626Z"}
+{"code":209,"level":"error","message":"Invalid session token","stack":"Error: Invalid session token\n    at Object.getAuthForSessionToken (/Users/shixuen/Development/Web3 Development/HA-P/parse-server/node_modules/parse-server/src/Auth.js:100:11)\n    at runMicrotasks (<anonymous>)\n    at processTicksAndRejections (node:internal/process/task_queues:96:5)","timestamp":"2022-11-13T16:31:46.628Z"}
+{"code":209,"level":"error","message":"Invalid session token","stack":"Error: Invalid session token\n    at Object.getAuthForSessionToken (/Users/shixuen/Development/Web3 Development/HA-P/parse-server/node_modules/parse-server/src/Auth.js:100:11)\n    at runMicrotasks (<anonymous>)\n    at processTicksAndRejections (node:internal/process/task_queues:96:5)","timestamp":"2022-11-13T16:31:46.646Z"}
+{"code":209,"level":"error","message":"Invalid session token","stack":"Error: Invalid session token\n    at Object.getAuthForSessionToken (/Users/shixuen/Development/Web3 Development/HA-P/parse-server/node_modules/parse-server/src/Auth.js:100:11)\n    at runMicrotasks (<anonymous>)\n    at processTicksAndRejections (node:internal/process/task_queues:96:5)","timestamp":"2022-11-13T16:31:46.650Z"}
+{"code":209,"level":"error","message":"Invalid session token","stack":"Error: Invalid session token\n    at Object.getAuthForSessionToken (/Users/shixuen/Development/Web3 Development/HA-P/parse-server/node_modules/parse-server/src/Auth.js:100:11)\n    at runMicrotasks (<anonymous>)\n    at processTicksAndRejections (node:internal/process/task_queues:96:5)","timestamp":"2022-11-13T16:31:46.666Z"}
+{"code":209,"level":"error","message":"Invalid session token","stack":"Error: Invalid session token\n    at Object.getAuthForSessionToken (/Users/shixuen/Development/Web3 Development/HA-P/parse-server/node_modules/parse-server/src/Auth.js:100:11)\n    at runMicrotasks (<anonymous>)\n    at processTicksAndRejections (node:internal/process/task_queues:96:5)","timestamp":"2022-11-13T16:31:47.185Z"}
+{"level":"error","message":"Can not find subscription with clientId 014f2f64-9fe7-4723-8ba5-84f909701781 subscriptionId 28","timestamp":"2022-11-13T16:31:47.689Z"}
+{"code":209,"level":"error","message":"Invalid session token","stack":"Error: Invalid session token\n    at Object.getAuthForSessionToken (/Users/shixuen/Development/Web3 Development/HA-P/parse-server/node_modules/parse-server/src/Auth.js:100:11)\n    at runMicrotasks (<anonymous>)\n    at processTicksAndRejections (node:internal/process/task_queues:96:5)","timestamp":"2022-11-13T16:31:47.711Z"}
+{"code":209,"level":"error","message":"Invalid session token","stack":"Error: Invalid session token\n    at Object.getAuthForSessionToken (/Users/shixuen/Development/Web3 Development/HA-P/parse-server/node_modules/parse-server/src/Auth.js:100:11)\n    at runMicrotasks (<anonymous>)\n    at processTicksAndRejections (node:internal/process/task_queues:96:5)","timestamp":"2022-11-13T16:31:47.717Z"}
+{"code":209,"level":"error","message":"Invalid session token","stack":"Error: Invalid session token\n    at Object.getAuthForSessionToken (/Users/shixuen/Development/Web3 Development/HA-P/parse-server/node_modules/parse-server/src/Auth.js:100:11)\n    at runMicrotasks (<anonymous>)\n    at processTicksAndRejections (node:internal/process/task_queues:96:5)","timestamp":"2022-11-13T16:31:47.725Z"}
+{"level":"error","message":"Can not find subscription with clientId 014f2f64-9fe7-4723-8ba5-84f909701781 subscriptionId 31","timestamp":"2022-11-13T16:31:48.219Z"}
+{"code":209,"level":"error","message":"Invalid session token","stack":"Error: Invalid session token\n    at Object.getAuthForSessionToken (/Users/shixuen/Development/Web3 Development/HA-P/parse-server/node_modules/parse-server/src/Auth.js:100:11)\n    at runMicrotasks (<anonymous>)\n    at processTicksAndRejections (node:internal/process/task_queues:96:5)","timestamp":"2022-11-13T16:31:48.243Z"}
+{"code":209,"level":"error","message":"Invalid session token","stack":"Error: Invalid session token\n    at Object.getAuthForSessionToken (/Users/shixuen/Development/Web3 Development/HA-P/parse-server/node_modules/parse-server/src/Auth.js:100:11)\n    at runMicrotasks (<anonymous>)\n    at processTicksAndRejections (node:internal/process/task_queues:96:5)","timestamp":"2022-11-13T16:31:48.246Z"}
+{"level":"error","message":"Can not find subscription with clientId fc43ff02-2962-4b35-80e6-1d48c2edd572 subscriptionId 1","timestamp":"2022-11-13T16:32:14.549Z"}
+{"level":"error","message":"Can not find subscription with clientId 729f9c64-d09d-4163-840a-ebc562f0ff27 subscriptionId 11","timestamp":"2022-11-13T16:32:17.049Z"}
+{"level":"error","message":"Can not find subscription with clientId 1a703575-b22c-48f8-a6fb-c1c44cce3bb3 subscriptionId 1","timestamp":"2022-11-13T16:32:21.958Z"}
+{"level":"error","message":"Can not find subscription with clientId 1a703575-b22c-48f8-a6fb-c1c44cce3bb3 subscriptionId 1","timestamp":"2022-11-13T16:32:21.959Z"}
+{"level":"error","message":"Can not find subscription with clientId f9bbcc3e-e5d8-443b-ac06-5e2be06fb759 subscriptionId 34","timestamp":"2022-11-13T16:32:56.365Z"}
+{"level":"error","message":"Can not find subscription with clientId f9bbcc3e-e5d8-443b-ac06-5e2be06fb759 subscriptionId 36","timestamp":"2022-11-13T16:32:56.496Z"}
+{"level":"error","message":"Can not find subscription with clientId f9bbcc3e-e5d8-443b-ac06-5e2be06fb759 subscriptionId 36","timestamp":"2022-11-13T16:32:56.502Z"}
+{"level":"error","message":"Can not find subscription with clientId f9bbcc3e-e5d8-443b-ac06-5e2be06fb759 subscriptionId 36","timestamp":"2022-11-13T16:32:56.510Z"}
+{"level":"error","message":"Can not find subscription with clientId f9bbcc3e-e5d8-443b-ac06-5e2be06fb759 subscriptionId 41","timestamp":"2022-11-13T16:32:56.536Z"}
+{"level":"error","message":"Can not find subscription with clientId f9bbcc3e-e5d8-443b-ac06-5e2be06fb759 subscriptionId 41","timestamp":"2022-11-13T16:32:56.539Z"}
+{"level":"error","message":"Can not find subscription with clientId f9bbcc3e-e5d8-443b-ac06-5e2be06fb759 subscriptionId 41","timestamp":"2022-11-13T16:32:56.541Z"}
+{"level":"error","message":"Can not find subscription with clientId 27380f8a-c1be-4896-99c4-c792fe5b0c17 subscriptionId 49","timestamp":"2022-11-13T16:32:57.951Z"}
+{"level":"error","message":"Can not find subscription with clientId 27380f8a-c1be-4896-99c4-c792fe5b0c17 subscriptionId 49","timestamp":"2022-11-13T16:32:57.951Z"}
+{"level":"error","message":"Can not find subscription with clientId e8db3d05-0bb6-4678-9656-ee188c116045 subscriptionId 55","timestamp":"2022-11-13T16:33:17.095Z"}
+{"level":"error","message":"Can not find subscription with clientId e8db3d05-0bb6-4678-9656-ee188c116045 subscriptionId 55","timestamp":"2022-11-13T16:33:17.100Z"}
+{"level":"error","message":"Can not find subscription with clientId c67e7f02-bb21-421c-b5d4-d4c4b9332867 subscriptionId 33","timestamp":"2022-11-13T16:33:17.112Z"}
+{"level":"error","message":"Can not find subscription with clientId c67e7f02-bb21-421c-b5d4-d4c4b9332867 subscriptionId 33","timestamp":"2022-11-13T16:33:17.118Z"}
+{"code":209,"level":"error","message":"Invalid session token","stack":"Error: Invalid session token\n    at Object.getAuthForSessionToken (/Users/shixuen/Development/Web3 Development/HA-P/parse-server/node_modules/parse-server/src/Auth.js:100:11)\n    at runMicrotasks (<anonymous>)\n    at processTicksAndRejections (node:internal/process/task_queues:96:5)","timestamp":"2022-11-13T16:33:17.346Z"}
+{"code":209,"level":"error","message":"Invalid session token","stack":"Error: Invalid session token\n    at Object.getAuthForSessionToken (/Users/shixuen/Development/Web3 Development/HA-P/parse-server/node_modules/parse-server/src/Auth.js:100:11)\n    at runMicrotasks (<anonymous>)\n    at processTicksAndRejections (node:internal/process/task_queues:96:5)","timestamp":"2022-11-13T16:33:17.351Z"}
+{"code":209,"level":"error","message":"Invalid session token","stack":"Error: Invalid session token\n    at Object.getAuthForSessionToken (/Users/shixuen/Development/Web3 Development/HA-P/parse-server/node_modules/parse-server/src/Auth.js:100:11)\n    at runMicrotasks (<anonymous>)\n    at processTicksAndRejections (node:internal/process/task_queues:96:5)","timestamp":"2022-11-13T16:33:17.357Z"}
+{"level":"error","message":"Can not find subscription with clientId 2e5e8ff7-2223-4c62-8756-5ed14c573474 subscriptionId 58","timestamp":"2022-11-13T16:33:18.009Z"}
+{"code":209,"level":"error","message":"Invalid session token","stack":"Error: Invalid session token\n    at Object.getAuthForSessionToken (/Users/shixuen/Development/Web3 Development/HA-P/parse-server/node_modules/parse-server/src/Auth.js:100:11)\n    at runMicrotasks (<anonymous>)\n    at processTicksAndRejections (node:internal/process/task_queues:96:5)","timestamp":"2022-11-13T16:33:18.046Z"}
+{"code":209,"level":"error","message":"Invalid session token","stack":"Error: Invalid session token\n    at Object.getAuthForSessionToken (/Users/shixuen/Development/Web3 Development/HA-P/parse-server/node_modules/parse-server/src/Auth.js:100:11)\n    at runMicrotasks (<anonymous>)\n    at processTicksAndRejections (node:internal/process/task_queues:96:5)","timestamp":"2022-11-13T16:33:18.420Z"}
+{"code":209,"level":"error","message":"Invalid session token","stack":"Error: Invalid session token\n    at Object.getAuthForSessionToken (/Users/shixuen/Development/Web3 Development/HA-P/parse-server/node_modules/parse-server/src/Auth.js:100:11)\n    at runMicrotasks (<anonymous>)\n    at processTicksAndRejections (node:internal/process/task_queues:96:5)","timestamp":"2022-11-13T16:33:18.941Z"}
+{"level":"error","message":"Can not find subscription with clientId 326aa19c-570c-49a5-9738-04b5ec6bb55f subscriptionId 39","timestamp":"2022-11-13T16:33:19.438Z"}
+{"level":"error","message":"Can not find subscription with clientId 1790c655-d059-4373-ac26-940c24801ef8 subscriptionId 61","timestamp":"2022-11-13T16:33:19.438Z"}
+{"code":209,"level":"error","message":"Invalid session token","stack":"Error: Invalid session token\n    at Object.getAuthForSessionToken (/Users/shixuen/Development/Web3 Development/HA-P/parse-server/node_modules/parse-server/src/Auth.js:100:11)\n    at runMicrotasks (<anonymous>)\n    at processTicksAndRejections (node:internal/process/task_queues:96:5)","timestamp":"2022-11-13T16:33:19.473Z"}
+{"code":209,"level":"error","message":"Invalid session token","stack":"Error: Invalid session token\n    at Object.getAuthForSessionToken (/Users/shixuen/Development/Web3 Development/HA-P/parse-server/node_modules/parse-server/src/Auth.js:100:11)\n    at runMicrotasks (<anonymous>)\n    at processTicksAndRejections (node:internal/process/task_queues:96:5)","timestamp":"2022-11-13T16:33:19.475Z"}
+{"code":209,"level":"error","message":"Invalid session token","stack":"Error: Invalid session token\n    at Object.getAuthForSessionToken (/Users/shixuen/Development/Web3 Development/HA-P/parse-server/node_modules/parse-server/src/Auth.js:100:11)\n    at runMicrotasks (<anonymous>)\n    at processTicksAndRejections (node:internal/process/task_queues:96:5)","timestamp":"2022-11-13T16:33:19.482Z"}
+{"code":209,"level":"error","message":"Invalid session token","stack":"Error: Invalid session token\n    at Object.getAuthForSessionToken (/Users/shixuen/Development/Web3 Development/HA-P/parse-server/node_modules/parse-server/src/Auth.js:100:11)\n    at runMicrotasks (<anonymous>)\n    at processTicksAndRejections (node:internal/process/task_queues:96:5)","timestamp":"2022-11-13T16:33:19.997Z"}
+{"level":"error","message":"Can not find client undefined on disconnect","timestamp":"2022-11-13T16:33:20.536Z"}
+{"level":"error","message":"Can not find subscription with clientId 1b8b0d05-f1fc-4ed5-9a25-6d802ac1336c subscriptionId 1","timestamp":"2022-11-13T16:33:24.116Z"}
+{"level":"error","message":"Can not find subscription with clientId 1b8b0d05-f1fc-4ed5-9a25-6d802ac1336c subscriptionId 5","timestamp":"2022-11-13T16:33:24.389Z"}
+{"level":"error","message":"Can not find subscription with clientId 1b8b0d05-f1fc-4ed5-9a25-6d802ac1336c subscriptionId 6","timestamp":"2022-11-13T16:33:24.411Z"}
+{"level":"error","message":"Can not find subscription with clientId 8bedd4a7-357c-4e40-98e4-b8d88c56c0d4 subscriptionId 14","timestamp":"2022-11-13T16:33:24.880Z"}
+{"level":"error","message":"Can not find subscription with clientId 8bedd4a7-357c-4e40-98e4-b8d88c56c0d4 subscriptionId 16","timestamp":"2022-11-13T16:33:24.901Z"}
+{"level":"error","message":"Can not find subscription with clientId 8bedd4a7-357c-4e40-98e4-b8d88c56c0d4 subscriptionId 16","timestamp":"2022-11-13T16:33:24.912Z"}
+{"level":"error","message":"Can not find subscription with clientId 8bedd4a7-357c-4e40-98e4-b8d88c56c0d4 subscriptionId 16","timestamp":"2022-11-13T16:33:24.927Z"}
+{"level":"error","message":"Can not find subscription with clientId ee169c62-feb4-4e67-afc8-69ccd524a81e subscriptionId 5","timestamp":"2022-11-13T16:34:35.756Z"}
+{"level":"error","message":"Can not find subscription with clientId dcc13d8c-c516-4890-a84e-abf76f82258c subscriptionId 9","timestamp":"2022-11-13T16:34:37.168Z"}
+{"level":"error","message":"Can not find subscription with clientId dcc13d8c-c516-4890-a84e-abf76f82258c subscriptionId 11","timestamp":"2022-11-13T16:34:37.567Z"}
+{"level":"error","message":"Can not find subscription with clientId dcc13d8c-c516-4890-a84e-abf76f82258c subscriptionId 13","timestamp":"2022-11-13T16:34:38.099Z"}
+{"level":"error","message":"Can not find subscription with clientId b8fad1e4-ae62-4801-b48d-3ef520f873cb subscriptionId 17","timestamp":"2022-11-13T16:34:51.138Z"}
+{"level":"error","message":"Can not find subscription with clientId 1ae80350-63e2-41b2-9517-1a5a3438944e subscriptionId 24","timestamp":"2022-11-13T16:34:51.159Z"}
+{"level":"error","message":"Can not find subscription with clientId 1ae80350-63e2-41b2-9517-1a5a3438944e subscriptionId 27","timestamp":"2022-11-13T16:34:52.243Z"}
+{"level":"error","message":"Can not find subscription with clientId c2e969f8-5133-43ec-88fd-ccc3aaca8e50 subscriptionId 30","timestamp":"2022-11-13T16:34:53.300Z"}
+{"level":"error","message":"Can not find subscription with clientId 1b5150e2-841d-4de3-b5c2-4c25ba91594b subscriptionId 24","timestamp":"2022-11-13T16:34:53.301Z"}
+{"level":"error","message":"Can not find subscription with clientId c2e969f8-5133-43ec-88fd-ccc3aaca8e50 subscriptionId 32","timestamp":"2022-11-13T16:34:53.814Z"}
+{"level":"error","message":"Can not find subscription with clientId b6ee14a1-fbea-426e-a392-77eafbec0b0c subscriptionId 1","timestamp":"2022-11-13T16:35:03.974Z"}
+{"level":"error","message":"Can not find subscription with clientId b6ee14a1-fbea-426e-a392-77eafbec0b0c subscriptionId 1","timestamp":"2022-11-13T16:35:03.975Z"}
+{"level":"error","message":"Can not find subscription with clientId 05109a94-075c-483d-b5a7-787192527352 subscriptionId 47","timestamp":"2022-11-13T16:35:08.258Z"}
+{"level":"error","message":"Can not find subscription with clientId 05109a94-075c-483d-b5a7-787192527352 subscriptionId 52","timestamp":"2022-11-13T16:35:08.319Z"}
+{"level":"error","message":"Can not find subscription with clientId 05109a94-075c-483d-b5a7-787192527352 subscriptionId 56","timestamp":"2022-11-13T16:35:08.385Z"}
+{"level":"error","message":"Can not find subscription with clientId 05109a94-075c-483d-b5a7-787192527352 subscriptionId 61","timestamp":"2022-11-13T16:35:08.537Z"}
+{"level":"error","message":"Can not find subscription with clientId 05109a94-075c-483d-b5a7-787192527352 subscriptionId 63","timestamp":"2022-11-13T16:35:08.564Z"}
+{"level":"error","message":"Can not find subscription with clientId 05109a94-075c-483d-b5a7-787192527352 subscriptionId 66","timestamp":"2022-11-13T16:35:08.597Z"}
+{"level":"error","message":"Can not find subscription with clientId 05109a94-075c-483d-b5a7-787192527352 subscriptionId 68","timestamp":"2022-11-13T16:35:08.654Z"}
+{"level":"error","message":"Can not find subscription with clientId 05109a94-075c-483d-b5a7-787192527352 subscriptionId 73","timestamp":"2022-11-13T16:35:08.729Z"}
+{"level":"error","message":"Can not find subscription with clientId 5a4fb210-710a-4bfd-81a2-087ce59ff096 subscriptionId 75","timestamp":"2022-11-13T16:35:08.746Z"}
+{"level":"error","message":"Can not find subscription with clientId 0583453f-d77a-454d-9035-30b4ee846789 subscriptionId 93","timestamp":"2022-11-13T16:35:18.079Z"}
+{"level":"error","message":"Can not find subscription with clientId 0583453f-d77a-454d-9035-30b4ee846789 subscriptionId 99","timestamp":"2022-11-13T16:35:18.103Z"}
+{"level":"error","message":"Can not find subscription with clientId 0583453f-d77a-454d-9035-30b4ee846789 subscriptionId 103","timestamp":"2022-11-13T16:35:18.153Z"}
+{"level":"error","message":"Can not find subscription with clientId 0583453f-d77a-454d-9035-30b4ee846789 subscriptionId 107","timestamp":"2022-11-13T16:35:18.462Z"}
+{"level":"error","message":"Can not find subscription with clientId 0583453f-d77a-454d-9035-30b4ee846789 subscriptionId 110","timestamp":"2022-11-13T16:35:18.487Z"}
+{"level":"error","message":"Can not find subscription with clientId 0583453f-d77a-454d-9035-30b4ee846789 subscriptionId 112","timestamp":"2022-11-13T16:35:18.529Z"}
+{"level":"error","message":"Can not find subscription with clientId 0583453f-d77a-454d-9035-30b4ee846789 subscriptionId 112","timestamp":"2022-11-13T16:35:18.529Z"}
+{"level":"error","message":"Can not find subscription with clientId 0583453f-d77a-454d-9035-30b4ee846789 subscriptionId 112","timestamp":"2022-11-13T16:35:18.537Z"}
+{"level":"error","message":"Can not find subscription with clientId 0583453f-d77a-454d-9035-30b4ee846789 subscriptionId 113","timestamp":"2022-11-13T16:35:18.546Z"}
+{"level":"error","message":"Can not find subscription with clientId 0583453f-d77a-454d-9035-30b4ee846789 subscriptionId 118","timestamp":"2022-11-13T16:35:18.649Z"}
+{"level":"error","message":"Can not find subscription with clientId 0583453f-d77a-454d-9035-30b4ee846789 subscriptionId 118","timestamp":"2022-11-13T16:35:18.649Z"}
+{"level":"error","message":"Can not find subscription with clientId 0583453f-d77a-454d-9035-30b4ee846789 subscriptionId 118","timestamp":"2022-11-13T16:35:18.650Z"}
+{"level":"error","message":"Can not find subscription with clientId 0583453f-d77a-454d-9035-30b4ee846789 subscriptionId 125","timestamp":"2022-11-13T16:35:18.719Z"}
+{"level":"error","message":"Can not find subscription with clientId 3315e5d7-7807-4744-8fde-f14b9cb54616 subscriptionId 7","timestamp":"2022-11-13T16:35:36.153Z"}
+{"level":"error","message":"Can not find subscription with clientId 933a9bbf-1bcb-429f-ae7d-457acb2b0839 subscriptionId 151","timestamp":"2022-11-13T16:35:36.915Z"}
+{"level":"error","message":"Can not find subscription with clientId 933a9bbf-1bcb-429f-ae7d-457acb2b0839 subscriptionId 160","timestamp":"2022-11-13T16:35:36.997Z"}
+{"level":"error","message":"Can not find subscription with clientId 933a9bbf-1bcb-429f-ae7d-457acb2b0839 subscriptionId 160","timestamp":"2022-11-13T16:35:36.997Z"}
+{"level":"error","message":"Can not find subscription with clientId 933a9bbf-1bcb-429f-ae7d-457acb2b0839 subscriptionId 161","timestamp":"2022-11-13T16:35:37.011Z"}
+{"level":"error","message":"Can not find subscription with clientId 933a9bbf-1bcb-429f-ae7d-457acb2b0839 subscriptionId 161","timestamp":"2022-11-13T16:35:37.011Z"}
+{"level":"error","message":"Can not find subscription with clientId b2bc617d-6aab-412a-a607-85795f872b7c subscriptionId 12","timestamp":"2022-11-13T16:35:38.382Z"}
+{"level":"error","message":"Can not find subscription with clientId 353bdc56-7411-471a-aac3-f9a488866a1e subscriptionId 169","timestamp":"2022-11-13T16:35:38.904Z"}
+{"level":"error","message":"Can not find subscription with clientId 391ab2fe-2790-4b29-bc20-269fe985ae29 subscriptionId 15","timestamp":"2022-11-13T16:35:38.905Z"}
+{"level":"error","message":"Can not find subscription with clientId 353bdc56-7411-471a-aac3-f9a488866a1e subscriptionId 174","timestamp":"2022-11-13T16:35:39.422Z"}
+{"level":"error","message":"Can not find subscription with clientId f6a4a750-3c94-47de-9388-0be77c583286 subscriptionId 1","timestamp":"2022-11-13T16:35:47.850Z"}
+{"level":"error","message":"Can not find subscription with clientId f6a4a750-3c94-47de-9388-0be77c583286 subscriptionId 1","timestamp":"2022-11-13T16:35:47.850Z"}
+{"level":"error","message":"Can not find subscription with clientId f6a4a750-3c94-47de-9388-0be77c583286 subscriptionId 1","timestamp":"2022-11-13T16:35:47.850Z"}
+{"level":"error","message":"Can not find subscription with clientId ed6f9a2d-ea5b-4621-b8f9-8e438a7ce4f4 subscriptionId 30","timestamp":"2022-11-13T16:35:58.931Z"}
+{"level":"error","message":"Can not find subscription with clientId ed6f9a2d-ea5b-4621-b8f9-8e438a7ce4f4 subscriptionId 35","timestamp":"2022-11-13T16:35:59.345Z"}
+{"level":"error","message":"Can not find subscription with clientId ed6f9a2d-ea5b-4621-b8f9-8e438a7ce4f4 subscriptionId 37","timestamp":"2022-11-13T16:35:59.414Z"}
+{"level":"error","message":"Can not find subscription with clientId ed6f9a2d-ea5b-4621-b8f9-8e438a7ce4f4 subscriptionId 37","timestamp":"2022-11-13T16:35:59.418Z"}
+{"level":"error","message":"Can not find subscription with clientId ed6f9a2d-ea5b-4621-b8f9-8e438a7ce4f4 subscriptionId 37","timestamp":"2022-11-13T16:35:59.426Z"}
+{"level":"error","message":"Can not find subscription with clientId ed6f9a2d-ea5b-4621-b8f9-8e438a7ce4f4 subscriptionId 41","timestamp":"2022-11-13T16:35:59.444Z"}
+{"level":"error","message":"Can not find subscription with clientId ed6f9a2d-ea5b-4621-b8f9-8e438a7ce4f4 subscriptionId 45","timestamp":"2022-11-13T16:35:59.466Z"}
+{"level":"error","message":"Can not find subscription with clientId 8f62dd70-1eaa-4a27-b3f2-b74a3f61833b subscriptionId 50","timestamp":"2022-11-13T16:36:00.912Z"}
+{"level":"error","message":"Can not find subscription with clientId 8f62dd70-1eaa-4a27-b3f2-b74a3f61833b subscriptionId 50","timestamp":"2022-11-13T16:36:00.920Z"}
+{"level":"error","message":"Can not find subscription with clientId 9401e9da-3e30-4c80-8d70-8afe8ce69c86 subscriptionId 53","timestamp":"2022-11-13T16:36:00.931Z"}
+{"level":"error","message":"Can not find subscription with clientId 9401e9da-3e30-4c80-8d70-8afe8ce69c86 subscriptionId 53","timestamp":"2022-11-13T16:36:00.932Z"}
+{"level":"error","message":"Can not find subscription with clientId 7ea3be28-71c4-46de-bed1-27775f23a340 subscriptionId 1","timestamp":"2022-11-13T16:37:04.914Z"}
+{"level":"error","message":"Can not find subscription with clientId 7ea3be28-71c4-46de-bed1-27775f23a340 subscriptionId 8","timestamp":"2022-11-13T16:37:05.205Z"}
+{"level":"error","message":"Can not find subscription with clientId c5f989d1-5973-44ce-9900-c4dfb9a3fc23 subscriptionId 13","timestamp":"2022-11-13T16:37:06.976Z"}
+{"level":"error","message":"Can not find subscription with clientId 2f075871-140a-4c7c-aa7e-222a3d5ecbd1 subscriptionId 198","timestamp":"2022-11-13T16:37:12.436Z"}
+{"level":"error","message":"Can not find subscription with clientId 2f075871-140a-4c7c-aa7e-222a3d5ecbd1 subscriptionId 201","timestamp":"2022-11-13T16:37:12.453Z"}
+{"level":"error","message":"Can not find subscription with clientId 2f075871-140a-4c7c-aa7e-222a3d5ecbd1 subscriptionId 204","timestamp":"2022-11-13T16:37:12.850Z"}
+{"level":"error","message":"Can not find subscription with clientId 2f075871-140a-4c7c-aa7e-222a3d5ecbd1 subscriptionId 204","timestamp":"2022-11-13T16:37:12.856Z"}
+{"level":"error","message":"Can not find subscription with clientId 2f075871-140a-4c7c-aa7e-222a3d5ecbd1 subscriptionId 204","timestamp":"2022-11-13T16:37:12.856Z"}
+{"level":"error","message":"Can not find subscription with clientId 2f075871-140a-4c7c-aa7e-222a3d5ecbd1 subscriptionId 204","timestamp":"2022-11-13T16:37:12.862Z"}
+{"level":"error","message":"Can not find subscription with clientId 2f075871-140a-4c7c-aa7e-222a3d5ecbd1 subscriptionId 204","timestamp":"2022-11-13T16:37:12.862Z"}
+{"level":"error","message":"Can not find subscription with clientId 2f075871-140a-4c7c-aa7e-222a3d5ecbd1 subscriptionId 208","timestamp":"2022-11-13T16:37:12.878Z"}
+{"level":"error","message":"Can not find subscription with clientId 2f075871-140a-4c7c-aa7e-222a3d5ecbd1 subscriptionId 211","timestamp":"2022-11-13T16:37:12.886Z"}
+{"level":"error","message":"Can not find subscription with clientId 2f075871-140a-4c7c-aa7e-222a3d5ecbd1 subscriptionId 215","timestamp":"2022-11-13T16:37:12.911Z"}
+{"level":"error","message":"Can not find subscription with clientId 2f075871-140a-4c7c-aa7e-222a3d5ecbd1 subscriptionId 219","timestamp":"2022-11-13T16:37:12.963Z"}
+{"level":"error","message":"Can not find subscription with clientId e1b485a1-5d41-472f-ad7d-4ea54686b31b subscriptionId 19","timestamp":"2022-11-13T16:37:32.847Z"}
+{"level":"error","message":"Can not find subscription with clientId e00fa33e-235f-4c5f-97e8-ae8e409cf130 subscriptionId 25","timestamp":"2022-11-13T16:37:35.814Z"}
+{"level":"error","message":"Can not find subscription with clientId bdf0b702-fb33-41d3-8dd1-a32c9f855dee subscriptionId 28","timestamp":"2022-11-13T16:37:40.725Z"}
+{"level":"error","message":"Can not find subscription with clientId 4ddbac44-f382-4b87-9196-414553b01439 subscriptionId 5","timestamp":"2022-11-13T16:37:46.162Z"}
+{"level":"error","message":"Can not find subscription with clientId 4ddbac44-f382-4b87-9196-414553b01439 subscriptionId 8","timestamp":"2022-11-13T16:37:46.849Z"}
+{"level":"error","message":"Can not find subscription with clientId 74a3270f-fd94-450a-98c0-8dae7e75bed4 subscriptionId 11","timestamp":"2022-11-13T16:37:47.383Z"}
+{"level":"error","message":"Can not find subscription with clientId 28ba6878-b1aa-481c-9c52-7625fff74e1e subscriptionId 15","timestamp":"2022-11-13T16:37:47.863Z"}
+{"level":"error","message":"Can not find subscription with clientId e20b772d-3768-49fe-aa88-67ac98d4896e subscriptionId 17","timestamp":"2022-11-13T16:37:48.398Z"}
+{"level":"error","message":"Can not find subscription with clientId 7a224bfc-e011-4559-81d6-6b62d2c3449a subscriptionId 4","timestamp":"2022-11-13T16:38:54.302Z"}
+{"level":"error","message":"Can not find subscription with clientId 272cb6cc-c1b8-4a21-bb45-93338f95227d subscriptionId 7","timestamp":"2022-11-13T16:38:55.507Z"}
+{"level":"error","message":"Can not find subscription with clientId 272cb6cc-c1b8-4a21-bb45-93338f95227d subscriptionId 8","timestamp":"2022-11-13T16:38:55.598Z"}
+{"level":"error","message":"Can not find subscription with clientId 5b76c822-3906-4e7a-abb0-37df878fb6a4 subscriptionId 10","timestamp":"2022-11-13T16:38:56.049Z"}
+{"level":"error","message":"Can not find subscription with clientId 5b76c822-3906-4e7a-abb0-37df878fb6a4 subscriptionId 10","timestamp":"2022-11-13T16:38:56.050Z"}
+{"level":"error","message":"Can not find subscription with clientId 5b76c822-3906-4e7a-abb0-37df878fb6a4 subscriptionId 13","timestamp":"2022-11-13T16:38:56.563Z"}
+{"level":"error","message":"Can not find subscription with clientId f2fc62ac-bfcf-4357-90ff-99349c2bde81 subscriptionId 1","timestamp":"2022-11-13T16:39:01.136Z"}
+{"level":"error","message":"Can not find subscription with clientId f2fc62ac-bfcf-4357-90ff-99349c2bde81 subscriptionId 6","timestamp":"2022-11-13T16:39:01.379Z"}
+{"level":"error","message":"Can not find subscription with clientId f2fc62ac-bfcf-4357-90ff-99349c2bde81 subscriptionId 6","timestamp":"2022-11-13T16:39:01.404Z"}
+{"level":"error","message":"Can not find subscription with clientId 0a32c9dd-689f-4c1c-bbef-036e588c7d63 subscriptionId 11","timestamp":"2022-11-13T16:39:02.532Z"}
+{"level":"error","message":"Can not find subscription with clientId 0a32c9dd-689f-4c1c-bbef-036e588c7d63 subscriptionId 13","timestamp":"2022-11-13T16:39:02.914Z"}
+{"level":"error","message":"Can not find subscription with clientId 80b07c6c-89dc-4f32-82a1-4162300a8367 subscriptionId 15","timestamp":"2022-11-13T16:39:03.472Z"}
+{"level":"error","message":"Can not find subscription with clientId f67f228d-2dfb-42df-968f-f3c9ff92070d subscriptionId 1","timestamp":"2022-11-13T16:40:36.044Z"}
+{"level":"error","message":"Can not find subscription with clientId f67f228d-2dfb-42df-968f-f3c9ff92070d subscriptionId 5","timestamp":"2022-11-13T16:40:36.320Z"}
+{"level":"error","message":"Can not find subscription with clientId dc66b60d-5113-4e8c-8957-8c095321f475 subscriptionId 10","timestamp":"2022-11-13T16:40:37.484Z"}
+{"level":"error","message":"Can not find subscription with clientId 0fb9615a-ef5a-4d21-9d58-56d2915f49d4 subscriptionId 12","timestamp":"2022-11-13T16:40:37.742Z"}
+{"level":"error","message":"Can not find subscription with clientId 87e86b01-a4ea-46a9-b713-f9dc388b1deb subscriptionId 14","timestamp":"2022-11-13T16:40:38.265Z"}
+{"level":"error","message":"Can not find subscription with clientId cd0b7688-6d7b-43dd-8d50-ce5e013d5d20 subscriptionId 1","timestamp":"2022-11-13T16:40:43.905Z"}
+{"level":"error","message":"Can not find subscription with clientId cd0b7688-6d7b-43dd-8d50-ce5e013d5d20 subscriptionId 7","timestamp":"2022-11-13T16:40:44.184Z"}
+{"level":"error","message":"Can not find subscription with clientId 1fb1ed7a-f1f1-4592-9019-e2a43a21865a subscriptionId 11","timestamp":"2022-11-13T16:40:45.302Z"}
+{"level":"error","message":"Can not find subscription with clientId 5e9e5872-e8fa-46b3-801d-4481176475cf subscriptionId 13","timestamp":"2022-11-13T16:40:45.605Z"}
+{"level":"error","message":"Can not find subscription with clientId 5e9e5872-e8fa-46b3-801d-4481176475cf subscriptionId 15","timestamp":"2022-11-13T16:40:46.145Z"}
+{"level":"error","message":"Can not find subscription with clientId 3b356941-e586-4212-a56b-60787d553d44 subscriptionId 18","timestamp":"2022-11-13T16:40:46.664Z"}
+{"level":"error","message":"Can not find subscription with clientId 699ece4a-56ae-415d-9be5-b9cc09301943 subscriptionId 5","timestamp":"2022-11-13T16:41:18.233Z"}
+{"level":"error","message":"Can not find subscription with clientId 699ece4a-56ae-415d-9be5-b9cc09301943 subscriptionId 5","timestamp":"2022-11-13T16:41:18.265Z"}
+{"level":"error","message":"Can not find subscription with clientId 699ece4a-56ae-415d-9be5-b9cc09301943 subscriptionId 15","timestamp":"2022-11-13T16:41:18.744Z"}
+{"level":"error","message":"Can not find subscription with clientId 699ece4a-56ae-415d-9be5-b9cc09301943 subscriptionId 17","timestamp":"2022-11-13T16:41:18.818Z"}
+{"level":"error","message":"Can not find subscription with clientId 699ece4a-56ae-415d-9be5-b9cc09301943 subscriptionId 20","timestamp":"2022-11-13T16:41:18.978Z"}
+{"level":"error","message":"Can not find subscription with clientId 648eeeeb-77c2-4050-ba17-c0611d09fce0 subscriptionId 23","timestamp":"2022-11-13T16:42:02.632Z"}
+{"level":"error","message":"Can not find subscription with clientId f67a48f5-432a-4566-8889-0857e7a11512 subscriptionId 20","timestamp":"2022-11-13T16:42:02.637Z"}
+{"level":"error","message":"Can not find subscription with clientId 767a4af8-ece3-4626-84e3-daea792542ab subscriptionId 27","timestamp":"2022-11-13T16:42:04.758Z"}
+{"level":"error","message":"Can not find subscription with clientId d9e285e5-f3f5-4d70-98fe-2ab89046cb0b subscriptionId 29","timestamp":"2022-11-13T16:42:04.758Z"}
+{"level":"error","message":"Can not find subscription with clientId ac5243a0-2cd4-446d-aa3e-33fbe889ff12 subscriptionId 33","timestamp":"2022-11-13T16:42:14.961Z"}
+{"level":"error","message":"Can not find subscription with clientId ac5243a0-2cd4-446d-aa3e-33fbe889ff12 subscriptionId 33","timestamp":"2022-11-13T16:42:14.964Z"}
+{"level":"error","message":"Can not find subscription with clientId 4818bcde-2ee7-4873-a966-150d1ebffd72 subscriptionId 31","timestamp":"2022-11-13T16:42:14.964Z"}
+{"level":"error","message":"Can not find subscription with clientId 4818bcde-2ee7-4873-a966-150d1ebffd72 subscriptionId 31","timestamp":"2022-11-13T16:42:14.964Z"}
+{"level":"error","message":"Can not find subscription with clientId bc8803b3-abfb-4467-bb00-76ed5c8ee04a subscriptionId 34","timestamp":"2022-11-13T16:42:15.792Z"}
+{"level":"error","message":"Can not find subscription with clientId 768f642d-6573-4df4-8093-36bac4a7e737 subscriptionId 39","timestamp":"2022-11-13T16:42:17.342Z"}
+{"level":"error","message":"Can not find subscription with clientId d259f69d-a67f-405a-bf0f-66cfe36338ed subscriptionId 38","timestamp":"2022-11-13T16:42:17.346Z"}
+{"level":"error","message":"Can not find subscription with clientId a155034f-3f37-477f-9fe5-d399d77a5345 subscriptionId 10","timestamp":"2022-11-13T18:57:34.161Z"}
+{"level":"error","message":"Can not find subscription with clientId a155034f-3f37-477f-9fe5-d399d77a5345 subscriptionId 16","timestamp":"2022-11-13T18:57:34.232Z"}
+{"level":"error","message":"Can not find subscription with clientId 5195837f-d8af-48a5-b9b8-8b71f4f4e2ac subscriptionId 23","timestamp":"2022-11-13T18:57:34.894Z"}
+{"level":"error","message":"Can not find subscription with clientId 5195837f-d8af-48a5-b9b8-8b71f4f4e2ac subscriptionId 25","timestamp":"2022-11-13T18:57:35.110Z"}
+{"level":"error","message":"Can not find subscription with clientId 5195837f-d8af-48a5-b9b8-8b71f4f4e2ac subscriptionId 28","timestamp":"2022-11-13T18:57:35.411Z"}
+{"level":"error","message":"Can not find subscription with clientId 5195837f-d8af-48a5-b9b8-8b71f4f4e2ac subscriptionId 28","timestamp":"2022-11-13T18:57:35.411Z"}
+{"level":"error","message":"Can not find subscription with clientId 5195837f-d8af-48a5-b9b8-8b71f4f4e2ac subscriptionId 31","timestamp":"2022-11-13T18:57:35.426Z"}
+{"level":"error","message":"Can not find subscription with clientId 5195837f-d8af-48a5-b9b8-8b71f4f4e2ac subscriptionId 34","timestamp":"2022-11-13T18:57:35.696Z"}
+{"level":"error","message":"Can not find subscription with clientId ca669868-aec7-4f30-81b7-6219fd1128bc subscriptionId 15","timestamp":"2022-11-13T19:16:48.622Z"}
+{"level":"error","message":"Can not find subscription with clientId ca669868-aec7-4f30-81b7-6219fd1128bc subscriptionId 18","timestamp":"2022-11-13T19:16:48.827Z"}
+{"level":"error","message":"Can not find subscription with clientId ca669868-aec7-4f30-81b7-6219fd1128bc subscriptionId 18","timestamp":"2022-11-13T19:16:48.842Z"}
+{"level":"error","message":"Can not find subscription with clientId ca669868-aec7-4f30-81b7-6219fd1128bc subscriptionId 19","timestamp":"2022-11-13T19:16:48.849Z"}
+{"level":"error","message":"Can not find subscription with clientId ca669868-aec7-4f30-81b7-6219fd1128bc subscriptionId 19","timestamp":"2022-11-13T19:16:48.850Z"}
+{"level":"error","message":"Can not find subscription with clientId ca669868-aec7-4f30-81b7-6219fd1128bc subscriptionId 19","timestamp":"2022-11-13T19:16:48.898Z"}
+{"level":"error","message":"Can not find subscription with clientId ca669868-aec7-4f30-81b7-6219fd1128bc subscriptionId 26","timestamp":"2022-11-13T19:16:48.952Z"}
+{"level":"error","message":"Can not find subscription with clientId ca669868-aec7-4f30-81b7-6219fd1128bc subscriptionId 29","timestamp":"2022-11-13T19:16:49.144Z"}
+{"level":"error","message":"Can not find subscription with clientId ca669868-aec7-4f30-81b7-6219fd1128bc subscriptionId 30","timestamp":"2022-11-13T19:16:49.169Z"}
+{"level":"error","message":"Can not find subscription with clientId ca669868-aec7-4f30-81b7-6219fd1128bc subscriptionId 30","timestamp":"2022-11-13T19:16:49.170Z"}
+{"level":"error","message":"Can not find subscription with clientId ca669868-aec7-4f30-81b7-6219fd1128bc subscriptionId 30","timestamp":"2022-11-13T19:16:49.198Z"}
+{"level":"error","message":"Can not find subscription with clientId ca669868-aec7-4f30-81b7-6219fd1128bc subscriptionId 30","timestamp":"2022-11-13T19:16:49.199Z"}
+{"level":"error","message":"Can not find subscription with clientId ca669868-aec7-4f30-81b7-6219fd1128bc subscriptionId 30","timestamp":"2022-11-13T19:16:49.220Z"}
+{"level":"error","message":"Can not find subscription with clientId ca669868-aec7-4f30-81b7-6219fd1128bc subscriptionId 30","timestamp":"2022-11-13T19:16:49.220Z"}
+{"level":"error","message":"Can not find subscription with clientId ca669868-aec7-4f30-81b7-6219fd1128bc subscriptionId 30","timestamp":"2022-11-13T19:16:49.221Z"}
+{"level":"error","message":"Can not find subscription with clientId 229cf1a3-bbe7-4d3c-bf77-77b25db67324 subscriptionId 37","timestamp":"2022-11-13T19:16:49.709Z"}
+{"level":"error","message":"Can not find subscription with clientId 229cf1a3-bbe7-4d3c-bf77-77b25db67324 subscriptionId 39","timestamp":"2022-11-13T19:16:49.709Z"}
+{"level":"error","message":"Can not find subscription with clientId 229cf1a3-bbe7-4d3c-bf77-77b25db67324 subscriptionId 39","timestamp":"2022-11-13T19:16:49.727Z"}
+{"level":"error","message":"Can not find subscription with clientId 229cf1a3-bbe7-4d3c-bf77-77b25db67324 subscriptionId 39","timestamp":"2022-11-13T19:16:49.727Z"}
+{"level":"error","message":"Can not find subscription with clientId 229cf1a3-bbe7-4d3c-bf77-77b25db67324 subscriptionId 39","timestamp":"2022-11-13T19:16:49.727Z"}
+{"level":"error","message":"Can not find subscription with clientId 229cf1a3-bbe7-4d3c-bf77-77b25db67324 subscriptionId 39","timestamp":"2022-11-13T19:16:49.746Z"}
+{"level":"error","message":"Can not find subscription with clientId 229cf1a3-bbe7-4d3c-bf77-77b25db67324 subscriptionId 39","timestamp":"2022-11-13T19:16:49.746Z"}
+{"level":"error","message":"Can not find subscription with clientId 229cf1a3-bbe7-4d3c-bf77-77b25db67324 subscriptionId 43","timestamp":"2022-11-13T19:16:49.757Z"}
+{"level":"error","message":"Can not find subscription with clientId 6b95605a-2ac0-4434-8349-60c5779014d2 subscriptionId 9","timestamp":"2022-11-13T19:17:47.138Z"}
+{"level":"error","message":"Can not find subscription with clientId 6b95605a-2ac0-4434-8349-60c5779014d2 subscriptionId 11","timestamp":"2022-11-13T19:17:47.322Z"}
+{"level":"error","message":"Can not find subscription with clientId 6b95605a-2ac0-4434-8349-60c5779014d2 subscriptionId 14","timestamp":"2022-11-13T19:17:47.611Z"}
+{"level":"error","message":"Can not find subscription with clientId bb9cedc2-cedf-419b-b848-f2c2ebb024c0 subscriptionId 5","timestamp":"2022-11-13T19:19:03.269Z"}
+{"level":"error","message":"Can not find subscription with clientId db042174-7b4f-4301-a2f8-41bca043e495 subscriptionId 11","timestamp":"2022-11-13T19:19:04.058Z"}
+{"level":"error","message":"Can not find subscription with clientId db042174-7b4f-4301-a2f8-41bca043e495 subscriptionId 13","timestamp":"2022-11-13T19:19:04.322Z"}
+{"level":"error","message":"Can not find subscription with clientId db042174-7b4f-4301-a2f8-41bca043e495 subscriptionId 16","timestamp":"2022-11-13T19:19:04.614Z"}

@@ -1121,6 +1121,25 @@ async function main() {
     console.log("Auction Started Bidding cannot deploy")
   }
 
+
+  if (nftMintedRes.success) {
+    console.log("Nft Minted deployed succesfully")
+  } else {
+    console.log("Nft Minted cannot deploy")
+  }
+
+  if (nftBurnedRes.success) {
+    console.log("Nft Burned deployed succesfully")
+  } else {
+    console.log("Nft Burned cannot deploy")
+  }
+
+  if (nftTransferredRes.success) {
+    console.log("Nft Transferred deployed succesfully")
+  } else {
+    console.log("Nft Transferred cannot deploy")
+  }
+
   if (
     nftMintedRes.success &&
     nftBurnedRes.success &&

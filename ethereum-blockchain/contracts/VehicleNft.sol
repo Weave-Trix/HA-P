@@ -50,6 +50,7 @@ contract VehicleNft is ERC721, ERC721Burnable {
     mapping(uint256 => string) private tokenIdToTokenUri;
     mapping(string => bool) private chassisNumToBool;
     mapping(uint256 => bool) public tokenIdToBurnBool;
+    mapping(uint256 => string) public tokenIdToReportUri;
 
     function registerVehicle(
         address _owner,
@@ -70,6 +71,10 @@ contract VehicleNft is ERC721, ERC721Burnable {
         emit NftMinted(_owner, _tokenURI, curr_tokenId);
 
         return curr_tokenId;
+    }
+
+    function addReport(uint256 _tokenId, string memory _tokenURI) external onlyAuthority {
+        tokenIdToReportUri[_tokenId] = _tokenURI;
     }
 
     function tokenURI(uint256 tokenId)

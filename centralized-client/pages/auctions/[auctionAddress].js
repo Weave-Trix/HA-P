@@ -6,17 +6,22 @@ import { Colors, Devices } from "../../next/Theme";
 import { HiOutlineExternalLink } from "react-icons/hi";
 import { AiFillCaretLeft } from "react-icons/ai";
 import { IoMdShareAlt } from "react-icons/io";
-import { BsHeart, BsFillEyeFill, BsThreeDots } from "react-icons/bs";
+import { BsHeart, BsFillEyeFill, BsThreeDots, BsFillPersonFill } from "react-icons/bs";
 import Tab from "../../next/components/styled/Tab.styled";
 import Tabs from "../../next/components/styled/Tabs.styled";
 import EditionSelector from "../../next/components/Asset/EditionSelector";
 import OwnershipItem from "../../next/components/Asset/OwnershipItem";
 import BidSticky from "../../next/components/Asset/BidSticky";
+import Timer from "../../next/components/Timer/CompactCountdownTimer"
+import Report from "../../next/components/NFT/Report";
+import { RiAuctionFill } from "react-icons/ri";
 import { useRouter } from "next/router";
 import {
   getAllAuctionAddress,
   getPostData,
 } from "../../next/lib/auctionAddress";
+import Moralis from "moralis-v1";
+import axios from "axios";
 import {
   useMoralis,
   useMoralisQuery,
@@ -25,28 +30,36 @@ import {
 } from "react-moralis";
 import { useEffect, useState } from "react";
 import Web3 from "web3";
-import { ENSAvatar } from "web3uikit";
+import { ENSAvatar, Widget, Eth } from "web3uikit";
 import contractAbi from "../../../ethereum-blockchain/artifacts/contracts/AuctionContracts.sol/Auction.json";
 import nftAbi from "../../../ethereum-blockchain/artifacts/contracts/VehicleNft.sol/VehicleNft.json";
 
 const AssetEl = styled.article`
+  height: 130vh;
   background-color: ${Colors.White};
   color: ${Colors.Black};
   padding: 1rem;
   display: flex;
   flex-direction: column;
   @media ${Devices.Laptop} {
-    padding: 1rem 15%;
+    padding: 1rem 13%;
   }
 `;
 const SectionContainer = styled.div`
   display: flex;
-  gap: 2rem;
+  gap: 6rem;
   flex-direction: column;
   @media ${Devices.Laptop} {
     flex-direction: row;
   }
 `;
+
+const Divider = styled.div`
+  border-top: 1px solid grey;
+  border-color: lightgrey;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+`
 
 const LeftSection = styled.div`
   display: flex;
@@ -59,7 +72,7 @@ const ImageEl = styled.div`
   overflow: hidden;
 `;
 const ChainLink = styled.a`
-  border-radius: 5px;
+  border-radius: 8px;
   display: flex;
   justify-content: space-between;
   font-size: 1rem;
@@ -69,6 +82,7 @@ const ChainLink = styled.a`
   padding: 1.5rem 1rem;
 `;
 const RightSection = styled.div`
+  margin-top: 4rem;
   display: flex;
   flex-direction: column;
   gap: 0.85rem;
@@ -81,10 +95,12 @@ const BackBtn = styled.span`
   cursor: pointer;
   align-items: center;
 `;
+
 const TopBtns = styled.div`
   display: flex;
-  gap: 1rem;
+  gap: 1.5rem;
   align-items: center;
+  margin-bottom: 1rem;
   svg {
     font-size: 1.5rem;
   }
@@ -105,6 +121,7 @@ const MoreBtn = styled(LikesBtn)`
 const AuthorContainer = styled.div`
   display: flex;
   gap: 0.5rem;
+  margin-bottom: 2rem;
   span {
     display: flex;
     flex-direction: column;
@@ -132,9 +149,6 @@ const CreatorLabel = styled.label`
   font-size: 0.8rem;
 `;
 const UsernameEl = styled.span``;
-const EditionEl = styled.span`
-  font-weight: 500;
-`;
 
 const AuctionTitle = styled.div`
     display: flex;
@@ -146,6 +160,7 @@ const Title = styled.h1`
   display: inline-block;
   margin-right: 1rem;
 `;
+
 const MarketPlace = styled.span`
   border: 1px solid ${Colors.Gray};
   border-radius: 50px;
@@ -154,6 +169,7 @@ const MarketPlace = styled.span`
   font-weight: 500;
   color: ${Colors.Gray};
 `;
+
 const AcOfferLabel = styled.span`
   font-size: 1.2rem;
   font-weight: 500;
@@ -165,10 +181,12 @@ const Des = styled.p`
   margin-bottom: 10px;
   font-size: 0.85rem;
 `;
+
 const TagContainer = styled.div`
   display: flex;
   gap: 0.5rem;
 `;
+
 const Tag = styled.span`
   border: 1px solid ${Colors.Black};
   border-radius: 5px;
@@ -177,12 +195,31 @@ const Tag = styled.span`
   font-weight: 500;
 `;
 
-const AllTabs = [
-  { Id: 1, Title: "Ownership", Content: <OwnershipItem /> },
-  { Id: 2, Title: "History", Content: <Tab /> },
-  { Id: 3, Title: "Bids", Content: <Tab /> },
-  { Id: 4, Title: "Offers", Content: <Tab /> },
-];
+const Info = styled.div`
+  box-shadow: 0 4px 40px rgb(0 0 0 /10%);
+  border: 1px solid ${Colors.Border};
+  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+  padding: 0.8rem 1rem;
+  border-radius: 5px;
+  background-color: ${Colors.White};
+`;
+
+const EditionEl = styled.span`
+  font-weight: 500;
+  font-size: 0.8rem;
+`;
+
+const BidTitle = styled.div`
+  font-weight: 400;
+  font-size: 1.2rem;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 15px;
+`;
+
+
 
 export async function getStaticPaths() {
   const paths = await getAllAuctionAddress();
@@ -204,9 +241,45 @@ export async function getStaticProps({ params }) {
 const auctionAddress = () => {
     const router = useRouter();
     const { auctionAddress } = router.query;
-    const { isWeb3Enabled, account, Moralis } = useMoralis();
-
-
+    const { isWeb3Enabled, account, isInitialized } = useMoralis();
+    
+    /*
+    Start Section
+    useState hooks
+    */
+    const [aucState, setAucState] = useState(0);
+    const [aucStateText, setAucStateText] = useState("NULL");
+    const [tokenId, setTokenId] = useState("0");
+    const [nftSymbol, setNftSymbol] = useState("LOL");
+    const [nftDescription, setNftDescription] = useState("Lorem ipsum, world's first tangible NFT marketplace for vehicle asset :)");
+    const [accAddress, setAccAddress] = useState("0x0");
+    const [nftAddress, setNftAddress] = useState("0x0");
+    const [vehicleName, setVehicleName] = useState("Null");
+    const [nftAttributes, setNftAttributes] = useState([]);
+    const [highestBid, setHighestBid] = useState("0");
+    const [highestBidder, setHighestBidder] = useState("0x0");
+    const [bidEndTime, setBidEndTime] = useState(0);
+    const [aucDeposit, setAucDeposit] = useState(0);
+    const [userDeposit, setUserDeposit] = useState(0);
+    const [seller, setSeller] = useState("0x0");
+    const [authority, setAuthority] = useState("0x0");
+    const [bidders, setBidders] = useState([]);
+    const [uniqueBidders, setUniqueBidders] = useState([]);
+    const [tokenURI, setTokenURI] = useState("0");
+    const [imageURI, setImageURI] = useState(
+        "https://cdn.dribbble.com/users/1186261/screenshots/3718681/_______.gif"
+    );
+    const [allTabs, setAllTabs] = useState(
+      [
+        { Id: 1, Title: "Attributes", Content: <Tab /> },
+        { Id: 2, Title: "Bids", Content: <Tab /> },
+        { Id: 3, Title: "Ownership", Content: <Tab /> },
+      ]
+    );
+    /*
+    End Section
+    useState hooks
+    */
 
     /* 
     Start Section
@@ -215,7 +288,7 @@ const auctionAddress = () => {
     // fetch logBidPlaced from blockchain event listener (initialize only)
     const { data: labp_bidPlaced, isLoading: isFetchingBidPlaced } =
         useMoralisQuery(
-        "LogAuctionBidPlaced",
+        "LogauctionbidplacedLogs",
         (query) =>
             query.equalTo("auction", auctionAddress).descending("createdAt"),
         [],
@@ -234,7 +307,7 @@ const auctionAddress = () => {
         // listens to deposit placed activity from blockchain event listener
         const { data: ladp_depositPlaced, isLoading: isFetchingDepositPlaced } =
             useMoralisQuery(
-                "LogAuctionDeplositPlaced",
+                "LogauctiondepositplacedLogs",
                 (query) => query.equalTo("auction", auctionAddress),
                 [],
                 { live: true}
@@ -243,50 +316,18 @@ const auctionAddress = () => {
         // listens to deposit retrieved activity from blockchain event listener
         const { data: ladr_depositRetrieved, isLoading: isFetchingDepositRetrieved } =
         useMoralisQuery(
-            "LogAuctionDepositRetrieved",
+            "LogauctiondepositretrievedLogs",
             (query) => query.equalTo("auction", auctionAddress),
             [],
-            { live: true}
+            { autoFetch: false }
         )
+
+      const { data: tokenURIData, error: tokenURIError, isLoading: isLoadingTokenURI, fetch: fetchTokenURI } = useMoralisQuery("ListNftRecords");
     /* 
     End Section
     WebSocket
     */
 
-
-
-    /*
-    Start Section
-    useState hooks
-    */
-    const [aucState, setAucState] = useState(0);
-    const [aucStateText, setAucStateText] = useState("NULL");
-    const [tokenId, setTokenId] = useState("0");
-    const [nftSymbol, setNftSymbol] = useState("LOL");
-    const [nftDescription, setNftDescription] = useState("Lorem ipsum, world's first tangible NFT marketplace for vehicle asset :)");
-    const [accAddress, setAccAddress] = useState("0x0");
-    const [nftAddress, setNftAddress] = useState("0x0");
-    const [vehicleName, setVehicleName] = useState("Null");
-    const [highestBid, setHighestBid] = useState("0");
-    const [highestBidder, setHighestBidder] = useState("0x0");
-    const [bidTimeLeft, setBidLeftTime] = useState(0);
-    const [aucDeposit, setAucDeposit] = useState(0);
-    const [userDeposit, setUserDeposit] = useState(0);
-    const [seller, setSeller] = useState("0x0");
-    const [authority, setAuthority] = useState("0x0");
-    const [bidders, setBidders] = useState([]);
-    const [uniqueBidders, setUniqueBidders] = useState([]);
-    const [tokenURI, setTokenURI] = useState("0");
-    const [imageURI, setImageURI] = useState(
-        "https://cdn.dribbble.com/users/1186261/screenshots/3718681/_______.gif"
-    );
-    /*
-    End Section
-    useState hooks
-    */
-
-
-console.log(`HighestBid Ruka :${highestBid}`)
     /* 
     Start Section
     useEffect hook, which triggers, when webSocket push new data
@@ -308,9 +349,15 @@ console.log(`HighestBid Ruka :${highestBid}`)
             const _accAddress = web3.utils.toChecksumAddress(bids.attributes.bidder);
             setBidders((prev_bidders) => [...prev_bidders, _accAddress]);
         });
-        updateAucDetails();
-        updateBidDetails();
+        if (labp_bidPlaced.length > 0) {
+          updateBidDetails();
+        }
+        if (auctionAddress) {
+          updateAucDetails();
+        }
     }, [labp_bidPlaced]);
+
+    console.log(labp_bidPlaced);
 
     useEffect(() => {
         console.log("Auction state changed");
@@ -324,12 +371,16 @@ console.log(`HighestBid Ruka :${highestBid}`)
 
     useEffect(() => {
     if (isWeb3Enabled) {
-        console.log("account change detected")
-        updateAucDetails()
-        updateBidDetails()
-        const web3 = new Web3(MoralisProvider)
-        const _accAddress = web3.utils.toChecksumAddress(account)
-        setAccAddress(_accAddress)
+        console.log("account change detected");
+        if (labp_bidPlaced.length > 0) {
+          updateBidDetails();
+        }
+        if (auctionAddress) {
+          updateAucDetails();
+        }
+        const web3 = new Web3(MoralisProvider);
+        const _accAddress = web3.utils.toChecksumAddress(account);
+        setAccAddress(_accAddress);
     }
     }, [isWeb3Enabled, account])
 
@@ -340,7 +391,44 @@ console.log(`HighestBid Ruka :${highestBid}`)
 
     useEffect(() => {
         updateTokenDetails();
+        console.log("updating token details")
     }, [nftAddress])
+
+    useEffect(() => {
+      setUniqueBidders(new Set(bidders));
+    }, [bidders])
+
+    useEffect(() => {
+      console.log("setting tabs...");
+      console.log(nftAttributes);
+      nftAttributes.length > 0 && setAllTabs(
+      [
+        { Id: 1, Title: "Attributes", Content: 
+          <div style={{ display: 'grid', gap: '20px' }}>
+            <section style={{ display: 'flex', gap: '20px' }}>
+                <Widget info={nftAttributes[0].value} title={nftAttributes[0].trait_type}/>
+                <Widget info={nftAttributes[1].value} title={nftAttributes[1].trait_type}/>
+                <Widget info={nftAttributes[2].value} title={nftAttributes[2].trait_type}/>              
+            </section>
+            <section style={{ display: 'flex', gap: '20px' }}>
+            <Widget info={nftAttributes[3].value} title={nftAttributes[3].trait_type}/>
+            <Widget info={nftAttributes[4].value} title={nftAttributes[4].trait_type}/>         
+            </section>
+          </div>},
+        { Id: 2, Title: "Bids", Content:
+            labp_bidPlaced.map((bid) => {
+              return (
+                <Info>
+                  <BidTitle>Bid Placed<div style={{display:"flex"}}><Eth fontSize='30px' style={{marginLeft: "40px", marginRight: "5px", alignSelf: "center"}}/>{bid.attributes.bidAmount}</div></BidTitle>
+                  <EditionEl>From <span style={{marginLeft: "30px", fontWeight: 100, fontSize: "0.9rem"}}>{bid.attributes.bidder}</span></EditionEl>
+                </Info>
+              );
+            })
+       },
+        { Id: 3, Title: "Ownership", Content: <OwnershipItem nft = {{seller: seller}}/> },
+      ]
+      );
+    }, [seller, nftAttributes, labp_bidPlaced])
 
     /* 
     End Section
@@ -482,20 +570,20 @@ console.log(`HighestBid Ruka :${highestBid}`)
     async function updateAucDetails() {
         // update tokenId
         const _tokenId = await getTokenId();
-        setTokenId(_tokenId);
+        _tokenId && setTokenId(_tokenId.toNumber());
         // update nftAddress
         const _nftAddress = await getNftAddress();
-        setNftAddress(_nftAddress);
+        _nftAddress && setNftAddress(_nftAddress);
         // update seller
         const _seller = await getSeller();
-        setSeller(_seller);
+        _seller && setSeller(_seller);
         // update aucDeposit
         const _aucDeposit = await getAucDeposit();
-        setAucDeposit(_aucDeposit);
+        _aucDeposit && setAucDeposit(_aucDeposit);
         // update bidEndTime
         const _bidEndTime = await getBidEndTime();
         if (_bidEndTime) {
-        setBidLeftTime(_bidEndTime.toNumber() * 1000);
+        setBidEndTime(_bidEndTime.toNumber() * 1000);
         }
     }
 
@@ -518,28 +606,45 @@ console.log(`HighestBid Ruka :${highestBid}`)
 
     // fetch live bdding data from event emitter
     async function updateBidDetails() {
-        const _highestBid = await getHighestBid();
+        console.log("updateBidDetails()")
+        const _highestBid = labp_bidPlaced[0].attributes.bidAmount;
         setHighestBid(_highestBid);
-        const _highestBidder = await getHighestBidder();
+        const _highestBidder = labp_bidPlaced[0].attributes.bidder;
         setHighestBidder(_highestBidder);
         // get unique bidders
-        setUniqueBidders(new Set(bidders));
     }
 
     // parse NFT data from TokenURI and fetch Nft details
     async function updateTokenDetails() {
-        const ipfsLink = await getTokenURI();
+        /* changed due to moralis migrate */
+          // fetch tokenURI from parse server
+        console.log("testing testing ruka ruka")
+        const centServerUrl = process.env.NEXT_PUBLIC_CENT_SERVER_URL;
+        console.log(`trying to fetch with tokenId => ${tokenId}`);
+        const ipfsLink = await fetch(`${centServerUrl}/nftTokenUri/${tokenId}`,{
+          method: 'GET',
+        })
+        .then((res) => {
+          return res.json();
+        })
+        .then((data) => {
+          console.log(`tokenURI fetched from mongoDb => ${data.msg}`);
+          return(data.msg);
+        })
+        /* end change */
+        
         if (ipfsLink) {
-        const requestURL = ipfsLink.replace("ipfs://", "https://ipfs.io/ipfs/");
-        const tokenURIResponse = await (await fetch(requestURL)).json();
-        setTokenURI(tokenURIResponse);
-        const _vehicleName = tokenURIResponse.name;
-        setVehicleName(_vehicleName);
-        const _imageURI = tokenURIResponse.image;
-        const imageURIURL = _imageURI.replace("ifps://", "https://ipfs.io/ipfs/");
-        setImageURI(imageURIURL);
-        setNftDescription(tokenURIResponse.description);
-        console.log(tokenURIResponse);
+          console.log("processing ipfs link")
+          const requestURL = ipfsLink.replace("ipfs://", "https://ipfs.io/ipfs/");
+          const tokenURIResponse = await (await fetch(requestURL)).json();
+          setTokenURI(tokenURIResponse);
+          const _vehicleName = tokenURIResponse.name;
+          setVehicleName(_vehicleName);
+          const _imageURI = tokenURIResponse.image;
+          const imageURIURL = _imageURI.replace("ifps://", "https://ipfs.io/ipfs/");
+          setImageURI(imageURIURL);
+          setNftDescription(tokenURIResponse.description);
+          setNftAttributes(tokenURIResponse.attributes)
         }
         const _authority = await getAuthorityAddress();
         setAuthority(_authority);
@@ -554,7 +659,10 @@ console.log(`HighestBid Ruka :${highestBid}`)
 
   return (
     <AssetEl>
-      <Head>NFT ITEM</Head>
+      <Head>
+        <title>HA-P</title>
+        <meta name="description" content="Generated by create next app" />
+      </Head>
       <SectionContainer>
         <LeftSection>
           <ImageEl>
@@ -565,41 +673,33 @@ console.log(`HighestBid Ruka :${highestBid}`)
               height="840"
             />
           </ImageEl>
+          <EditionSelector nft={{tokenId: tokenId}}/>
           <ChainLink>
-            View Auction on Etherscan <HiOutlineExternalLink />
+            Vehicle Inspection Report <Report nft={{tokenId: tokenId}}/>
           </ChainLink>
         </LeftSection>
         <RightSection>
-          <BackBtn>
-            <AiFillCaretLeft />
-            Back
-          </BackBtn>
-          <TopBtns>
-            <LikesBtn>
-              <BsHeart />
-              710
-            </LikesBtn>
-            <ViewsEl>
-              <BsFillEyeFill />
-              16177
-            </ViewsEl>
-            <ShareBtn>
-              <IoMdShareAlt />
-              Share
-            </ShareBtn>
-            <MoreBtn>
-              <BsThreeDots />
-            </MoreBtn>
-          </TopBtns>
           <AuctionTitle>
             <Title>{vehicleName}</Title>
             <MarketPlace>{nftSymbol}</MarketPlace>
           </AuctionTitle>
-          <AcOfferLabel>{aucStateText}</AcOfferLabel>
+          <div style={{display: "flex", justifyContent: "space-between"}}>
+            <AcOfferLabel>{aucStateText}</AcOfferLabel>
+            <TopBtns>
+              <LikesBtn>
+                <BsFillPersonFill />
+                {uniqueBidders.size}
+              </LikesBtn>
+              <ViewsEl>
+                <RiAuctionFill />
+                {bidders.length}
+              </ViewsEl>
+            </TopBtns>
+          </div>
           <AuthorContainer>
             <AvatarEl>
                 <ENSAvatar
-                    address={authority}
+                    address={authority.toLowerCase()}
                     size={50}
                 />
             </AvatarEl>
@@ -608,17 +708,17 @@ console.log(`HighestBid Ruka :${highestBid}`)
               <UsernameEl>{(authority === undefined) ? "Loading..": truncateStr(authority, 15)}</UsernameEl>
             </AuthorAddress>
           </AuthorContainer>
+          <Timer targetDate={bidEndTime}/>
+          <Divider />
           <Des>
             {nftDescription}
           </Des>
-          <EditionEl>371 Editions Minted</EditionEl>
-          <EditionSelector />
-          <Tabs mt="1rem" data={AllTabs} />
+          <Tabs mt="1rem" data={allTabs} />
         </RightSection>
       </SectionContainer>
       { (true) ? 
         <BidSticky
-            auction={{aucAdrres: auctionAddress, aucDeposit: aucDeposit, userDeposit: userDeposit, highestBid: highestBid}}
+            auction={{aucAdrres: auctionAddress, aucDeposit: aucDeposit, userDeposit: userDeposit, highestBid: highestBid, highestBidder: highestBidder}}
         /> : ""}
     </AssetEl>
   );

@@ -6388,6 +6388,38 @@
             },
             {
                 "type": "function",
+                "name": "addReport",
+                "constant": false,
+                "inputs": [
+                    {
+                        "name": "_tokenId",
+                        "type": "uint256",
+                        "indexed": null,
+                        "components": null,
+                        "arrayLength": null,
+                        "arrayChildren": null,
+                        "baseType": "uint256",
+                        "_isParamType": true
+                    },
+                    {
+                        "name": "_tokenURI",
+                        "type": "string",
+                        "indexed": null,
+                        "components": null,
+                        "arrayLength": null,
+                        "arrayChildren": null,
+                        "baseType": "string",
+                        "_isParamType": true
+                    }
+                ],
+                "outputs": [],
+                "payable": false,
+                "stateMutability": "nonpayable",
+                "gas": null,
+                "_isFragment": true
+            },
+            {
+                "type": "function",
                 "name": "approve",
                 "constant": false,
                 "inputs": [
@@ -6949,6 +6981,39 @@
             },
             {
                 "type": "function",
+                "name": "tokenIdToReportUri",
+                "constant": true,
+                "inputs": [
+                    {
+                        "name": null,
+                        "type": "uint256",
+                        "indexed": null,
+                        "components": null,
+                        "arrayLength": null,
+                        "arrayChildren": null,
+                        "baseType": "uint256",
+                        "_isParamType": true
+                    }
+                ],
+                "outputs": [
+                    {
+                        "name": null,
+                        "type": "string",
+                        "indexed": null,
+                        "components": null,
+                        "arrayLength": null,
+                        "arrayChildren": null,
+                        "baseType": "string",
+                        "_isParamType": true
+                    }
+                ],
+                "payable": false,
+                "stateMutability": "view",
+                "gas": null,
+                "_isFragment": true
+            },
+            {
+                "type": "function",
                 "name": "tokenURI",
                 "constant": true,
                 "inputs": [
@@ -7027,6 +7092,38 @@
             "coerceFunc": null
         },
         "functions": {
+            "addReport(uint256,string)": {
+                "type": "function",
+                "name": "addReport",
+                "constant": false,
+                "inputs": [
+                    {
+                        "name": "_tokenId",
+                        "type": "uint256",
+                        "indexed": null,
+                        "components": null,
+                        "arrayLength": null,
+                        "arrayChildren": null,
+                        "baseType": "uint256",
+                        "_isParamType": true
+                    },
+                    {
+                        "name": "_tokenURI",
+                        "type": "string",
+                        "indexed": null,
+                        "components": null,
+                        "arrayLength": null,
+                        "arrayChildren": null,
+                        "baseType": "string",
+                        "_isParamType": true
+                    }
+                ],
+                "outputs": [],
+                "payable": false,
+                "stateMutability": "nonpayable",
+                "gas": null,
+                "_isFragment": true
+            },
             "approve(address,uint256)": {
                 "type": "function",
                 "name": "approve",
@@ -7580,6 +7677,39 @@
                         "arrayLength": null,
                         "arrayChildren": null,
                         "baseType": "bool",
+                        "_isParamType": true
+                    }
+                ],
+                "payable": false,
+                "stateMutability": "view",
+                "gas": null,
+                "_isFragment": true
+            },
+            "tokenIdToReportUri(uint256)": {
+                "type": "function",
+                "name": "tokenIdToReportUri",
+                "constant": true,
+                "inputs": [
+                    {
+                        "name": null,
+                        "type": "uint256",
+                        "indexed": null,
+                        "components": null,
+                        "arrayLength": null,
+                        "arrayChildren": null,
+                        "baseType": "uint256",
+                        "_isParamType": true
+                    }
+                ],
+                "outputs": [
+                    {
+                        "name": null,
+                        "type": "string",
+                        "indexed": null,
+                        "components": null,
+                        "arrayLength": null,
+                        "arrayChildren": null,
+                        "baseType": "string",
                         "_isParamType": true
                     }
                 ],

@@ -259,7 +259,7 @@ const AuctionsManager = () => {
         />
 
         setBiddingAucsTable(table);
-    }, [biddingAucsUI, isLoadingVerWinnerAucsTable])
+    }, [biddingAucsUI, isLoadingBiddingAucsTable])
 
 
     // verWinnerAucs
@@ -328,7 +328,7 @@ const AuctionsManager = () => {
         />
 
         setVerWinnerAucsTable(table);
-    }, [biddingAucsUI])
+    }, [verWinnerAucsUI, isLoadingVerWinnerAucsTable])
 
     // pendPayAucs
     useEffect(() => {
@@ -499,6 +499,7 @@ const AuctionsManager = () => {
 
     /* async functions */
     const updateAucDetails = async (e) => {
+        console.log(lar_auctions);
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         let temp_biddingAucs = [];
         let temp_verWinnerAucs = [];
@@ -523,10 +524,24 @@ const AuctionsManager = () => {
             const status = auctionObj.currState;
             const tokenId = auctionObj.tokenId;
             const seller = auctionObj.seller;
-            const tokenSymbol = await nftContract.symbol();
+            const tokenSymbol = "VOC";
 
             // query generals
-            const ipfsLink = await nftContract.tokenURI(tokenId);
+            /* changed due to moralis migrate */
+            // fetch tokenURI from parse server
+            console.log(`fetching token URI => ${tokenId}`)
+            const centServerUrl = process.env.NEXT_PUBLIC_CENT_SERVER_URL;
+            const ipfsLink = await fetch(`${centServerUrl}/nftTokenUri/${tokenId}`,{
+                method: 'GET',
+            })
+            .then((res) => {
+                return res.json();
+            })
+            .then((data) => {
+                console.log(`tokenURI fetched from mongoDb => ${data.msg}`);
+                return(data.msg);
+            })
+            /* end change */
             if(ipfsLink) {
                 const requestURL = ipfsLink.replace("ipfs://", "https://ipfs.io/ipfs/");
                 const tokenURI = await (await fetch(requestURL)).json();
@@ -591,9 +606,7 @@ const AuctionsManager = () => {
                 default:
                     console.log("bad ruka");
             }
-
-            // stop skeleton
-            if (i === (lar_auctions.length - 1)) {
+            if (i === lar_auctions.length - 1) {
                 setIsLoadingBiddingAucsTable(false);
                 setIsLoadingVerWinnerAucsTable(false);
                 setIsLoadingPendPayAucsTable(false);

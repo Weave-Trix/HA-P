@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Colors, Devices } from "../../Theme";
 import GridTmp from "./Grid.styled";
 
@@ -38,11 +38,18 @@ const Header = styled.span`
   }
 `;
 const Content = styled.div`
-  padding: 1rem;
+  padding-top: 1rem;
 `;
 
 export default function Tabs({ data, mt }) {
   const [CurTab, setCurTab] = useState(data[0]);
+  
+  console.log(CurTab.Content);
+
+  useEffect(() => {
+    setCurTab(data[0]);
+  }, [data])
+
   return (
     <TabsEl mt={mt}>
       <Headers>

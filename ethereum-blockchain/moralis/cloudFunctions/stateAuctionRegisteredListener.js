@@ -1,14 +1,14 @@
 // auction state 0:registered, 1:bidding, 2:verifyingWinner, 3: pendingPayment, 4: pendingAudit, 5: auctionClosed
 
 // when auction registered, update auction state to 0
-Moralis.Cloud.afterSave("StateAuctionRegistered", async (request) => {
+Parse.Cloud.afterSave("StateAuctionRegistered", async (request) => {
   const confirmed = request.object.get("confirmed");
-  const logger = Moralis.Cloud.getLogger();
+  const logger = Parse.Cloud.getLogger();
   logger.info("Looking for confirmed StateAuctionRegistered transaction...");
   if (!confirmed) {
     logger.info("Item fetched!");
     // create ListAuctionRecords, set currState to 0
-    const ListAuctionRecords = Moralis.Object.extend("ListAuctionRecords");
+    const ListAuctionRecords = Parse.Object.extend("ListAuctionRecords");
     const listAuctionRecords = new ListAuctionRecords();
     listAuctionRecords.set("auctionAddress", request.object.get("auction"));
     listAuctionRecords.set("nftAddress", request.object.get("nftAddress"));
